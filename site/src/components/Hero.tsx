@@ -201,7 +201,7 @@ function PalettePicker({
                 boxShadow: active
                   ? `0 0 0 2px rgba(0,0,0,0.12), 0 0 0 4px ${opt.hex}, 0 0 0 5px ${vAccent(v)}`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
-                transform: active ? 'scale(1.12)' : 'scale(1)',
+                transform: 'scale(1)',
                 transition: 'all 200ms var(--ease-bounce)',
               }}
             />
@@ -409,9 +409,28 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
         <PalettePicker v={v} setVariantKey={setVariantKey} />
 
         <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-          <Button variant={v.dark ? 'inverse' : 'primary'} icon="Check" size="lg">
+          <a
+            href="/shop"
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              borderRadius: 'var(--r-pill)',
+              transition: 'transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '14px 26px',
+              fontSize: 15,
+              background: v.dark ? 'white' : 'var(--fg)',
+              color: v.dark ? 'var(--fg)' : 'white',
+              boxShadow: v.dark ? '0 6px 18px rgba(0,0,0,0.10)' : '0 6px 18px rgba(0,0,0,0.18)',
+              textDecoration: 'none',
+            }}
+          >
             Add to cart · ${pack.price}
-          </Button>
+          </a>
           <IconBtn icon="Heart" size={48} />
         </div>
       </div>

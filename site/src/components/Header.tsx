@@ -195,20 +195,17 @@ export default function Header({ dark, variant }: HeaderProps) {
             </a>
           </div>
 
-          {/* RIGHT: Search, Heart, Cart, CTA */}
+          {/* RIGHT: Search, Cart, CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-            {/* Desktop-only: search & heart */}
+            {/* Desktop-only: search */}
             <span className="og-header-desktop">
               <RoundIcon icon="search" hoverBg={chipBg} />
-            </span>
-            <span className="og-header-desktop">
-              <RoundIcon icon="heart" hoverBg={chipBg} />
             </span>
             {/* Cart icon always visible */}
             <CartIconButton
               hoverBg={chipBg}
               badgeBorder={dark ? 'transparent' : '#fff'}
-              onClick={() => setCartOpen(true)}
+              onClick={() => setCartOpen(prev => !prev)}
             />
             {/* Desktop-only: CTA button */}
             <a

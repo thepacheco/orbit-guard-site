@@ -1,6 +1,11 @@
 'use client';
 
 import React from 'react';
+import Header from '../../../components/Header';
+import { PRODUCT_VARIANTS } from '../../../components/data';
+import type { Variant } from '../../../components/types';
+
+const blueberryVariant = PRODUCT_VARIANTS.find((v: Variant) => v.key === 'blueberry')!;
 
 export default function PetsLandingPage() {
   const bg = '#E4E9FF';
@@ -60,6 +65,8 @@ export default function PetsLandingPage() {
         />
       </div>
 
+      <Header dark={false} variant={blueberryVariant} />
+
       {/* Content layer */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* Top: Orbit icon mark centered */}
@@ -68,6 +75,7 @@ export default function PetsLandingPage() {
             display: 'flex',
             justifyContent: 'center',
             padding: '32px 24px 0',
+            paddingTop: 100,
           }}
         >
           <div

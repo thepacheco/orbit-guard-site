@@ -39,57 +39,68 @@ export default function NotifyForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: 'flex',
-        gap: 0,
-        background: 'rgba(255,255,255,0.18)',
-        backdropFilter: 'blur(8px)',
-        borderRadius: 999,
-        border: '1px solid rgba(255,255,255,0.3)',
-        padding: 4,
-        maxWidth: 460,
-        width: '100%',
-      }}
-    >
-      <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Enter your email to get notified when we launch"
-        required
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%', maxWidth: 520 }}>
+      <form
+        onSubmit={handleSubmit}
         style={{
-          flex: 1,
-          background: 'transparent',
-          border: 'none',
-          outline: 'none',
-          padding: '10px 16px',
-          fontFamily: 'var(--font-ui)',
-          fontSize: 14,
-          color: '#fff',
-          minWidth: 280,
-          maxWidth: 400,
-        }}
-      />
-      <button
-        type="submit"
-        style={{
-          background: '#fff',
-          color: 'var(--og-blue)',
-          border: 'none',
+          display: 'flex',
+          gap: 0,
+          background: 'rgba(255,255,255,0.18)',
+          backdropFilter: 'blur(8px)',
           borderRadius: 999,
-          padding: '10px 20px',
-          fontFamily: 'var(--font-ui)',
-          fontWeight: 700,
-          fontSize: 14,
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
+          border: '1px solid rgba(255,255,255,0.3)',
+          padding: 4,
+          width: '100%',
         }}
       >
-        Notify me →
-      </button>
-    </form>
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="your@email.com"
+          required
+          style={{
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+            padding: '10px 16px',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 14,
+            color: '#fff',
+            minWidth: 260,
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            background: '#fff',
+            color: 'var(--og-blue)',
+            border: 'none',
+            borderRadius: 999,
+            padding: '10px 20px',
+            fontFamily: 'var(--font-ui)',
+            fontWeight: 700,
+            fontSize: 14,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          Notify me →
+        </button>
+      </form>
+      <p
+        style={{
+          margin: 0,
+          fontSize: 13,
+          fontFamily: 'var(--font-ui)',
+          color: 'rgba(255,255,255,0.80)',
+          textAlign: 'center',
+        }}
+      >
+        Enter your email to be notified when we launch on Kickstarter.
+      </p>
+    </div>
   );
 }

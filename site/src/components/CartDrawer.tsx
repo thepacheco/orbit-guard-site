@@ -145,16 +145,33 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     }}
                   >
                     {/* Color dot */}
-                    <div
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: '50%',
-                        background: item.hex,
-                        flexShrink: 0,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
-                      }}
-                    />
+                    {item.isMix ? (
+                      <div
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: '50%',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
+                          border: '1px solid rgba(0,0,0,0.1)',
+                        }}
+                      >
+                        <div style={{ height: '50%', background: item.mixTop }} />
+                        <div style={{ height: '50%', background: item.mixBottom }} />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: '50%',
+                          background: item.hex,
+                          flexShrink: 0,
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
+                        }}
+                      />
+                    )}
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
@@ -167,7 +184,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     {/* Qty controls */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <button
-                        onClick={() => cart.updateQty(item.variantKey, item.packCount, -1)}
+                        onClick={() => cart.updateQty(item.variantKey, item.packCount, -1, item.mixTop, item.mixBottom)}
                         style={{
                           width: 26,
                           height: 26,
@@ -186,7 +203,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                         {item.qty}
                       </span>
                       <button
-                        onClick={() => cart.updateQty(item.variantKey, item.packCount, 1)}
+                        onClick={() => cart.updateQty(item.variantKey, item.packCount, 1, item.mixTop, item.mixBottom)}
                         style={{
                           width: 26,
                           height: 26,
@@ -208,7 +225,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     </div>
                     {/* Remove */}
                     <button
-                      onClick={() => cart.removeItem(item.variantKey, item.packCount)}
+                      onClick={() => cart.removeItem(item.variantKey, item.packCount, item.mixTop, item.mixBottom)}
                       style={{
                         width: 26,
                         height: 26,

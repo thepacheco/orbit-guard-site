@@ -27,74 +27,74 @@ export default function AboutPage() {
       {/* Hero */}
       <section
         style={{
-          minHeight: '70vh',
+          background: '#fff',
+          padding: '160px 56px 100px',
+          textAlign: 'center',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          padding: '160px 56px 100px',
-          textAlign: 'center',
-          background: 'var(--bg-inset)',
-          position: 'relative',
-          overflow: 'hidden',
         }}
       >
         <div
           style={{
-            width: 72,
-            height: 72,
-            borderRadius: '50%',
-            background: '#5A74FF',
-            boxShadow: '0 16px 40px rgba(90,116,255,0.35)',
-            marginBottom: 32,
-            position: 'relative',
+            fontFamily: 'var(--font-mono)',
+            fontSize: 11,
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: '#5A74FF',
+            marginBottom: 20,
           }}
         >
-          <div
-            style={{
-              position: 'absolute',
-              inset: '50%',
-              width: 24,
-              height: 24,
-              transform: 'translate(-50%,-50%)',
-              borderRadius: '50%',
-              background: '#fff',
-              opacity: 0.5,
-            }}
-          />
+          Our story
         </div>
         <h1
           style={{
             fontFamily: 'var(--font-ui)',
             fontWeight: 800,
-            fontSize: 'clamp(40px, 5vw, 72px)',
+            fontSize: 'clamp(40px, 5vw, 64px)',
             letterSpacing: '-0.03em',
-            lineHeight: 1.0,
-            margin: '0 0 24px',
-            maxWidth: 800,
+            lineHeight: 1.05,
+            margin: '0 0 28px',
+            maxWidth: 820,
           }}
         >
-          We protect the spaces you live in.
+          Built for the spaces between the desk and the floor.
         </h1>
         <p
           style={{
             fontFamily: 'var(--font-body)',
             fontSize: 19,
-            lineHeight: 1.6,
+            lineHeight: 1.65,
             color: 'var(--fg-2)',
             maxWidth: 560,
-            margin: 0,
+            margin: '0 0 40px',
           }}
         >
-          OrbitGuard makes small hardware with big impact — starting with a simple
-          caster guard that protects pets, cords, and toes from office chair wheels.
+          Orbit Guard started with a simple problem — a rolling chair kept snagging cables and nearly took out a cat.
+          We made a small fix. Now it lives under 2,100 desks.
         </p>
+        {/* Orbit icon mark */}
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            background: '#5A74FF',
+            WebkitMaskImage: "url('/assets/orbit-mark-mono.svg')",
+            maskImage: "url('/assets/orbit-mark-mono.svg')",
+            WebkitMaskRepeat: 'no-repeat',
+            maskRepeat: 'no-repeat',
+            WebkitMaskPosition: 'center',
+            maskPosition: 'center',
+            WebkitMaskSize: 'contain',
+            maskSize: 'contain',
+          } as React.CSSProperties}
+        />
       </section>
 
-      {/* Our story */}
+      {/* Origin section */}
       <section
         style={{
-          padding: '120px 56px',
+          padding: '100px 56px',
           background: '#fff',
         }}
       >
@@ -108,14 +108,16 @@ export default function AboutPage() {
             alignItems: 'center',
           }}
         >
+          {/* LEFT */}
           <div>
             <div
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(120px, 14vw, 200px)',
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 800,
+                fontSize: 180,
                 lineHeight: 0.85,
                 color: '#5A74FF',
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.04em',
               }}
             >
               2026
@@ -127,73 +129,166 @@ export default function AboutPage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.12em',
                 color: 'var(--fg-3)',
-                marginTop: 16,
+                marginTop: 20,
               }}
             >
               Founded in Atlanta, GA
             </div>
           </div>
+
+          {/* RIGHT */}
           <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 11,
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: '#5A74FF',
-                marginBottom: 16,
-              }}
-            >
-              Our story
-            </div>
-            <h2
+            <h3
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 700,
-                fontSize: 'clamp(28px, 3vw, 42px)',
+                fontSize: 'clamp(22px, 2.5vw, 32px)',
                 letterSpacing: '-0.02em',
-                lineHeight: 1.1,
+                lineHeight: 1.2,
                 margin: '0 0 20px',
+                color: 'var(--fg)',
               }}
             >
-              Started with a cat and a cable.
-            </h2>
+              We started with one chair and one cat.
+            </h3>
             <p
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 17,
-                lineHeight: 1.65,
+                lineHeight: 1.7,
                 color: 'var(--fg-2)',
-                margin: '0 0 20px',
+                margin: '0 0 18px',
               }}
             >
-              It started with a curious cat, a laptop cable, and an office chair that refused
-              to play nice. One morning in Atlanta, a wheel caught the cord — and the idea for
-              Orbit was born.
+              Every office chair has five wheels. Every wheel is a hazard. A tail, a charging cable, a bare foot at midnight
+              — all of them find the wheel eventually. We built Orbit to sit between the floor and the wheel, quietly doing
+              nothing until it needs to do everything. Small, soft, and out of sight.
             </p>
             <p
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 17,
-                lineHeight: 1.65,
+                lineHeight: 1.7,
                 color: 'var(--fg-2)',
                 margin: 0,
               }}
             >
-              We set out to make the simplest, most satisfying piece of hardware in any home
-              office. A soft TPU shell that clips onto every caster, protects everything in its
-              path, and comes in colors that actually match real rooms. Available in 11 colors,
-              fits 95% of chairs.
+              We&apos;re a small team in Atlanta. We design everything here, manufacture in small runs, and ship every order
+              ourselves. That&apos;s not a selling point — it&apos;s just how we prefer to work.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Values section */}
       <section
         style={{
           padding: '100px 56px',
-          background: 'var(--bg-inset)',
+          background: '#F6F6F4',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1180,
+            margin: '0 auto',
+          }}
+        >
+          <div
+            style={{
+              textAlign: 'center',
+              marginBottom: 56,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#5A74FF',
+                marginBottom: 16,
+              }}
+            >
+              How we work
+            </div>
+            <h2
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 800,
+                fontSize: 'clamp(28px, 3vw, 42px)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+                margin: 0,
+              }}
+            >
+              What we believe in.
+            </h2>
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 24,
+            }}
+          >
+            {[
+              {
+                title: 'Simple by design',
+                body: 'One part. Five seconds per wheel. No tools, no instructions needed.',
+              },
+              {
+                title: 'Made for real homes',
+                body: 'Not labs or showrooms. Homes with pets, cables, bare feet, and hardwood floors.',
+              },
+              {
+                title: 'Built to last',
+                body: 'Soft TPU that doesn\'t yellow or crack. Replace the chair before you replace the Orbit.',
+              },
+            ].map(card => (
+              <div
+                key={card.title}
+                style={{
+                  background: '#fff',
+                  borderRadius: 20,
+                  padding: '36px 32px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 700,
+                    fontSize: 20,
+                    letterSpacing: '-0.01em',
+                    margin: '0 0 12px',
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 16,
+                    lineHeight: 1.65,
+                    color: 'var(--fg-2)',
+                    margin: 0,
+                  }}
+                >
+                  {card.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats row */}
+      <section
+        style={{
+          padding: '80px 56px',
+          background: '#5A74FF',
+          color: '#fff',
         }}
       >
         <div
@@ -201,33 +296,26 @@ export default function AboutPage() {
             maxWidth: 1180,
             margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(4, 1fr)',
             gap: 24,
+            textAlign: 'center',
           }}
         >
           {[
-            { big: '11 colors', small: 'From Blueberry to Polar', icon: '🎨' },
-            { big: '2.1k', small: 'Happy chairs protected', icon: '🪑' },
-            { big: '4.9 ★', small: 'Average review score', icon: '⭐' },
+            { big: '2,140', label: 'chairs protected' },
+            { big: '4.9', label: 'average rating' },
+            { big: '11', label: 'colors' },
+            { big: '60-day', label: 'free returns' },
           ].map(stat => (
-            <div
-              key={stat.big}
-              style={{
-                background: '#fff',
-                borderRadius: 20,
-                padding: '32px 28px',
-                border: '1px solid var(--border)',
-              }}
-            >
-              <div style={{ fontSize: 28, marginBottom: 12 }}>{stat.icon}</div>
+            <div key={stat.big}>
               <div
                 style={{
                   fontFamily: 'var(--font-ui)',
                   fontWeight: 800,
-                  fontSize: 32,
-                  letterSpacing: '-0.02em',
-                  color: '#5A74FF',
-                  marginBottom: 6,
+                  fontSize: 48,
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1,
+                  marginBottom: 8,
                 }}
               >
                 {stat.big}
@@ -235,20 +323,20 @@ export default function AboutPage() {
               <div
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: 11,
+                  fontSize: 12,
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
-                  color: 'var(--fg-3)',
+                  opacity: 0.75,
                 }}
               >
-                {stat.small}
+                {stat.label}
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Team */}
+      {/* Team section */}
       <section
         style={{
           padding: '120px 56px',
@@ -257,18 +345,6 @@ export default function AboutPage() {
         }}
       >
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: '#5A74FF',
-              marginBottom: 16,
-            }}
-          >
-            Team
-          </div>
           <h2
             style={{
               fontFamily: 'var(--font-ui)',
@@ -279,8 +355,20 @@ export default function AboutPage() {
               margin: '0 0 20px',
             }}
           >
-            Small team. Big intentions.
+            A small team in Atlanta.
           </h2>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 17,
+              lineHeight: 1.65,
+              color: 'var(--fg-2)',
+              margin: '0 0 24px',
+            }}
+          >
+            We don&apos;t have a big team photo or a mission statement poster. We have a product that works and customers who
+            tell their friends.
+          </p>
           <p
             style={{
               fontFamily: 'var(--font-body)',
@@ -290,9 +378,17 @@ export default function AboutPage() {
               margin: 0,
             }}
           >
-            A small team in Atlanta building simple safety products for real homes.
-            We believe the best hardware is the kind you forget is there — until you
-            realise it was there all along.
+            Want to talk? Reach us at{' '}
+            <a
+              href="mailto:hello@orbitguard.com"
+              style={{
+                color: '#5A74FF',
+                textDecoration: 'none',
+                fontWeight: 600,
+              }}
+            >
+              hello@orbitguard.com
+            </a>
           </p>
         </div>
       </section>

@@ -11,16 +11,44 @@ const POLAR: Variant = {
   price: 24, blurb: '', features: [], floatChips: [], dark: false,
 };
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '14px 18px',
+  borderRadius: 12,
+  border: '1px solid var(--border)',
+  fontFamily: 'var(--font-ui)',
+  fontSize: 15,
+  color: 'var(--fg)',
+  background: '#fff',
+  outline: 'none',
+  boxSizing: 'border-box',
+  transition: 'border-color 160ms',
+  appearance: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--font-ui)',
+  fontWeight: 600,
+  fontSize: 14,
+  marginBottom: 8,
+  color: 'var(--fg)',
+};
+
 export default function ContactPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('General question');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (typeof window !== 'undefined') {
-      localStorage.setItem('og_contact_submission', JSON.stringify({ name, email, message, ts: Date.now() }));
+      localStorage.setItem(
+        'og_contact_submission',
+        JSON.stringify({ name, email, subject, message, ts: Date.now() }),
+      );
     }
     setSubmitted(true);
   }
@@ -29,7 +57,7 @@ export default function ContactPage() {
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
       <Header dark={false} variant={POLAR} />
 
-      {/* Page header */}
+      {/* Hero */}
       <section
         style={{
           padding: '160px 56px 80px',
@@ -42,13 +70,13 @@ export default function ContactPage() {
             style={{
               fontFamily: 'var(--font-ui)',
               fontWeight: 800,
-              fontSize: 'clamp(36px, 5vw, 64px)',
+              fontSize: 'clamp(48px, 6vw, 80px)',
               letterSpacing: '-0.03em',
               lineHeight: 1.0,
               margin: '0 0 20px',
             }}
           >
-            Get in touch
+            Say hello.
           </h1>
           <p
             style={{
@@ -59,202 +87,49 @@ export default function ContactPage() {
               margin: 0,
             }}
           >
-            We&apos;d love to hear from you. Whether it&apos;s a question, a collaboration, or
-            just to say hi.
+            We&apos;re a small team and we read every message. Expect a reply within one business day.
           </p>
         </div>
       </section>
 
-      {/* Contact form */}
+      {/* Two-column layout */}
       <section style={{ padding: '80px 56px' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          {submitted ? (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '56px 40px',
-                background: '#E6F7EF',
-                borderRadius: 24,
-                border: '1px solid #A3DFC3',
-              }}
-            >
-              <div style={{ fontSize: 40, marginBottom: 16 }}>✓</div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 22,
-                  color: '#18A06F',
-                  marginBottom: 10,
-                }}
-              >
-                Message sent!
-              </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 16, color: '#1A6649' }}>
-                Thanks! We&apos;ll get back to you within 24 hours.
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    fontSize: 14,
-                    marginBottom: 8,
-                    color: 'var(--fg)',
-                  }}
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  required
-                  placeholder="Your name"
-                  style={{
-                    width: '100%',
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    border: '1px solid var(--border)',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 15,
-                    color: 'var(--fg)',
-                    background: '#fff',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 160ms',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-                />
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    fontSize: 14,
-                    marginBottom: 8,
-                    color: 'var(--fg)',
-                  }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                  placeholder="you@example.com"
-                  style={{
-                    width: '100%',
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    border: '1px solid var(--border)',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 15,
-                    color: 'var(--fg)',
-                    background: '#fff',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 160ms',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-                />
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    fontSize: 14,
-                    marginBottom: 8,
-                    color: 'var(--fg)',
-                  }}
-                >
-                  Message
-                </label>
-                <textarea
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                  required
-                  placeholder="How can we help?"
-                  rows={6}
-                  style={{
-                    width: '100%',
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    border: '1px solid var(--border)',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 15,
-                    color: 'var(--fg)',
-                    background: '#fff',
-                    outline: 'none',
-                    resize: 'vertical',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 160ms',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                style={{
-                  background: '#5A74FF',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 999,
-                  padding: '16px 32px',
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 16,
-                  cursor: 'pointer',
-                  alignSelf: 'flex-start',
-                  boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
-                  transition: 'transform 140ms',
-                }}
-                onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.97)'; }}
-                onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-              >
-                Send message →
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
-
-      {/* Info cards */}
-      <section
-        style={{
-          padding: '0 56px 100px',
-        }}
-      >
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: '2fr 3fr',
+            gap: 64,
+            alignItems: 'flex-start',
+          }}
+        >
+          {/* LEFT: Contact info cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {[
-              { title: 'General', email: 'hello@orbitguard.com', desc: 'For general questions and feedback' },
-              { title: 'Press', email: 'press@orbitguard.com', desc: 'Media inquiries and review units' },
-              { title: 'Support', email: 'support@orbitguard.com', desc: 'Order help and returns' },
+              {
+                title: 'General',
+                email: 'hello@orbitguard.com',
+                desc: 'Questions, feedback, or just want to say hi.',
+              },
+              {
+                title: 'Orders & Support',
+                email: 'support@orbitguard.com',
+                desc: 'Order status, fit questions, or anything about your Orbit.',
+              },
+              {
+                title: 'Press',
+                email: 'press@orbitguard.com',
+                desc: 'Coverage, review units, or brand assets.',
+              },
             ].map(card => (
               <div
                 key={card.title}
                 style={{
-                  padding: '20px',
-                  background: 'var(--bg-inset)',
-                  borderRadius: 16,
+                  background: '#fff',
                   border: '1px solid var(--border)',
+                  borderRadius: 16,
+                  padding: '24px 28px',
                 }}
               >
                 <div
@@ -262,6 +137,7 @@ export default function ContactPage() {
                     fontFamily: 'var(--font-ui)',
                     fontWeight: 700,
                     fontSize: 15,
+                    color: 'var(--fg)',
                     marginBottom: 6,
                   }}
                 >
@@ -271,23 +147,207 @@ export default function ContactPage() {
                   href={`mailto:${card.email}`}
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 12,
+                    fontSize: 13,
                     color: '#5A74FF',
                     textDecoration: 'none',
                     display: 'block',
-                    marginBottom: 8,
-                    wordBreak: 'break-all',
+                    marginBottom: 10,
+                    fontWeight: 600,
                   }}
                 >
                   {card.email}
                 </a>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--fg-3)', lineHeight: 1.4 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 14,
+                    color: 'var(--fg-3)',
+                    lineHeight: 1.5,
+                  }}
+                >
                   {card.desc}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* RIGHT: Contact form */}
+          <div>
+            {submitted ? (
+              <div
+                style={{
+                  padding: '48px 40px',
+                  background: 'var(--success-bg)',
+                  border: '1px solid #A3DFC3',
+                  borderRadius: 20,
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: 'var(--success)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 20px',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: 22,
+                  }}
+                >
+                  &#10003;
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 700,
+                    fontSize: 22,
+                    color: 'var(--success)',
+                    marginBottom: 10,
+                  }}
+                >
+                  Message received.
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 16,
+                    color: '#1A6649',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  We&apos;ll reply to your email within one business day.
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div>
+                  <label style={labelStyle}>Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    required
+                    placeholder="Your name"
+                    style={inputStyle}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                    style={inputStyle}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Subject</label>
+                  <select
+                    value={subject}
+                    onChange={e => setSubject(e.target.value)}
+                    style={{
+                      ...inputStyle,
+                      cursor: 'pointer',
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234B5560' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 16px center',
+                      paddingRight: 44,
+                    }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+                  >
+                    <option>General question</option>
+                    <option>Order support</option>
+                    <option>Press inquiry</option>
+                    <option>Partnership</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Message</label>
+                  <textarea
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    required
+                    placeholder="How can we help?"
+                    rows={4}
+                    style={{
+                      ...inputStyle,
+                      resize: 'vertical',
+                      lineHeight: 1.6,
+                    }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#5A74FF'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    background: '#5A74FF',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 999,
+                    padding: '16px 36px',
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 700,
+                    fontSize: 16,
+                    cursor: 'pointer',
+                    alignSelf: 'flex-start',
+                    boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
+                    transition: 'transform 140ms',
+                  }}
+                  onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.97)'; }}
+                  onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                >
+                  Send message
+                </button>
+              </form>
+            )}
+          </div>
         </div>
+      </section>
+
+      {/* Bottom strip */}
+      <section
+        style={{
+          padding: '28px 56px',
+          background: 'var(--bg-inset)',
+          borderTop: '1px solid var(--border)',
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 12,
+            color: 'var(--fg-3)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            margin: 0,
+          }}
+        >
+          Based in Atlanta, Georgia &middot; Reply within 1 business day &middot;{' '}
+          <a
+            href="mailto:hello@orbitguard.com"
+            style={{ color: '#5A74FF', textDecoration: 'none', fontWeight: 600 }}
+          >
+            hello@orbitguard.com
+          </a>
+        </p>
       </section>
 
       {/* Footer */}
@@ -303,8 +363,12 @@ export default function ContactPage() {
           gap: 12,
         }}
       >
-        <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>© 2026 OrbitGuard, Inc.</div>
-        <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Made in Atlanta</div>
+        <div style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
+          &copy; 2026 OrbitGuard, Inc.
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
+          Made in Atlanta
+        </div>
       </footer>
     </div>
   );

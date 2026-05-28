@@ -8,13 +8,16 @@ export type CartItem = {
   packCount: number
   packPrice: number
   qty: number
+  isMix?: boolean
+  mixTop?: string
+  mixBottom?: string
 }
 
 type CartCtx = {
   items: CartItem[]
   addItem: (item: Omit<CartItem, 'qty'>) => void
-  updateQty: (variantKey: string, packCount: number, delta: number) => void
-  removeItem: (variantKey: string, packCount: number) => void
+  updateQty: (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => void
+  removeItem: (variantKey: string, packCount: number, mixTop?: string, mixBottom?: string) => void
   totalItems: number
   totalPrice: number
   saveCartByEmail: (email: string) => void
@@ -39,25 +42,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (saved) try { setItems(JSON.parse(saved)) } catch { /* ignore */ }
   }, [])
 
+  function itemKey(item: Omit<CartItem, 'qty'> | CartItem): string {
+    if (item.isMix) return `mix-${item.mixTop}-${item.mixBottom}-${item.packCount}`
+    return `${item.variantKey}-${item.packCount}`
+  }
+
   const addItem = (item: Omit<CartItem, 'qty'>) => {
     setItems(prev => {
-      const key = `${item.variantKey}-${item.packCount}`
-      const existing = prev.find(x => `${x.variantKey}-${x.packCount}` === key)
-      if (existing) return prev.map(x => `${x.variantKey}-${x.packCount}` === key ? { ...x, qty: x.qty + 1 } : x)
+      const key = itemKey(item)
+      const existing = prev.find(x => itemKey(x) === key)
+      if (existing) return prev.map(x => itemKey(x) === key ? { ...x, qty: x.qty + 1 } : x)
       return [...prev, { ...item, qty: 1 }]
     })
   }
 
-  const updateQty = (variantKey: string, packCount: number, delta: number) => {
-    const key = `${variantKey}-${packCount}`
-    setItems(prev => prev.map(x => `${x.variantKey}-${x.packCount}` === key
+  const updateQty = (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => {
+    const key = mixTop && mixBottom
+      ? `mix-${mixTop}-${mixBottom}-${packCount}`
+      : `${variantKey}-${packCount}`
+    setItems(prev => prev.map(x => itemKey(x) === key
       ? { ...x, qty: Math.max(0, x.qty + delta) }
       : x
     ).filter(x => x.qty > 0))
   }
 
-  const removeItem = (variantKey: string, packCount: number) => {
-    setItems(prev => prev.filter(x => !(x.variantKey === variantKey && x.packCount === packCount)))
+  const removeItem = (variantKey: string, packCount: number, mixTop?: string, mixBottom?: string) => {
+    if (mixTop && mixBottom) {
+      const key = `mix-${mixTop}-${mixBottom}-${packCount}`
+      setItems(prev => prev.filter(x => itemKey(x) !== key))
+    } else {
+      setItems(prev => prev.filter(x => !(x.variantKey === variantKey && x.packCount === packCount && !x.isMix)))
+    }
   }
 
   const totalItems = items.reduce((s, x) => s + x.qty, 0)

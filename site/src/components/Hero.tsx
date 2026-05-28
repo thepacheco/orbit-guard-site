@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, IconBtn, DynIcon } from './primitives';
+import { DynIcon } from './primitives';
 import ProductHero from './ProductHero';
 import { PRODUCT_VARIANTS, PACK_SIZES } from './data';
 import type { Variant } from './types';
@@ -199,7 +199,7 @@ function PalettePicker({
                 cursor: 'pointer',
                 padding: 0,
                 boxShadow: active
-                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.5)`
+                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.25)`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
                 transition: 'box-shadow 200ms var(--ease-bounce)',
               }}
@@ -431,7 +431,6 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
           >
             Add to cart · ${pack.price}
           </a>
-          <IconBtn icon="Heart" size={48} />
         </div>
       </div>
 

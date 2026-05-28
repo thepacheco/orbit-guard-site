@@ -1,6 +1,11 @@
 'use client';
 
 import React from 'react';
+import Header from '../../../components/Header';
+import { PRODUCT_VARIANTS } from '../../../components/data';
+import type { Variant } from '../../../components/types';
+
+const cloverVariant = PRODUCT_VARIANTS.find((v: Variant) => v.key === 'clover')!;
 
 export default function OfficeLandingPage() {
   const bg = '#E5F7EE';
@@ -61,10 +66,12 @@ export default function OfficeLandingPage() {
         />
       </div>
 
+      <Header dark={false} variant={cloverVariant} />
+
       {/* Content layer */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* Top: Orbit icon centered */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 24px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 24px 0', paddingTop: 100 }}>
           <div
             style={{
               width: 44,

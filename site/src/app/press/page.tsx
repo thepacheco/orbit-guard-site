@@ -9,12 +9,31 @@ const POLAR: Variant = {
   price: 24, blurb: '', features: [], floatChips: [], dark: false,
 };
 
+const QUICK_FACTS = [
+  { fact: 'Founded', detail: '2026' },
+  { fact: 'Headquarters', detail: 'Atlanta, Georgia' },
+  { fact: 'Product', detail: 'Chair caster guards (soft TPU)' },
+  { fact: 'Sizes', detail: '2.5cm per guard, stackable to 5cm' },
+  { fact: 'Colors', detail: 'Blueberry, Clover, Coral, Lavender, Fawn, Rooster, Flamingo, Bear, Pomegranate, Onyx, Polar' },
+  { fact: 'Price', detail: 'From $6 (single) to $48 (12-pack)' },
+  { fact: 'Compatibility', detail: '95% of office chairs (7–11mm stems)' },
+  { fact: 'Kickstarter', detail: '342% funded, 2,140 backers' },
+];
+
+const BRAND_COLORS = [
+  { name: 'Brand Blue', hex: '#5A74FF' },
+  { name: 'Onyx', hex: '#212529' },
+  { name: 'Cream', hex: '#F6F6F4' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Sky Blue', hex: '#0096DE' },
+];
+
 export default function PressPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
       <Header dark={false} variant={POLAR} />
 
-      {/* Header section */}
+      {/* Hero */}
       <section
         style={{
           padding: '160px 56px 80px',
@@ -28,12 +47,12 @@ export default function PressPage() {
               fontFamily: 'var(--font-mono)',
               fontSize: 11,
               textTransform: 'uppercase',
-              letterSpacing: '0.12em',
+              letterSpacing: '0.14em',
               color: '#5A74FF',
               marginBottom: 16,
             }}
           >
-            Press &amp; Brand Kit
+            Press &amp; Media
           </div>
           <h1
             style={{
@@ -45,7 +64,7 @@ export default function PressPage() {
               margin: '0 0 20px',
             }}
           >
-            Everything you need to write about Orbit.
+            Everything you need to cover Orbit.
           </h1>
           <p
             style={{
@@ -56,98 +75,185 @@ export default function PressPage() {
               margin: 0,
             }}
           >
-            Download our brand assets, read the quick facts, and reach out to our press team.
+            Assets, facts, and context — all in one place. For press inquiries:{' '}
+            <a
+              href="mailto:press@orbitguard.com"
+              style={{ color: '#5A74FF', textDecoration: 'none', fontWeight: 600 }}
+            >
+              press@orbitguard.com
+            </a>
           </p>
         </div>
       </section>
 
-      {/* Download kit */}
+      {/* Brand assets */}
       <section style={{ padding: '80px 56px', background: '#fff' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: '-0.02em',
-              margin: '0 0 24px',
-            }}
-          >
-            Download Kit
-          </h2>
           <div
             style={{
-              background: '#5A74FF',
-              borderRadius: 24,
-              padding: '48px 48px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 32,
-              flexWrap: 'wrap',
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--fg-3)',
+              marginBottom: 24,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              {/* Masked logo */}
+            Brand assets
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 24,
+            }}
+          >
+            {/* Logo card */}
+            <div
+              style={{
+                background: '#fff',
+                border: '1px solid #ECEAE3',
+                borderRadius: 20,
+                padding: '40px 36px',
+              }}
+            >
               <div
-                role="img"
-                aria-label="OrbitGuard"
                 style={{
-                  height: 48,
-                  width: 200,
-                  background: '#fff',
-                  WebkitMaskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
-                  maskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskPosition: 'left center',
-                  maskPosition: 'left center',
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                } as React.CSSProperties}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  marginBottom: 24,
+                  height: 56,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  role="img"
+                  aria-label="OrbitGuard"
+                  style={{
+                    height: 40,
+                    width: 180,
+                    background: '#5A74FF',
+                    WebkitMaskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
+                    maskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'left center',
+                    maskPosition: 'left center',
+                    WebkitMaskSize: 'contain',
+                    maskSize: 'contain',
+                  } as React.CSSProperties}
+                />
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 8,
+                  color: 'var(--fg)',
+                }}
+              >
+                Logo &amp; Wordmark
+              </div>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 15,
+                  lineHeight: 1.6,
+                  color: 'var(--fg-2)',
+                  margin: '0 0 24px',
+                }}
+              >
+                Available in SVG, PNG, and dark/light variants.
+              </p>
               <a
                 href="#"
                 style={{
-                  background: '#fff',
-                  color: '#5A74FF',
-                  border: 'none',
-                  borderRadius: 999,
-                  padding: '14px 24px',
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 15,
-                  cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  textDecoration: 'none',
-                  boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
-                }}
-              >
-                ↓ Brand Kit (ZIP)
-              </a>
-              <a
-                href="#"
-                style={{
-                  background: 'rgba(255,255,255,0.15)',
+                  background: '#5A74FF',
                   color: '#fff',
-                  border: '1px solid rgba(255,255,255,0.3)',
                   borderRadius: 999,
-                  padding: '14px 24px',
+                  padding: '12px 22px',
                   fontFamily: 'var(--font-ui)',
                   fontWeight: 700,
+                  fontSize: 14,
+                  textDecoration: 'none',
+                  boxShadow: '0 6px 18px rgba(90,116,255,0.3)',
+                }}
+              >
+                Download logos
+              </a>
+            </div>
+
+            {/* Brand kit card */}
+            <div
+              style={{
+                background: '#fff',
+                border: '1px solid #ECEAE3',
+                borderRadius: 20,
+                padding: '40px 36px',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 24,
+                  height: 56,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 36,
+                    color: '#5A74FF',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  OrbitGuard
+                </div>
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 700,
+                  fontSize: 18,
+                  marginBottom: 8,
+                  color: 'var(--fg)',
+                }}
+              >
+                Brand Kit ZIP
+              </div>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
                   fontSize: 15,
-                  cursor: 'pointer',
+                  lineHeight: 1.6,
+                  color: 'var(--fg-2)',
+                  margin: '0 0 24px',
+                }}
+              >
+                Colors, fonts, usage guidelines, and full asset library.
+              </p>
+              <a
+                href="#"
+                style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
+                  background: 'var(--bg-inset)',
+                  color: 'var(--fg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 999,
+                  padding: '12px 22px',
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 700,
+                  fontSize: 14,
                   textDecoration: 'none',
                 }}
               >
-                ↓ Product photos
+                Download brand kit
               </a>
             </div>
           </div>
@@ -157,142 +263,66 @@ export default function PressPage() {
       {/* Brand colors */}
       <section style={{ padding: '0 56px 80px', background: '#fff' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-          <h2
+          <div
             style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: '-0.02em',
-              margin: '0 0 24px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--fg-3)',
+              marginBottom: 28,
             }}
           >
-            Brand Colors
-          </h2>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            {[
-              { name: 'Orbit Blue', hex: '#5A74FF' },
-              { name: 'Onyx', hex: '#212529' },
-              { name: 'Cream', hex: '#F6F6F4' },
-              { name: 'White', hex: '#FFFFFF' },
-            ].map(color => (
+            Brand colors
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              gap: 32,
+              flexWrap: 'wrap',
+            }}
+          >
+            {BRAND_COLORS.map(color => (
               <div
                 key={color.hex}
                 style={{
-                  flex: '1 1 180px',
-                  border: '1px solid var(--border)',
-                  borderRadius: 16,
-                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 10,
                 }}
               >
                 <div
                   style={{
-                    height: 100,
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    color: 'var(--fg)',
+                  }}
+                >
+                  {color.name}
+                </div>
+                <div
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
                     background: color.hex,
-                    borderBottom: '1px solid var(--border)',
+                    border: color.hex === '#FFFFFF' ? '1px solid var(--border)' : undefined,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                   }}
                 />
-                <div style={{ padding: '14px 16px' }}>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 15 }}>
-                    {color.name}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--fg-3)', marginTop: 4 }}>
-                    {color.hex}
-                  </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 12,
+                    color: 'var(--fg-3)',
+                  }}
+                >
+                  {color.hex}
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Typography */}
-      <section
-        style={{
-          padding: '0 56px 80px',
-          background: '#fff',
-        }}
-      >
-        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 28,
-              letterSpacing: '-0.02em',
-              margin: '0 0 24px',
-            }}
-          >
-            Typography
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-            <div
-              style={{
-                padding: '32px',
-                border: '1px solid var(--border)',
-                borderRadius: 16,
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  color: 'var(--fg-3)',
-                  marginBottom: 16,
-                }}
-              >
-                UI Font
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 36,
-                  letterSpacing: '-0.02em',
-                  marginBottom: 8,
-                }}
-              >
-                DM Sans
-              </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--fg-2)' }}>
-                Aa Bb Cc — 400 · 600 · 700 · 800
-              </div>
-            </div>
-            <div
-              style={{
-                padding: '32px',
-                border: '1px solid var(--border)',
-                borderRadius: 16,
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  color: 'var(--fg-3)',
-                  marginBottom: 16,
-                }}
-              >
-                Display Font
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 400,
-                  fontSize: 36,
-                  letterSpacing: '-0.01em',
-                  marginBottom: 8,
-                }}
-              >
-                Rez
-              </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--fg-2)' }}>
-                Headlines · Display type · Brand moments
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -307,89 +337,108 @@ export default function PressPage() {
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 56,
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--fg-3)',
+              marginBottom: 24,
             }}
           >
-            <div>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 28,
-                  letterSpacing: '-0.02em',
-                  margin: '0 0 20px',
-                }}
-              >
-                Quick Facts
-              </h2>
-              <ul
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 16,
-                  lineHeight: 2,
-                  color: 'var(--fg-2)',
-                  paddingLeft: 20,
-                  margin: 0,
-                }}
-              >
-                <li>Founded 2026 · Atlanta, GA</li>
-                <li>Product: Chair caster guards</li>
-                <li>Materials: Soft TPU</li>
-                <li>Available in 11 colors</li>
-                <li>Price: from $6 (single guard)</li>
-                <li>Fits 95% of chairs</li>
-              </ul>
-            </div>
-
-            {/* Press contact */}
-            <div>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 28,
-                  letterSpacing: '-0.02em',
-                  margin: '0 0 20px',
-                }}
-              >
-                Press Contact
-              </h2>
+            Quick facts for press
+          </div>
+          <div
+            style={{
+              border: '1px solid var(--border)',
+              borderRadius: 16,
+              overflow: 'hidden',
+            }}
+          >
+            {QUICK_FACTS.map((row, i) => (
               <div
+                key={row.fact}
                 style={{
-                  padding: '28px',
-                  background: 'var(--bg-inset)',
-                  borderRadius: 16,
-                  border: '1px solid var(--border)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'baseline',
+                  gap: 24,
+                  padding: '18px 28px',
+                  borderBottom: i < QUICK_FACTS.length - 1 ? '1px solid var(--border)' : undefined,
+                  background: i % 2 === 1 ? '#FAFAF8' : '#fff',
                 }}
               >
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 16,
-                    lineHeight: 1.6,
-                    color: 'var(--fg-2)',
-                    margin: '0 0 16px',
-                  }}
-                >
-                  For press inquiries, review units, and media interviews:
-                </p>
-                <a
-                  href="mailto:press@orbitguard.com"
+                <div
                   style={{
                     fontFamily: 'var(--font-ui)',
-                    fontWeight: 700,
-                    fontSize: 18,
-                    color: '#5A74FF',
-                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    color: 'var(--fg)',
+                    minWidth: 160,
+                    flexShrink: 0,
                   }}
                 >
-                  press@orbitguard.com
-                </a>
+                  {row.fact}
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 15,
+                    color: 'var(--fg-2)',
+                    textAlign: 'right',
+                  }}
+                >
+                  {row.detail}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* Suggested boilerplate */}
+      <section
+        style={{
+          padding: '0 56px 100px',
+          background: '#fff',
+        }}
+      >
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--fg-3)',
+              marginBottom: 20,
+            }}
+          >
+            Suggested boilerplate
+          </div>
+          <blockquote
+            style={{
+              margin: 0,
+              padding: '28px 32px',
+              borderLeft: '4px solid #5A74FF',
+              background: '#FAFAF8',
+              borderRadius: '0 12px 12px 0',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 16,
+                lineHeight: 1.7,
+                color: 'var(--fg-2)',
+                margin: 0,
+                fontStyle: 'italic',
+              }}
+            >
+              &ldquo;Orbit Guard makes soft TPU caster guards for office chairs. Each guard clips onto a chair&apos;s wheels
+              to protect pets, cables, and feet from getting caught in rolling chairs. Available in 11 colors and compatible
+              with 95% of office chairs, Orbit ships from Atlanta, Georgia. orbitguard.com&rdquo;
+            </p>
+          </blockquote>
         </div>
       </section>
 
@@ -406,8 +455,12 @@ export default function PressPage() {
           gap: 12,
         }}
       >
-        <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>© 2026 OrbitGuard, Inc.</div>
-        <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>Made in Atlanta</div>
+        <div style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
+          © 2026 OrbitGuard, Inc.
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
+          Made in Atlanta
+        </div>
       </footer>
     </div>
   );

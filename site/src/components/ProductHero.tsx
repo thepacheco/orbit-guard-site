@@ -292,9 +292,9 @@ export default function ProductHero({ v, view = 'product' }: ProductHeroProps) {
       {/* Floating feature chips — only in product view */}
       {view === 'product' && (
         <>
-          <FeatureChip v={v} chip={v.floatChips[0]} style={{ position: 'absolute', left: '4%', bottom: '26%' }} />
-          <FeatureChip v={v} chip={v.floatChips[1]} style={{ position: 'absolute', right: '2%', top: '22%' }} />
-          <FeatureChip v={v} chip={v.floatChips[2]} style={{ position: 'absolute', left: '12%', top: '16%' }} />
+          <FeatureChip v={v} chip={v.floatChips[0]} style={{ position: 'absolute', left: '4%', bottom: '26%', animation: 'ogChipFloat1 5s ease-in-out infinite' }} />
+          <FeatureChip v={v} chip={v.floatChips[1]} style={{ position: 'absolute', right: '2%', top: '22%', animation: 'ogChipFloat2 6.5s ease-in-out infinite' }} />
+          <FeatureChip v={v} chip={v.floatChips[2]} style={{ position: 'absolute', left: '12%', top: '16%', animation: 'ogChipFloat3 4.5s ease-in-out infinite' }} />
         </>
       )}
     </div>

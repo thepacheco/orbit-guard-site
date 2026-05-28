@@ -1,6 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Header from '../../../components/Header';
+import { PRODUCT_VARIANTS } from '../../../components/data';
+import type { Variant } from '../../../components/types';
+
+const onyxVariant = PRODUCT_VARIANTS.find((v: Variant) => v.key === 'onyx')!;
 
 const PALETTE = [
   { hex: '#4361EE', name: 'Blueberry' },
@@ -261,10 +266,12 @@ export default function LaunchLandingPage() {
         />
       </div>
 
+      <Header dark={true} variant={onyxVariant} />
+
       {/* Content layer */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* Top: Orbit icon mark */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 24px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 24px 0', paddingTop: 100 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/orbit-icon-mark.png"

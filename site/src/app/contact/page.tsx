@@ -2,6 +2,14 @@
 
 import React, { useState } from 'react';
 import Header from '@/components/Header';
+import type { Variant } from '@/components/types';
+
+const POLAR: Variant = {
+  key: 'polar', name: 'Polar', hex: '#F4F4F0', bg: '#FFFFFF', text: '#1A1B1F',
+  ring: '#5A74FF', accent: '#06D6A0',
+  headline: { line1: 'Pure,', lasso: 'Polar', line2: 'minimal.' },
+  price: 24, blurb: '', features: [], floatChips: [], dark: false,
+};
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -19,7 +27,7 @@ export default function ContactPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
-      <Header dark={false} />
+      <Header dark={false} variant={POLAR} />
 
       {/* Page header */}
       <section

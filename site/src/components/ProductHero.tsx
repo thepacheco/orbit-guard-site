@@ -268,7 +268,7 @@ export default function ProductHero({ v, view = 'product' }: ProductHeroProps) {
             width: '100%',
             height: '100%',
             animation: 'ogSpin 28s linear infinite',
-            opacity: 0.45,
+            opacity: 0.25,
           }}
           preserveAspectRatio="xMidYMid meet"
         >

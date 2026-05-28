@@ -68,7 +68,8 @@ export default function NotifyForm() {
           fontFamily: 'var(--font-ui)',
           fontSize: 14,
           color: '#fff',
-          minWidth: 0,
+          minWidth: 280,
+          maxWidth: 400,
         }}
       />
       <button

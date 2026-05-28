@@ -22,7 +22,7 @@ const POLAR: Variant = {
 export default function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
-      <Header dark={false} />
+      <Header dark={false} variant={POLAR} />
 
       {/* Hero */}
       <section

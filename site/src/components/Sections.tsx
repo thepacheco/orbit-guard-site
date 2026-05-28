@@ -6,6 +6,7 @@ import { Button } from './primitives';
 import { DynIcon } from './primitives';
 import type { Variant } from './types';
 import * as LucideIcons from 'lucide-react';
+import NotifyForm from './NotifyForm';
 
 export function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
@@ -747,13 +748,13 @@ export function Reviews({ v }: { v: Variant }) {
 }
 
 // ──────────────────────────────────────────────────────────────────
-function FootCol({ title, items }: { title: string; items: string[] }) {
+function FootCol({ title, items }: { title: string; items: { label: string; href: string }[] }) {
   return (
     <div>
       <div style={{ fontWeight: 700, color: 'var(--fg)', marginBottom: 8 }}>{title}</div>
-      {items.map(x => (
-        <div key={x} style={{ lineHeight: 1.8 }}>
-          {x}
+      {items.map((x) => (
+        <div key={x.label} style={{ lineHeight: 1.8 }}>
+          <a href={x.href} style={{ color: 'inherit', textDecoration: 'none' }}>{x.label}</a>
         </div>
       ))}
     </div>
@@ -847,12 +848,7 @@ export function FooterCta({ v }: { v: Variant }) {
               marginTop: 4,
             }}
           >
-            <Button variant="inverse" size="lg" icon="ArrowRight">
-              Get a pack · $24
-            </Button>
-            <Button variant="ghost" size="lg">
-              Watch the install
-            </Button>
+            <NotifyForm />
           </div>
         </div>
       </section>
@@ -894,10 +890,10 @@ export function FooterCta({ v }: { v: Variant }) {
               fontSize: 14,
             }}
           >
-            <FootCol title="Shop" items={['All colors', '5-pack']} />
-            <FootCol title="Learn" items={['How it works', 'FAQ']} />
-            <FootCol title="Company" items={['About', 'Press']} />
-            <FootCol title="Help" items={['Contact', 'Returns']} />
+            <FootCol title="Shop" items={[{ label: 'All colors', href: '/shop' }, { label: '5-pack', href: '/shop' }]} />
+            <FootCol title="Learn" items={[{ label: 'How it works', href: '/#how' }, { label: 'FAQ', href: '/#faq' }]} />
+            <FootCol title="Company" items={[{ label: 'About', href: '/about' }, { label: 'Press', href: '/press' }]} />
+            <FootCol title="Help" items={[{ label: 'Contact', href: '/contact' }]} />
           </div>
           <div
             style={{

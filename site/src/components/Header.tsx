@@ -114,7 +114,6 @@ export default function Header({ dark }: HeaderProps) {
   const cardBg = 'rgba(255,255,255,0.65)';
   const cardBorder = 'rgba(255,255,255,0.7)';
   const ink = 'var(--fg)';
-  const mute = 'var(--fg-2)';
   const chipBg = 'rgba(255,255,255,0.85)';
 
   return (
@@ -150,54 +149,7 @@ export default function Header({ dark }: HeaderProps) {
           color: ink,
         }}
       >
-        {/* LEFT: nav */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <NavLink active inkActive={ink} mute={mute} chip={chipBg}>
-            Shop
-          </NavLink>
-          <NavLink mute={mute} ink={ink}>
-            Pets
-            <span
-              style={{
-                display: 'inline-block',
-                width: 7,
-                height: 7,
-                borderRadius: '50%',
-                background: 'var(--og-blue)',
-                marginLeft: 6,
-                boxShadow: '0 0 0 4px rgba(90,116,255,0.18)',
-              }}
-            />
-          </NavLink>
-          <NavLink mute={mute} ink={ink}>
-            How it works
-          </NavLink>
-          <NavLink mute={mute} ink={ink}>
-            Support
-          </NavLink>
-        </nav>
-
-        {/* CENTER: icon mark */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <Image
-            src="/assets/orbit-icon-mark.png"
-            alt="Orbit"
-            width={40}
-            height={40}
-            style={{ borderRadius: '50%', display: 'block' }}
-          />
-        </div>
-
-        {/* RIGHT: icons + CTA */}
+        {/* LEFT: icons + CTA */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <RoundIcon icon="search" hoverBg={chipBg} />
           <RoundIcon icon="heart" hoverBg={chipBg} />
@@ -207,7 +159,8 @@ export default function Header({ dark }: HeaderProps) {
             badge="2"
             badgeBorder={dark ? 'transparent' : '#fff'}
           />
-          <button
+          <a
+            href="/shop"
             style={{
               marginLeft: 8,
               background: 'var(--og-blue)',
@@ -223,11 +176,23 @@ export default function Header({ dark }: HeaderProps) {
               alignItems: 'center',
               gap: 8,
               boxShadow: '0 6px 16px rgba(90,116,255,0.32)',
+              textDecoration: 'none',
             }}
           >
             Get a pack
             <LucideIcons.ArrowRight size={16} />
-          </button>
+          </a>
+        </div>
+
+        {/* RIGHT: Orbit icon mark */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Image
+            src="/assets/orbit-icon-mark.png"
+            alt="Orbit"
+            width={40}
+            height={40}
+            style={{ borderRadius: '50%', display: 'block' }}
+          />
         </div>
       </header>
     </div>

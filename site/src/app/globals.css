@@ -1,0 +1,171 @@
+/* =========================================================
+   Orbit Guard — Design Tokens
+   Colors, type and the semantic vars used across surfaces.
+   ========================================================= */
+
+@font-face {
+  font-family: "Rez";
+  src: url("/fonts/REZ.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Core brand ---------- */
+  --og-blue:        #5A74FF;
+  --og-blue-deep:   #3B57E8;
+  --og-blue-soft:   #E2E7FF;
+  --og-navy:        #0F172A;
+  --og-cream:       #E8E6D8;
+  --og-cream-soft:  #F4F2E8;
+  --og-white:       #FFFFFF;
+  --og-sky:         #0096DE;
+
+  /* ---------- Product palette ---------- */
+  --pal-lavender:    #A292FF;
+  --pal-rooster:     #FF3131;
+  --pal-blueberry:   #4361EE;
+  --pal-clover:      #06D6A0;
+  --pal-flamingo:    #FF90FE;
+  --pal-coral:       #FFB4A2;
+  --pal-bear:        #9C6644;
+  --pal-fawn:        #E7BC91;
+  --pal-pomegranate: #950000;
+  --pal-lunar:       #ADB5BD;
+  --pal-onyx:        #212529;
+  --pal-polar:       #FFFFFF;
+
+  /* ---------- Semantic ---------- */
+  --bg:        var(--og-white);
+  --bg-elev:   var(--og-white);
+  --bg-inset:  #F6F6F4;
+  --bg-cream:  var(--og-cream);
+
+  --fg:        #1A1B1F;
+  --fg-2:      #4B5560;
+  --fg-3:      #7A8290;
+  --fg-muted:  #B3B8C0;
+
+  --accent:    var(--og-blue);
+  --accent-on: var(--og-white);
+
+  --border:    #ECEAE3;
+  --border-strong: #D9D6CD;
+
+  --success:   #18A06F;
+  --success-bg: #E6F7EF;
+  --warning:   #B57D2A;
+  --warning-bg: #FBF1DD;
+  --danger:    #D93838;
+  --danger-bg: #FCE6E4;
+
+  /* ---------- Radii ---------- */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---------- Spacing scale (4-pt base) ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-1: 0 1px 2px rgba(33,37,41,0.06), 0 1px 1px rgba(33,37,41,0.04);
+  --shadow-2: 0 4px 14px rgba(33,37,41,0.08), 0 2px 4px rgba(33,37,41,0.04);
+  --shadow-3: 0 14px 38px rgba(33,37,41,0.12), 0 6px 12px rgba(33,37,41,0.06);
+  --shadow-blue: 0 10px 28px rgba(90,116,255,0.35);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* ---------- Typography families ---------- */
+  --font-display: "Rez", "Bowlby One SC", "Impact", sans-serif;
+  --font-ui:      "DM Sans", "HK Grotesk", "Proxima Nova", system-ui, sans-serif;
+  --font-body:    "ABeeZee", "DM Sans", system-ui, sans-serif;
+  --font-mono:    ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+
+  /* ---------- Type scale ---------- */
+  --t-display:  clamp(48px, 7vw, 96px);
+  --t-h1:       clamp(36px, 4.4vw, 60px);
+  --t-h2:       clamp(28px, 3vw, 42px);
+  --t-h3:       24px;
+  --t-h4:       18px;
+  --t-body:     16px;
+  --t-small:    14px;
+  --t-micro:    12px;
+
+  /* ---------- Motion ---------- */
+  --ease-out:   cubic-bezier(.16,.84,.32,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:   140ms;
+  --dur-base:   220ms;
+  --dur-slow:   420ms;
+}
+
+/* ===== Animations ===== */
+@keyframes ogSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes ogMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: var(--og-blue);
+  color: var(--og-white);
+}
+
+/* ===== Mobile breakpoints ===== */
+@media (max-width: 900px) {
+  section[data-og-section] {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+  section[data-og-grid] > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  h1, h2 {
+    font-size: 36px !important;
+    line-height: 1.1 !important;
+  }
+}

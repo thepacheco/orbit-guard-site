@@ -1,0 +1,36 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  body { padding: 22px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .ic { width: 44px; height: 44px; border-radius: var(--r-md); background: var(--og-white); display:grid; place-items:center; box-shadow: var(--shadow-1); color: var(--og-blue);}
+  .ic svg { width: 22px; height: 22px; stroke-width: 2; }
+  .lbl { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-3); width: 100px; }
+  .tile { display:flex; align-items:center; gap: 8px; padding: 8px 12px 8px 8px; background: var(--og-white); border-radius: var(--r-md); box-shadow: var(--shadow-1); font: 600 13px var(--font-ui); }
+  .tile .ic { width: 28px; height: 28px; box-shadow: none; background: var(--og-cream); }
+  .tile .ic svg { width: 16px; height: 16px; }
+</style></head>
+<body>
+  <div class="stack">
+    <div class="row">
+      <div class="lbl">Default · 24</div>
+      <div class="ic"><i data-lucide="shield-check"></i></div>
+      <div class="ic"><i data-lucide="paw-print"></i></div>
+      <div class="ic"><i data-lucide="cable"></i></div>
+      <div class="ic"><i data-lucide="armchair"></i></div>
+      <div class="ic"><i data-lucide="package"></i></div>
+      <div class="ic"><i data-lucide="truck"></i></div>
+      <div class="ic"><i data-lucide="heart"></i></div>
+    </div>
+    <div class="row">
+      <div class="lbl">In context</div>
+      <div class="tile"><div class="ic"><i data-lucide="shield-check"></i></div>Pet-safe</div>
+      <div class="tile"><div class="ic"><i data-lucide="cable"></i></div>Cord-friendly</div>
+      <div class="tile"><div class="ic"><i data-lucide="truck"></i></div>Free shipping</div>
+      <div class="tile"><div class="ic"><i data-lucide="rotate-ccw"></i></div>60-day returns</div>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body></html>

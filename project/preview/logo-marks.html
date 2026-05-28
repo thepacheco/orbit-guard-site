@@ -1,0 +1,37 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 0; background: var(--bg); }
+  .stack { display: flex; flex-direction: column; }
+  .panel { padding: 22px 28px; display: flex; align-items: center; gap: 20px; }
+  .panel + .panel { border-top: 1px solid var(--border); }
+  .label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-3); width: 110px; flex-shrink: 0; }
+  .nav { background: #0F172A; }
+  .blue { background: var(--og-blue); }
+  .swatch { flex: 1; display: flex; align-items: center; justify-content: center; padding: 14px 22px; border-radius: var(--r-md); min-height: 84px; }
+  img.lockup { height: 56px; width: auto; }
+  img.wm { height: 44px; width: auto; }
+  img.icon { width: 64px; height: 64px; border-radius: 50%; }
+  .name { font-family: var(--font-ui); font-weight: 800; font-size: 13px; }
+  .sub { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); margin-top: 2px; }
+</style></head>
+<body>
+  <div class="stack">
+    <div class="panel">
+      <div class="label">Parent · OrbitGuard</div>
+      <div class="swatch nav"><img class="lockup" src="../assets/orbitguard-lockup-white.jpg" alt="OrbitGuard lockup"></div>
+    </div>
+    <div class="panel">
+      <div class="label">Product · Orbit</div>
+      <div class="swatch blue"><img class="wm" src="../assets/orbit-wordmark-white.png" alt="Orbit wordmark"></div>
+    </div>
+    <div class="panel">
+      <div class="label">Avatar / mark</div>
+      <div class="swatch blue" style="flex: 0 0 110px;"><img class="icon" src="../assets/orbit-icon-mark.png" alt="Orbit avatar"></div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div class="name">Use the Orbit mark for app icons & avatars</div>
+        <div class="sub">Always keep one ring of padding around the glyph.</div>
+      </div>
+    </div>
+  </div>
+</body></html>

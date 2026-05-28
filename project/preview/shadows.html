@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 28px; background: var(--og-cream); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .card { background: var(--og-white); border-radius: var(--r-md); height: 110px; display: flex; align-items: flex-end; padding: 12px; }
+  .lbl { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+  .s1 { box-shadow: var(--shadow-1); }
+  .s2 { box-shadow: var(--shadow-2); }
+  .s3 { box-shadow: var(--shadow-3); }
+  .sb { box-shadow: 0 10px 28px rgba(90,116,255,0.35); background: var(--og-blue); color: white; }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="card s1"><div class="lbl">--shadow-1</div></div>
+    <div class="card s2"><div class="lbl">--shadow-2</div></div>
+    <div class="card s3"><div class="lbl">--shadow-3</div></div>
+    <div class="card sb"><div class="lbl" style="color:rgba(255,255,255,.85)">--shadow-blue</div></div>
+  </div>
+</body></html>

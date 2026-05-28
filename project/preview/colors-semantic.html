@@ -1,0 +1,40 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 20px; background: #fff; }
+  .lead { font-family: var(--font-ui); font-size: 13px; color: var(--fg-2); margin: 0 0 14px; }
+  .lead b { color: var(--fg); }
+  .group { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-3); margin: 10px 0 6px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cell { padding: 12px 14px; border-radius: var(--r-sm); box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 2px; min-height: 70px; }
+  .label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+  .val { font-family: var(--font-mono); font-size: 11px; }
+  .name { font-weight: 800; font-size: 13px; }
+</style></head>
+<body>
+  <p class="lead"><b>Semantic mapping</b> — the only colors the UI itself uses. Page is white; Blue is the only brand color; everything else is a derived neutral or status tint.</p>
+
+  <div class="group">Surface</div>
+  <div class="row">
+    <div class="cell" style="background:#FFFFFF;color:#1A1B1F;border:1px solid var(--border)"><div class="label">--bg</div><div class="name">Page</div><div class="val">White · #FFFFFF</div></div>
+    <div class="cell" style="background:#FFFFFF;color:#1A1B1F;border:1px solid var(--border)"><div class="label">--bg-elev</div><div class="name">Card</div><div class="val">White + shadow</div></div>
+    <div class="cell" style="background:#F6F6F4;color:#1A1B1F"><div class="label">--bg-inset</div><div class="name">Quiet section</div><div class="val">Mist · #F6F6F4</div></div>
+    <div class="cell" style="background:#E8E6D8;color:#1A1B1F"><div class="label">--bg-cream</div><div class="name">Feature block</div><div class="val">Cream · #E8E6D8</div></div>
+  </div>
+
+  <div class="group">Text</div>
+  <div class="row">
+    <div class="cell" style="background:#1A1B1F;color:#fff"><div class="label">--fg</div><div class="name">Primary</div><div class="val">Ink · #1A1B1F</div></div>
+    <div class="cell" style="background:#4B5560;color:#fff"><div class="label">--fg-2</div><div class="name">Secondary</div><div class="val">#4B5560</div></div>
+    <div class="cell" style="background:#7A8290;color:#fff"><div class="label">--fg-3</div><div class="name">Tertiary</div><div class="val">#7A8290</div></div>
+    <div class="cell" style="background:#5A74FF;color:#fff"><div class="label">--accent</div><div class="name">Link / CTA</div><div class="val">Blue · #5A74FF</div></div>
+  </div>
+
+  <div class="group">Status (derived — not from the product palette)</div>
+  <div class="row">
+    <div class="cell" style="background:#E6F7EF;color:#0B6E48"><div class="label">--success-bg / fg</div><div class="name">Success</div><div class="val">#E6F7EF · #18A06F</div></div>
+    <div class="cell" style="background:#FBF1DD;color:#7A5418"><div class="label">--warning-bg / fg</div><div class="name">Warning</div><div class="val">#FBF1DD · #B57D2A</div></div>
+    <div class="cell" style="background:#FCE6E4;color:#8A1F1F"><div class="label">--danger-bg / fg</div><div class="name">Danger</div><div class="val">#FCE6E4 · #D93838</div></div>
+    <div class="cell" style="background:#EEF1FF;color:#293BB0"><div class="label">--info-bg / fg</div><div class="name">Info</div><div class="val">#EEF1FF · #5A74FF</div></div>
+  </div>
+</body></html>

@@ -1,0 +1,178 @@
+/* =========================================================
+   Orbit Guard — Design Tokens
+   Colors, type and the semantic vars used across surfaces.
+   ========================================================= */
+
+/* Fonts:
+   - Rez (display) shipped locally as fonts/REZ.ttf.
+   - HK Grotesk / Proxima Nova substituted with Mulish from Google Fonts
+     (see fonts/README.md). ABeeZee is loaded directly. */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=ABeeZee:ital@0;1&display=swap");
+
+@font-face {
+  font-family: "Rez";
+  src: url("fonts/REZ.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Core brand ---------- */
+  --og-blue:        #5A74FF; /* primary brand "Blue" */
+  --og-blue-deep:   #3B57E8; /* hover / press */
+  --og-blue-soft:   #E2E7FF; /* tint for surfaces */
+  --og-navy:        #0F172A; /* OrbitGuard parent-lockup background */
+  --og-cream:       #E8E6D8; /* warm neutral background */
+  --og-cream-soft:  #F4F2E8; /* lighter cream */
+  --og-white:       #FFFFFF;
+  --og-sky:         #0096DE; /* alt "Solid Blue" wordmark */
+
+  /* ---------- Product palette (from brand guide pg 5) ---------- */
+  --pal-lavender:    #A292FF;
+  --pal-rooster:     #FF3131;
+  --pal-blueberry:   #4361EE;
+  --pal-clover:      #06D6A0;
+  --pal-flamingo:    #FF90FE;
+  --pal-coral:       #FFB4A2;
+  --pal-bear:        #9C6644;
+  --pal-fawn:        #E7BC91;
+  --pal-pomegranate: #950000;
+  --pal-lunar:       #ADB5BD;
+  --pal-onyx:        #212529;
+  --pal-polar:       #FFFFFF;
+
+  /* ---------- Semantic ---------- */
+  --bg:        var(--og-white);    /* page bg — white */
+  --bg-elev:   var(--og-white);    /* cards on white share the surface; lift with shadow */
+  --bg-inset:  #F6F6F4;            /* subtle warm gray for quiet sections */
+  --bg-cream:  var(--og-cream);    /* opt-in: warm cream for hero/feature blocks only */
+
+  --fg:        #1A1B1F;            /* primary text */
+  --fg-2:      #4B5560;            /* secondary text */
+  --fg-3:      #7A8290;            /* tertiary text */
+  --fg-muted:  #B3B8C0;
+
+  --accent:    var(--og-blue);
+  --accent-on: var(--og-white);
+
+  --border:    #ECEAE3;            /* warm hairline on white */
+  --border-strong: #D9D6CD;
+
+  --success:   #18A06F;            /* derived greens — cleaner UI than Clover */
+  --success-bg: #E6F7EF;
+  --warning:   #B57D2A;
+  --warning-bg: #FBF1DD;
+  --danger:    #D93838;
+  --danger-bg: #FCE6E4;
+
+  /* ---------- Radii ---------- */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---------- Spacing scale (4-pt base) ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ---------- Shadows (soft, warm) ---------- */
+  --shadow-1: 0 1px 2px rgba(33,37,41,0.06), 0 1px 1px rgba(33,37,41,0.04);
+  --shadow-2: 0 4px 14px rgba(33,37,41,0.08), 0 2px 4px rgba(33,37,41,0.04);
+  --shadow-3: 0 14px 38px rgba(33,37,41,0.12), 0 6px 12px rgba(33,37,41,0.06);
+  --shadow-blue: 0 10px 28px rgba(90,116,255,0.35);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.6);
+
+  /* ---------- Typography families ---------- */
+  --font-display: "Rez", "Bowlby One SC", "Impact", sans-serif;
+  --font-ui:      "DM Sans", "HK Grotesk", "Proxima Nova", system-ui, sans-serif;
+  --font-body:    "ABeeZee", "DM Sans", system-ui, sans-serif;
+  --font-mono:    ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+
+  /* ---------- Type scale ---------- */
+  --t-display:  clamp(48px, 7vw, 96px);
+  --t-h1:       clamp(36px, 4.4vw, 60px);
+  --t-h2:       clamp(28px, 3vw, 42px);
+  --t-h3:       24px;
+  --t-h4:       18px;
+  --t-body:     16px;
+  --t-small:    14px;
+  --t-micro:    12px;
+
+  /* ---------- Motion ---------- */
+  --ease-out:   cubic-bezier(.16,.84,.32,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:   140ms;
+  --dur-base:   220ms;
+  --dur-slow:   420ms;
+}
+
+/* ===== Element-level defaults ===== */
+html, body { background: var(--bg); color: var(--fg); }
+body {
+  font-family: var(--font-ui);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.og-display, h1.og-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--t-display);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+h1, .og-h1 {
+  font-family: var(--font-ui); /* DM Sans — confident + warm */
+  font-weight: 700;
+  font-size: var(--t-h1);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+h2, .og-h2 {
+  font-family: var(--font-ui); /* DM Sans */
+  font-weight: 700;
+  font-size: var(--t-h2);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+h3, .og-h3 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--t-h3);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+h4, .og-h4 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--t-h4);
+  line-height: 1.35;
+}
+
+.og-body { font-family: var(--font-body); font-size: var(--t-body); line-height: 1.6; }
+.og-eyebrow {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--og-blue);
+}
+.og-small { font-size: var(--t-small); color: var(--fg-2); }
+code, .og-mono { font-family: var(--font-mono); font-size: 13px; }
+
+/* ===== Selection ===== */
+::selection { background: var(--og-blue); color: var(--og-white); }

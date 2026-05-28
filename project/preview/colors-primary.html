@@ -1,0 +1,38 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 20px; background: var(--og-white); }
+  .lead { font-family: var(--font-ui); font-size: 13px; color: var(--fg-2); margin: 0 0 14px; }
+  .lead b { color: var(--fg); }
+  .row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 10px; }
+  .sw { height: 138px; border-radius: var(--r-md); padding: 12px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-1); }
+  .top { font-family: var(--font-ui); font-weight: 800; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .role { font-size: 11px; font-weight: 600; opacity: 0.8; margin-top: 2px; }
+  .bot { font-family: var(--font-mono); font-size: 12px; opacity: 0.85; }
+  .light { color: white; } .dark { color: #1A1B1F; }
+</style></head>
+<body>
+  <p class="lead"><b>Website colors</b> — Blue is the only brand hue. White is the page. The rest of the palette is a clean neutral scale, so Blue can really pop. <i>(Product colors live in their own card, used only for the physical caster guards.)</i></p>
+  <div class="row">
+    <div class="sw light" style="background:#5A74FF">
+      <div><div class="top">Blue</div><div class="role">Primary · CTAs, links</div></div>
+      <div class="bot">#5A74FF</div>
+    </div>
+    <div class="sw dark"  style="background:#FFFFFF;border:1px solid var(--border)">
+      <div><div class="top">White</div><div class="role">Page surface</div></div>
+      <div class="bot">#FFFFFF</div>
+    </div>
+    <div class="sw dark"  style="background:#F6F6F4">
+      <div><div class="top">Mist</div><div class="role">Quiet sections</div></div>
+      <div class="bot">#F6F6F4</div>
+    </div>
+    <div class="sw dark"  style="background:#ECEAE3">
+      <div><div class="top">Hairline</div><div class="role">Borders</div></div>
+      <div class="bot">#ECEAE3</div>
+    </div>
+    <div class="sw light" style="background:#1A1B1F">
+      <div><div class="top">Ink</div><div class="role">Text · contrast</div></div>
+      <div class="bot">#1A1B1F</div>
+    </div>
+  </div>
+</body></html>

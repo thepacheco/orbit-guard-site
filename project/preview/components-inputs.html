@@ -1,0 +1,27 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--fg-2); }
+  .inp { background: var(--og-white); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px 14px; font: 500 15px var(--font-ui); color: var(--fg); transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+  .inp:focus { outline: none; border-color: var(--og-blue); box-shadow: 0 0 0 4px rgba(90,116,255,0.18);}
+  .inp.error { border-color: var(--pal-rooster); }
+  .help { font-size: 12px; color: var(--fg-3); }
+  .err  { font-size: 12px; color: var(--pal-rooster); }
+  .toggle-row { display: flex; align-items: center; gap: 10px; }
+  .toggle { width: 44px; height: 26px; background: var(--og-blue); border-radius: 999px; position: relative; }
+  .toggle::after { content:""; position:absolute; top:3px; left: 21px; width: 20px; height: 20px; background: white; border-radius: 50%; box-shadow: var(--shadow-1);}
+  .toggle.off { background: var(--border-strong); }
+  .toggle.off::after { left: 3px; }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="field"><label>Email</label><input class="inp" value="you@home.com"><div class="help">We'll send a shipping update.</div></div>
+    <div class="field"><label>Zip</label><input class="inp error" value="0000"><div class="err">Needs five digits.</div></div>
+    <div class="field" style="grid-column: span 2"><label>Notes for the courier</label><textarea class="inp" rows="2">Please leave by the door, cat is curious.</textarea></div>
+    <div class="toggle-row"><div class="toggle"></div><div>Email me when restocked</div></div>
+    <div class="toggle-row"><div class="toggle off"></div><div>Subscribe & save</div></div>
+  </div>
+</body></html>

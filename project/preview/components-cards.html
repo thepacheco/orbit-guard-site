@@ -1,0 +1,20 @@
+<!-- @dsCard group="Components" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  body { padding: 22px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;}
+  .card { padding: 16px; min-height: 130px; display:flex; flex-direction:column; justify-content:space-between; }
+  .a { background: var(--og-white); border-radius: var(--r-lg); box-shadow: var(--shadow-2);}
+  .b { background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--r-lg);}
+  .c { background: var(--og-white); border-radius: var(--r-lg); box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255,255,255,.6);}
+  .label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-3); }
+  .title { font: 700 16px var(--font-ui); margin-top: 4px;}
+  .body { font-size: 13px; color: var(--fg-2); }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="card a"><div><div class="label">Elevated</div><div class="title">White + shadow-2</div></div><div class="body">Default product / content card.</div></div>
+    <div class="card b"><div><div class="label">Tinted</div><div class="title">Cream + hairline</div></div><div class="body">Quiet card on white pages.</div></div>
+    <div class="card c"><div><div class="label">Featured</div><div class="title">shadow-3 + inset</div></div><div class="body">Hero or recommended item.</div></div>
+  </div>
+</body></html>

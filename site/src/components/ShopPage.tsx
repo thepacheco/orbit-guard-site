@@ -5,22 +5,13 @@ import Image from 'next/image';
 import * as LucideIcons from 'lucide-react';
 import { PRODUCT_VARIANTS, PACK_SIZES } from './data';
 import type { Variant } from './types';
+import { useCart } from './CartContext';
 
 // ── helpers ──────────────────────────────────────────────────────────
 function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
   if (v.key === 'polar') return v.ring;
   return v.hex;
-}
-
-// ── Cart types ────────────────────────────────────────────────────────
-interface CartItem {
-  variantKey: string;
-  variantName: string;
-  hex: string;
-  packCount: number;
-  packPrice: number;
-  qty: number;
 }
 
 // ── PuckView (inline) ────────────────────────────────────────────────
@@ -111,9 +102,8 @@ function ShopPalettePicker({
                 border: 'none',
                 cursor: 'pointer',
                 padding: 0,
-                transform: 'scale(1)',
                 boxShadow: active
-                  ? `0 0 0 2px rgba(0,0,0,0.12), 0 0 0 4px ${opt.hex}, 0 0 0 5px #5A74FF`
+                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.5)`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
                 transition: 'box-shadow 200ms var(--ease-bounce)',
               }}
@@ -282,66 +272,29 @@ function SimpleHeader() {
 export default function ShopPage() {
   const [variantKey, setVariantKey] = useState('blueberry');
   const [packIdx, setPackIdx] = useState(1);
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [saveEmail, setSaveEmail] = useState('');
   const [cartSaved, setCartSaved] = useState(false);
 
+  const cart = useCart();
   const v = PRODUCT_VARIANTS.find(x => x.key === variantKey) || PRODUCT_VARIANTS[0];
   const pack = PACK_SIZES[packIdx];
 
   function addToCart() {
-    setCart(prev => {
-      const existing = prev.find(
-        item => item.variantKey === v.key && item.packCount === pack.count
-      );
-      if (existing) {
-        return prev.map(item =>
-          item.variantKey === v.key && item.packCount === pack.count
-            ? { ...item, qty: item.qty + 1 }
-            : item
-        );
-      }
-      return [
-        ...prev,
-        {
-          variantKey: v.key,
-          variantName: v.name,
-          hex: v.hex,
-          packCount: pack.count,
-          packPrice: pack.price,
-          qty: 1,
-        },
-      ];
+    cart.addItem({
+      variantKey: v.key,
+      variantName: v.name,
+      hex: v.hex,
+      packCount: pack.count,
+      packPrice: pack.price,
     });
-    setCartSaved(false);
-  }
-
-  function updateQty(idx: number, delta: number) {
-    setCart(prev => {
-      const next = [...prev];
-      next[idx] = { ...next[idx], qty: next[idx].qty + delta };
-      if (next[idx].qty <= 0) {
-        next.splice(idx, 1);
-      }
-      return next;
-    });
-    setCartSaved(false);
-  }
-
-  function removeItem(idx: number) {
-    setCart(prev => prev.filter((_, i) => i !== idx));
     setCartSaved(false);
   }
 
   function saveCart() {
-    if (!saveEmail.trim() || cart.length === 0) return;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`og_cart_${saveEmail.trim()}`, JSON.stringify(cart));
-    }
+    if (!saveEmail.trim() || cart.items.length === 0) return;
+    cart.saveCartByEmail(saveEmail.trim());
     setCartSaved(true);
   }
-
-  const subtotal = cart.reduce((sum, item) => sum + item.packPrice * item.qty, 0);
 
   return (
     <div style={{ minHeight: '100vh', background: '#fff' }}>
@@ -477,14 +430,14 @@ export default function ShopPage() {
           <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
             <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, marginBottom: 16 }}>
               Cart
-              {cart.length > 0 && (
+              {cart.totalItems > 0 && (
                 <span style={{ marginLeft: 8, fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 400, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  {cart.reduce((s, i) => s + i.qty, 0)} item{cart.reduce((s, i) => s + i.qty, 0) !== 1 ? 's' : ''}
+                  {cart.totalItems} item{cart.totalItems !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
 
-            {cart.length === 0 ? (
+            {cart.items.length === 0 ? (
               <div
                 style={{
                   textAlign: 'center',
@@ -502,7 +455,7 @@ export default function ShopPage() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {cart.map((item, idx) => (
+                {cart.items.map(item => (
                   <div
                     key={`${item.variantKey}-${item.packCount}`}
                     style={{
@@ -538,7 +491,7 @@ export default function ShopPage() {
                     {/* Qty controls */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <button
-                        onClick={() => updateQty(idx, -1)}
+                        onClick={() => cart.updateQty(item.variantKey, item.packCount, -1)}
                         style={{
                           width: 28,
                           height: 28,
@@ -560,7 +513,7 @@ export default function ShopPage() {
                         {item.qty}
                       </span>
                       <button
-                        onClick={() => updateQty(idx, 1)}
+                        onClick={() => cart.updateQty(item.variantKey, item.packCount, 1)}
                         style={{
                           width: 28,
                           height: 28,
@@ -585,7 +538,7 @@ export default function ShopPage() {
                     </div>
                     {/* Remove */}
                     <button
-                      onClick={() => removeItem(idx)}
+                      onClick={() => cart.removeItem(item.variantKey, item.packCount)}
                       style={{
                         width: 28,
                         height: 28,
@@ -620,7 +573,7 @@ export default function ShopPage() {
                     Subtotal
                   </span>
                   <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 20 }}>
-                    ${subtotal}
+                    ${cart.totalPrice}
                   </span>
                 </div>
 

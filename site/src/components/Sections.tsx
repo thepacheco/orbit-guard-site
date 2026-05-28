@@ -58,6 +58,7 @@ export function AboutOrbit({ v }: { v: Variant }) {
       }}
     >
       <div
+        className="og-two-col"
         style={{
           maxWidth: 1180,
           margin: '0 auto',
@@ -219,6 +220,7 @@ export function HowItWorks({ v }: { v: Variant }) {
           </Button>
         </div>
         <div
+          className="og-four-col"
           style={{
             position: 'relative',
             display: 'grid',
@@ -378,6 +380,7 @@ export function StemFit({ v }: { v: Variant }) {
       }}
     >
       <div
+        className="og-two-col"
         style={{
           maxWidth: 1180,
           margin: '0 auto',
@@ -448,7 +451,7 @@ export function StemFit({ v }: { v: Variant }) {
 }
 
 // ──────────────────────────────────────────────────────────────────
-function KStat({ big, small }: { big: string; small: string }) {
+function KStat({ value, small }: { value: string; small: string }) {
   return (
     <div>
       <div
@@ -460,7 +463,7 @@ function KStat({ big, small }: { big: string; small: string }) {
           color: '#fff',
         }}
       >
-        {big}
+        {value}
       </div>
       <div
         style={{
@@ -478,9 +481,60 @@ function KStat({ big, small }: { big: string; small: string }) {
   );
 }
 
+function useCountUp(target: number, duration: number, active: boolean): number {
+  const [count, setCount] = React.useState(0);
+  React.useEffect(() => {
+    if (!active) return;
+    const start = performance.now();
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+    let raf: number;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      setCount(Math.round(easeOut(progress) * target));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, target, duration]);
+  return count;
+}
+
 export function Kickstarter({ v }: { v: Variant }) {
+  const sectionRef = React.useRef<HTMLElement>(null);
+  const [visible, setVisible] = React.useState(false);
+  const [barWidth, setBarWidth] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => setBarWidth(85), 300);
+    return () => clearTimeout(t);
+  }, [visible]);
+
+  const raised = useCountUp(48, 1800, visible);
+  const backers = useCountUp(2140, 1800, visible);
+  const days = useCountUp(14, 1200, visible);
+  const funded = useCountUp(342, 2000, visible);
+
   return (
     <section
+      ref={sectionRef}
       style={{
         padding: '100px 56px',
         background: '#15171B',
@@ -490,6 +544,7 @@ export function Kickstarter({ v }: { v: Variant }) {
       }}
     >
       <div
+        className="og-two-col"
         style={{
           maxWidth: 1180,
           margin: '0 auto',
@@ -535,8 +590,8 @@ export function Kickstarter({ v }: { v: Variant }) {
               lineHeight: 0.95,
             }}
           >
-            342%<br />
-            <span style={{ color: '#05CE78' }}>funded.</span>
+            <span style={{ color: '#05CE78' }}>{funded}%</span><br />
+            <span>funded.</span>
           </div>
           <div
             style={{
@@ -564,9 +619,9 @@ export function Kickstarter({ v }: { v: Variant }) {
           }}
         >
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-            <KStat big="$48k" small="raised so far" />
-            <KStat big="2,140" small="backers" />
-            <KStat big="14" small="days to go" />
+            <KStat value={`$${raised}k`} small="raised so far" />
+            <KStat value={backers >= 1000 ? `${(backers / 1000).toFixed(backers % 1000 === 0 ? 0 : 1).replace(/\.0$/, '')},${String(backers).slice(-3).padStart(3, '0')}` : String(backers)} small="backers" />
+            <KStat value={String(days)} small="days to go" />
           </div>
           <div
             style={{
@@ -578,10 +633,11 @@ export function Kickstarter({ v }: { v: Variant }) {
           >
             <div
               style={{
-                width: '85%',
+                width: `${barWidth}%`,
                 height: '100%',
                 background: '#05CE78',
                 borderRadius: 999,
+                transition: 'width 2s cubic-bezier(.16,.84,.32,1)',
               }}
             />
           </div>

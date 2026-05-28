@@ -199,10 +199,9 @@ function PalettePicker({
                 cursor: 'pointer',
                 padding: 0,
                 boxShadow: active
-                  ? `0 0 0 2px rgba(0,0,0,0.12), 0 0 0 4px ${opt.hex}, 0 0 0 5px ${vAccent(v)}`
+                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.5)`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
-                transform: 'scale(1)',
-                transition: 'all 200ms var(--ease-bounce)',
+                transition: 'box-shadow 200ms var(--ease-bounce)',
               }}
             />
           );
@@ -366,6 +365,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
 
   return (
     <section
+      className="og-hero-grid"
       style={{
         minHeight: '100vh',
         width: '100%',

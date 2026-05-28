@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DM_Sans, ABeeZee } from 'next/font/google';
+import { Providers } from '../components/Providers';
 import './globals.css';
 
 const dmSans = DM_Sans({
@@ -29,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${abeeZee.variable}`}>
-      <body>{children}</body>
+      <body><Providers>{children}</Providers></body>
     </html>
   );
 }

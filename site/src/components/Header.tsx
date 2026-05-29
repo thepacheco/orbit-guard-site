@@ -127,7 +127,7 @@ export default function Header({ dark, variant }: HeaderProps) {
       <div
         style={{
           position: 'fixed',
-          top: 22,
+          top: 'calc(22px + var(--og-announce-h, 0px))',
           left: 0,
           right: 0,
           zIndex: 50,

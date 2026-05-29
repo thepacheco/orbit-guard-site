@@ -1,4 +1,6 @@
 import React from 'react';
+
+export const metadata = { title: 'Press & Brand Kit', description: 'Brand assets, color swatches, and quick facts about Orbit Guard for journalists.' };
 import Header from '@/components/Header';
 import type { Variant } from '@/components/types';
 

@@ -947,7 +947,7 @@ export function FooterCta({ v }: { v: Variant }) {
             }}
           >
             <FootCol title="Shop" items={[{ label: 'All colors', href: '/shop' }, { label: '5-pack', href: '/shop' }]} />
-            <FootCol title="Learn" items={[{ label: 'How it works', href: '/#how' }, { label: 'FAQ', href: '/#faq' }]} />
+            <FootCol title="Learn" items={[{ label: 'How it works', href: '/#how' }, { label: 'FAQ', href: '/faq' }]} />
             <FootCol title="Company" items={[{ label: 'About', href: '/about' }, { label: 'Press', href: '/press' }]} />
             <FootCol title="Help" items={[{ label: 'Contact', href: '/contact' }]} />
           </div>

@@ -1,4 +1,6 @@
 import React from 'react';
+
+export const metadata = { title: 'About', description: 'Orbit Guard makes soft caster guards in Atlanta. Our story, values, and team.' };
 import Header from '@/components/Header';
 import { FooterCta } from '@/components/Sections';
 import type { Variant } from '@/components/types';

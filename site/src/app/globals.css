@@ -108,7 +108,13 @@
   --dur-fast:   140ms;
   --dur-base:   220ms;
   --dur-slow:   420ms;
+
+  /* ---------- Announce bar ---------- */
+  --og-announce-h: 0px;
 }
+
+.og-announce-label { display: inline; }
+@media (max-width: 600px) { .og-announce-label { display: none !important; } }
 
 /* ===== Animations ===== */
 @keyframes ogSpin {

@@ -2,6 +2,21 @@
 
 import React, { useState } from 'react';
 
+async function saveSignupToSheets(email: string) {
+  const url = process.env.NEXT_PUBLIC_SHEETS_URL;
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'signup',
+        email,
+        source: 'homepage-notify',
+      }),
+    });
+  } catch {}
+}
+
 export default function NotifyForm() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -12,6 +27,7 @@ export default function NotifyForm() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('og_notify_email', email.trim());
     }
+    saveSignupToSheets(email.trim()).then(() => {});
     setSubmitted(true);
   }
 
@@ -55,6 +71,8 @@ export default function NotifyForm() {
       >
         <input
           type="email"
+          name="email"
+          autoComplete="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           placeholder="your@email.com"

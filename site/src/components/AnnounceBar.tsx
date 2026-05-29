@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { SITE_CONFIG } from '../config/products';
 
-const LAUNCH = new Date('2026-09-01T00:00:00Z');
+const LAUNCH = new Date(SITE_CONFIG.launchDate);
 const DISMISS_KEY = 'og_announce_dismissed';
 
 interface TimeLeft {
@@ -155,7 +156,7 @@ export default function AnnounceBar() {
 
         {isLive ? (
           <a
-            href="https://www.kickstarter.com"
+            href={SITE_CONFIG.kickstarterUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="og-announce-link"
@@ -171,11 +172,11 @@ export default function AnnounceBar() {
         ) : (
           <>
             <span style={{ whiteSpace: 'nowrap', opacity: 0.95 }}>
-              342% funded — launches in
+              {`${SITE_CONFIG.kickstarterFunded}% funded`} — launches in
             </span>
             {timerNode}
             <a
-              href="https://www.kickstarter.com"
+              href={SITE_CONFIG.kickstarterUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="og-announce-link"

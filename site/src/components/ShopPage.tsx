@@ -491,7 +491,6 @@ export default function ShopPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#fff' }}>
-      <SimpleHeader />
 
       <div
         style={{

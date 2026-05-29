@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const metadata = { title: 'About', description: 'Orbit Guard makes soft caster guards in Atlanta. Our story, values, and team.' };
 import Header from '@/components/Header';
 import { FooterCta } from '@/components/Sections';
@@ -29,8 +27,11 @@ export default function AboutPage() {
       {/* Hero */}
       <section
         style={{
-          background: '#fff',
-          padding: '160px 56px 100px',
+          background: 'var(--og-blue)',
+          paddingTop: 160,
+          paddingBottom: 100,
+          paddingLeft: 56,
+          paddingRight: 56,
           textAlign: 'center',
           display: 'flex',
           flexDirection: 'column',
@@ -43,7 +44,8 @@ export default function AboutPage() {
             fontSize: 11,
             textTransform: 'uppercase',
             letterSpacing: '0.14em',
-            color: '#5A74FF',
+            color: '#fff',
+            opacity: 0.75,
             marginBottom: 20,
           }}
         >
@@ -53,11 +55,12 @@ export default function AboutPage() {
           style={{
             fontFamily: 'var(--font-ui)',
             fontWeight: 800,
-            fontSize: 'clamp(40px, 5vw, 64px)',
-            letterSpacing: '-0.03em',
+            fontSize: 'clamp(36px, 4.5vw, 60px)',
+            letterSpacing: '-0.025em',
             lineHeight: 1.05,
-            margin: '0 0 28px',
-            maxWidth: 820,
+            margin: '0 0 24px',
+            maxWidth: 780,
+            color: '#fff',
           }}
         >
           Built for the spaces between the desk and the floor.
@@ -65,31 +68,21 @@ export default function AboutPage() {
         <p
           style={{
             fontFamily: 'var(--font-body)',
-            fontSize: 19,
+            fontSize: 18,
             lineHeight: 1.65,
-            color: 'var(--fg-2)',
-            maxWidth: 560,
-            margin: '0 0 40px',
+            color: 'rgba(255,255,255,0.70)',
+            maxWidth: 520,
+            margin: '0 0 0',
           }}
         >
-          Orbit Guard started with a simple problem — a rolling chair kept snagging cables and nearly took out a cat.
-          We made a small fix. Now it lives under 2,100 desks.
+          A small team. A real problem. A simple fix.
         </p>
         {/* Orbit icon mark */}
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            background: '#5A74FF',
-            WebkitMaskImage: "url('/assets/orbit-mark-mono.svg')",
-            maskImage: "url('/assets/orbit-mark-mono.svg')",
-            WebkitMaskRepeat: 'no-repeat',
-            maskRepeat: 'no-repeat',
-            WebkitMaskPosition: 'center',
-            maskPosition: 'center',
-            WebkitMaskSize: 'contain',
-            maskSize: 'contain',
-          } as React.CSSProperties}
+        <img
+          src="/assets/orbit-wordmark-white.png"
+          height={36}
+          alt="Orbit"
+          style={{ marginTop: 32, opacity: 0.9 }}
         />
       </section>
 

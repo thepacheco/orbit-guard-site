@@ -32,7 +32,7 @@ function Headline({ v }: { v: Variant }) {
         <svg
           style={{
             position: 'absolute',
-            inset: '-8% -8% -10% -8%',
+            inset: '-10% -6% 0% -6%',
             zIndex: 0,
             pointerEvents: 'none',
           }}
@@ -41,7 +41,7 @@ function Headline({ v }: { v: Variant }) {
           fill="none"
         >
           <ellipse
-            cx="100" cy="40" rx="92" ry="34"
+            cx="100" cy="36" rx="90" ry="30"
             stroke={v.ring}
             strokeWidth="3"
             strokeLinecap="round"

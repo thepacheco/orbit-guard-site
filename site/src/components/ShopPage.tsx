@@ -394,8 +394,6 @@ interface GuardSlot {
 export default function ShopPage() {
   const [variantKey, setVariantKey] = useState('blueberry');
   const [packIdx, setPackIdx] = useState(1);
-  const [saveEmail, setSaveEmail] = useState('');
-  const [cartSaved, setCartSaved] = useState(false);
 
   // Mix & Match state
   const [mixMode, setMixMode] = useState(false);
@@ -403,7 +401,6 @@ export default function ShopPage() {
   const [mixBottomKey, setMixBottomKey] = useState('clover');
   const [activeSlot, setActiveSlot] = useState(0);
   const [guardSlots, setGuardSlots] = useState<GuardSlot[]>([]);
-  const [showMixTooltip, setShowMixTooltip] = useState(false);
 
   const cart = useCart();
   const v = PRODUCT_VARIANTS.find(x => x.key === variantKey) || PRODUCT_VARIANTS[0];
@@ -463,7 +460,7 @@ export default function ShopPage() {
       packCount: pack.count,
       packPrice: pack.price,
     });
-    setCartSaved(false);
+    window.dispatchEvent(new CustomEvent('og:open-cart'));
   }
 
   function addMixToCart() {
@@ -479,13 +476,7 @@ export default function ShopPage() {
       mixTop: topVariant.hex,
       mixBottom: bottomVariant.hex,
     });
-    setCartSaved(false);
-  }
-
-  function saveCart() {
-    if (!saveEmail.trim() || cart.items.length === 0) return;
-    cart.saveCartByEmail(saveEmail.trim());
-    setCartSaved(true);
+    window.dispatchEvent(new CustomEvent('og:open-cart'));
   }
 
   // Left panel background in mix mode: gradient of two colors at 20% opacity
@@ -635,46 +626,19 @@ export default function ShopPage() {
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <button
                   onClick={() => setMixMode(m => !m)}
-                  onMouseEnter={() => setShowMixTooltip(true)}
-                  onMouseLeave={() => setShowMixTooltip(false)}
-                  title="Mix & Match colors"
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    border: mixMode ? 'none' : '1px solid var(--border)',
-                    background: mixMode ? '#5A74FF' : '#fff',
-                    color: mixMode ? '#fff' : 'var(--fg-2)',
-                    cursor: 'pointer',
-                    display: 'grid',
-                    placeItems: 'center',
-                    boxShadow: mixMode ? '0 4px 14px rgba(90,116,255,0.35)' : '0 1px 3px rgba(0,0,0,0.08)',
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    padding: '10px 18px', borderRadius: 999, border: 'none', cursor: 'pointer',
+                    background: mixMode ? 'var(--og-blue)' : 'var(--bg-inset)',
+                    color: mixMode ? '#fff' : 'var(--fg)',
+                    fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13,
                     transition: 'all 200ms var(--ease-out)',
-                    marginTop: 4,
+                    boxShadow: mixMode ? 'var(--shadow-blue)' : 'none',
                   }}
                 >
-                  <LucideIcons.Layers size={18} strokeWidth={2} />
+                  <LucideIcons.Layers size={15} strokeWidth={2} />
+                  Mix &amp; Match
                 </button>
-                {showMixTooltip && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '100%',
-                    right: 0,
-                    marginTop: 6,
-                    background: '#1A1B1F',
-                    color: '#fff',
-                    borderRadius: 8,
-                    padding: '6px 10px',
-                    fontSize: 12,
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    whiteSpace: 'nowrap',
-                    zIndex: 10,
-                    pointerEvents: 'none',
-                  }}>
-                    Mix &amp; Match colors
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -855,254 +819,6 @@ export default function ShopPage() {
             </>
           )}
 
-          {/* Divider + Cart (shared between both modes) */}
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24 }}>
-            <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, marginBottom: 16 }}>
-              Cart
-              {cart.totalItems > 0 && (
-                <span style={{ marginLeft: 8, fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 400, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  {cart.totalItems} item{cart.totalItems !== 1 ? 's' : ''}
-                </span>
-              )}
-            </div>
-
-            {cart.items.length === 0 ? (
-              <div
-                style={{
-                  textAlign: 'center',
-                  padding: '32px 24px',
-                  background: 'var(--bg-inset)',
-                  borderRadius: 16,
-                  color: 'var(--fg-3)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 15,
-                }}
-              >
-                <LucideIcons.ShoppingBag size={28} strokeWidth={1.5} style={{ marginBottom: 10, opacity: 0.4 }} />
-                <div>Your cart is empty</div>
-                <div style={{ fontSize: 13, marginTop: 4 }}>Add a pack to get started</div>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {cart.items.map(item => (
-                  <div
-                    key={item.isMix ? `mix-${item.mixTop}-${item.mixBottom}-${item.packCount}` : `${item.variantKey}-${item.packCount}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 14,
-                      padding: '14px 16px',
-                      background: 'var(--bg-inset)',
-                      borderRadius: 14,
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    {/* Color dot */}
-                    {item.isMix ? (
-                      <div style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
-                        border: '1px solid rgba(0,0,0,0.1)',
-                      }}>
-                        <div style={{ height: '50%', background: item.mixTop }} />
-                        <div style={{ height: '50%', background: item.mixBottom }} />
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: '50%',
-                          background: item.hex,
-                          flexShrink: 0,
-                          boxShadow: '0 2px 6px rgba(0,0,0,0.14)',
-                        }}
-                      />
-                    )}
-                    {/* Info */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
-                        {item.variantName}
-                      </div>
-                      <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>
-                        {item.packCount}-pack · ${item.packPrice} each
-                      </div>
-                    </div>
-                    {/* Qty controls */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <button
-                        onClick={() => cart.updateQty(item.variantKey, item.packCount, -1, item.mixTop, item.mixBottom)}
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: '50%',
-                          border: '1px solid var(--border)',
-                          background: '#fff',
-                          cursor: 'pointer',
-                          display: 'grid',
-                          placeItems: 'center',
-                          fontFamily: 'var(--font-ui)',
-                          fontWeight: 700,
-                          fontSize: 16,
-                          color: 'var(--fg)',
-                        }}
-                      >
-                        <LucideIcons.Minus size={12} strokeWidth={2.5} />
-                      </button>
-                      <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 15, minWidth: 20, textAlign: 'center' }}>
-                        {item.qty}
-                      </span>
-                      <button
-                        onClick={() => cart.updateQty(item.variantKey, item.packCount, 1, item.mixTop, item.mixBottom)}
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: '50%',
-                          border: '1px solid var(--border)',
-                          background: '#fff',
-                          cursor: 'pointer',
-                          display: 'grid',
-                          placeItems: 'center',
-                          fontFamily: 'var(--font-ui)',
-                          fontWeight: 700,
-                          fontSize: 16,
-                          color: 'var(--fg)',
-                        }}
-                      >
-                        <LucideIcons.Plus size={12} strokeWidth={2.5} />
-                      </button>
-                    </div>
-                    {/* Line total */}
-                    <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 15, minWidth: 48, textAlign: 'right' }}>
-                      ${item.packPrice * item.qty}
-                    </div>
-                    {/* Remove */}
-                    <button
-                      onClick={() => cart.removeItem(item.variantKey, item.packCount, item.mixTop, item.mixBottom)}
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: '50%',
-                        border: 'none',
-                        background: 'transparent',
-                        cursor: 'pointer',
-                        display: 'grid',
-                        placeItems: 'center',
-                        color: 'var(--fg-3)',
-                        transition: 'color 140ms',
-                      }}
-                      title="Remove"
-                    >
-                      <LucideIcons.X size={14} strokeWidth={2} />
-                    </button>
-                  </div>
-                ))}
-
-                {/* Subtotal */}
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    borderTop: '1px solid var(--border)',
-                    marginTop: 4,
-                  }}
-                >
-                  <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 15, color: 'var(--fg-2)' }}>
-                    Subtotal
-                  </span>
-                  <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 20 }}>
-                    ${cart.totalPrice}
-                  </span>
-                </div>
-
-                {/* Save cart */}
-                <div
-                  style={{
-                    padding: '18px 20px',
-                    background: 'var(--bg-inset)',
-                    borderRadius: 14,
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
-                    Save your cart
-                  </div>
-                  {cartSaved ? (
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        background: '#E6F7EF',
-                        color: '#18A06F',
-                        borderRadius: 999,
-                        padding: '10px 16px',
-                        fontFamily: 'var(--font-ui)',
-                        fontWeight: 600,
-                        fontSize: 14,
-                      }}
-                    >
-                      <LucideIcons.CheckCircle size={16} strokeWidth={2} />
-                      Cart saved! Check back anytime.
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: 0,
-                        background: '#fff',
-                        borderRadius: 999,
-                        border: '1px solid var(--border)',
-                        padding: 4,
-                      }}
-                    >
-                      <input
-                        type="email"
-                        value={saveEmail}
-                        onChange={e => setSaveEmail(e.target.value)}
-                        placeholder="your@email.com"
-                        style={{
-                          flex: 1,
-                          background: 'transparent',
-                          border: 'none',
-                          outline: 'none',
-                          padding: '8px 14px',
-                          fontFamily: 'var(--font-ui)',
-                          fontSize: 14,
-                          color: 'var(--fg)',
-                          minWidth: 0,
-                        }}
-                      />
-                      <button
-                        onClick={saveCart}
-                        style={{
-                          background: '#5A74FF',
-                          color: '#fff',
-                          border: 'none',
-                          borderRadius: 999,
-                          padding: '8px 18px',
-                          fontFamily: 'var(--font-ui)',
-                          fontWeight: 700,
-                          fontSize: 14,
-                          cursor: 'pointer',
-                          whiteSpace: 'nowrap',
-                          flexShrink: 0,
-                        }}
-                      >
-                        Save
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>

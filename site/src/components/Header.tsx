@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { useCart } from './CartContext';
 import CartDrawer from './CartDrawer';
@@ -15,45 +15,6 @@ function vAccent(v: Variant): string {
 interface HeaderProps {
   dark: boolean;
   variant: Variant;
-}
-
-function RoundIcon({
-  icon,
-  hoverBg,
-  onClick,
-}: {
-  icon: string;
-  hoverBg?: string;
-  onClick?: () => void;
-}) {
-  const [hover, setHover] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Icon = (LucideIcons as any)[
-    icon.split('-').map((p: string) => p.charAt(0).toUpperCase() + p.slice(1)).join('')
-  ] as React.ComponentType<{ size?: number; strokeWidth?: number }> | undefined;
-  if (!Icon) return null;
-  return (
-    <button
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onClick={onClick}
-      style={{
-        width: 42,
-        height: 42,
-        borderRadius: '50%',
-        background: hover ? hoverBg : 'transparent',
-        border: 'none',
-        color: 'inherit',
-        cursor: 'pointer',
-        display: 'grid',
-        placeItems: 'center',
-        position: 'relative',
-        transition: 'background 140ms var(--ease-out)',
-      }}
-    >
-      <Icon size={20} strokeWidth={1.6} />
-    </button>
-  );
 }
 
 function CartIconButton({
@@ -116,6 +77,12 @@ function CartIconButton({
 
 export default function Header({ dark, variant }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setCartOpen(true);
+    window.addEventListener('og:open-cart', handler);
+    return () => window.removeEventListener('og:open-cart', handler);
+  }, []);
   const cardBg = 'rgba(255,255,255,0.65)';
   const cardBorder = 'rgba(255,255,255,0.7)';
   const ink = 'var(--fg)';
@@ -195,11 +162,27 @@ export default function Header({ dark, variant }: HeaderProps) {
             </a>
           </div>
 
-          {/* RIGHT: Search, Cart, CTA */}
+          {/* RIGHT: Kickstarter, Cart, CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-            {/* Desktop-only: search */}
+            {/* Desktop-only: Kickstarter pill */}
             <span className="og-header-desktop">
-              <RoundIcon icon="search" hoverBg={chipBg} />
+              <a href="https://www.kickstarter.com" target="_blank" rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '10px 16px', borderRadius: 999,
+                  background: '#05CE78', color: '#0A0A0A',
+                  fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13,
+                  textDecoration: 'none', whiteSpace: 'nowrap',
+                  transition: 'opacity 140ms',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.5 17.5l-3-4.5 3-1.5v6zm0-8l-3-1.5 3-4.5v6zm1.5 9l4.5-3-4.5-1.5V18.5zm0-10.5L16.5 6.5 12 5v3z"/>
+                </svg>
+                Back us
+              </a>
             </span>
             {/* Cart icon always visible */}
             <CartIconButton

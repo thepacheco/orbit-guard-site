@@ -3,24 +3,49 @@
 import React, { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { useCart } from './CartContext';
+import type { CartItem } from './CartContext';
 
 interface CartDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
+async function saveToSheets(email: string, items: CartItem[], total: number) {
+  const url = process.env.NEXT_PUBLIC_SHEETS_URL;
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'preorder',
+        email,
+        items,
+        total,
+      }),
+    });
+  } catch {}
+}
+
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const cart = useCart();
   const [saveEmail, setSaveEmail] = useState('');
   const [loadEmail, setLoadEmail] = useState('');
-  const [savedMsg, setSavedMsg] = useState(false);
+  const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [loadMsg, setLoadMsg] = useState<string | null>(null);
 
-  function handleSave() {
+  async function handleSave() {
     if (!saveEmail.trim()) return;
     cart.saveCartByEmail(saveEmail.trim());
-    setSavedMsg(true);
-    setTimeout(() => setSavedMsg(false), 3000);
+    await saveToSheets(saveEmail.trim(), cart.items, cart.totalPrice);
+    setSavedMsg('Saved! We will email you at launch with your cart.');
+    setTimeout(() => setSavedMsg(null), 4000);
+  }
+
+  async function handleKickstarter() {
+    if (!saveEmail.trim()) return;
+    await saveToSheets(saveEmail.trim(), cart.items, cart.totalPrice);
+    setSavedMsg('Cart saved — opening Kickstarter...');
+    window.open('https://www.kickstarter.com', '_blank');
   }
 
   function handleLoad() {
@@ -275,8 +300,18 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                   gap: 10,
                 }}
               >
-                <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13 }}>
-                  Save cart by email
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: 'var(--og-blue)',
+                }}>
+                  Save your cart
+                </div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.5 }}>
+                  Enter your email — we will send you a reminder when Orbit launches, with your saved cart ready to go.
                 </div>
                 {savedMsg ? (
                   <div
@@ -294,55 +329,77 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     }}
                   >
                     <LucideIcons.CheckCircle size={14} strokeWidth={2} />
-                    Saved!
+                    {savedMsg}
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 0,
-                      background: '#fff',
-                      borderRadius: 999,
-                      border: '1px solid var(--border)',
-                      padding: 3,
-                    }}
-                  >
-                    <input
-                      type="email"
-                      value={saveEmail}
-                      onChange={e => setSaveEmail(e.target.value)}
-                      placeholder="your@email.com"
+                  <>
+                    <div
                       style={{
-                        flex: 1,
-                        background: 'transparent',
-                        border: 'none',
-                        outline: 'none',
-                        padding: '7px 12px',
-                        fontFamily: 'var(--font-ui)',
-                        fontSize: 13,
-                        color: 'var(--fg)',
-                        minWidth: 0,
-                      }}
-                    />
-                    <button
-                      onClick={handleSave}
-                      style={{
-                        background: 'var(--og-blue)',
-                        color: '#fff',
-                        border: 'none',
+                        display: 'flex',
+                        gap: 0,
+                        background: '#fff',
                         borderRadius: 999,
-                        padding: '7px 14px',
-                        fontFamily: 'var(--font-ui)',
-                        fontWeight: 700,
-                        fontSize: 13,
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
+                        border: '1px solid var(--border)',
+                        padding: 3,
                       }}
                     >
-                      Save
-                    </button>
-                  </div>
+                      <input
+                        type="email"
+                        value={saveEmail}
+                        onChange={e => setSaveEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        style={{
+                          flex: 1,
+                          background: 'transparent',
+                          border: 'none',
+                          outline: 'none',
+                          padding: '7px 12px',
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: 13,
+                          color: 'var(--fg)',
+                          minWidth: 0,
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <button
+                        onClick={handleSave}
+                        style={{
+                          background: 'var(--og-blue)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: 999,
+                          padding: '10px 16px',
+                          fontFamily: 'var(--font-ui)',
+                          fontWeight: 700,
+                          fontSize: 13,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          width: '100%',
+                        }}
+                      >
+                        Save cart &amp; notify me
+                      </button>
+                      <button
+                        onClick={handleKickstarter}
+                        style={{
+                          background: '#05CE78',
+                          color: '#0A0A0A',
+                          border: 'none',
+                          borderRadius: 999,
+                          padding: '10px 16px',
+                          fontFamily: 'var(--font-ui)',
+                          fontWeight: 700,
+                          fontSize: 13,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          width: '100%',
+                        }}
+                      >
+                        Back us on Kickstarter now
+                      </button>
+                    </div>
+                  </>
                 )}
 
                 {/* Load by email */}

@@ -19,8 +19,27 @@ const abeeZee = ABeeZee({
 });
 
 export const metadata: Metadata = {
-  title: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
-  description: 'Soft TPU caster guards that protect your pets, cords, and toes from office chair wheels. 11 colors, fits 95% of chairs.',
+  metadataBase: new URL('https://orbitguard.com'),
+  title: {
+    default: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
+    template: '%s | Orbit Guard',
+  },
+  description: 'Soft TPU caster guards that protect your pets, cords, and toes from office-chair wheels. 11 colors, fits 95% of chairs. Live on Kickstarter — 342% funded.',
+  keywords: ['caster guards', 'office chair wheel covers', 'pet safe chair casters', 'cord protection', 'chair wheel guards', 'Orbit Guard'],
+  openGraph: {
+    type: 'website',
+    siteName: 'Orbit Guard',
+    title: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
+    description: 'Soft TPU caster guards that protect pets, cords, and toes. 11 colors, fits 95% of chairs. Live on Kickstarter.',
+    url: 'https://orbitguard.com',
+    images: [{ url: '/assets/orbit-icon-mark.png', width: 800, height: 800, alt: 'Orbit Guard caster guards' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
+    description: 'Soft TPU caster guards that protect pets, cords, and toes. 11 colors, fits 95% of chairs.',
+    images: ['/assets/orbit-icon-mark.png'],
+  },
 };
 
 export default function RootLayout({

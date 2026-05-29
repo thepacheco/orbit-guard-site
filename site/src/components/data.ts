@@ -1,12 +1,7 @@
 import { Variant, Pack } from './types';
+import { SITE_CONFIG } from '../config/products';
 
-export const PACK_SIZES: Pack[] = [
-  { count: 1,  price: 6,  label: "Single",      tag: null },
-  { count: 5,  price: 24, label: "One chair",   tag: null },
-  { count: 6,  price: 28, label: "+1 spare",    tag: "Best for 1" },
-  { count: 10, price: 44, label: "Two chairs",  tag: null },
-  { count: 12, price: 48, label: "Bulk",        tag: "Save 33%" },
-];
+export const PACK_SIZES: Pack[] = SITE_CONFIG.packPricing.map(p => ({ ...p }));
 
 export const PRODUCT_VARIANTS: Variant[] = [
   {

@@ -1,5 +1,13 @@
 import ShopPage from '@/components/ShopPage';
+import Header from '@/components/Header';
+import { PRODUCT_VARIANTS } from '@/components/data';
 
 export default function Page() {
-  return <ShopPage />;
+  const blueberryVariant = PRODUCT_VARIANTS.find(v => v.key === 'blueberry') ?? PRODUCT_VARIANTS[0];
+  return (
+    <>
+      <Header variant={blueberryVariant} dark={false} />
+      <ShopPage />
+    </>
+  );
 }

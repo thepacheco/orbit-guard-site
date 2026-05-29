@@ -7,6 +7,7 @@ import { DynIcon } from './primitives';
 import type { Variant } from './types';
 import * as LucideIcons from 'lucide-react';
 import NotifyForm from './NotifyForm';
+import { SITE_CONFIG } from '../config/products';
 
 export function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
@@ -527,10 +528,10 @@ export function Kickstarter({ v }: { v: Variant }) {
     return () => clearTimeout(t);
   }, [visible]);
 
-  const raised = useCountUp(48, 1800, visible);
-  const backers = useCountUp(2140, 1800, visible);
-  const days = useCountUp(14, 1200, visible);
-  const funded = useCountUp(342, 2000, visible);
+  const raised = useCountUp(Math.round(SITE_CONFIG.kickstarterRaised / 1000), 1800, visible);
+  const backers = useCountUp(SITE_CONFIG.kickstarterBackers, 1800, visible);
+  const days = useCountUp(SITE_CONFIG.kickstarterDaysLeft, 1200, visible);
+  const funded = useCountUp(SITE_CONFIG.kickstarterFunded, 2000, visible);
 
   return (
     <section
@@ -602,7 +603,7 @@ export function Kickstarter({ v }: { v: Variant }) {
               maxWidth: 320,
             }}
           >
-            Backed by 2,140 chair-owners (and counting). Ships from Atlanta this fall.
+            Backed by {SITE_CONFIG.kickstarterBackers.toLocaleString()} chair-owners (and counting). Ships from Atlanta this fall.
           </div>
         </div>
 
@@ -661,7 +662,10 @@ export function Kickstarter({ v }: { v: Variant }) {
               Early-bird perks: 3 stretch goals unlocked, including a free spare guard and the
               Polar finish.
             </div>
-            <button
+            <a
+              href={SITE_CONFIG.kickstarterUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 background: '#05CE78',
                 color: '#0A0A0A',
@@ -675,11 +679,12 @@ export function Kickstarter({ v }: { v: Variant }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
+                textDecoration: 'none',
               }}
             >
               Back on Kickstarter
               <LucideIcons.ArrowUpRight size={16} />
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -732,7 +737,7 @@ export function Reviews({ v }: { v: Variant }) {
               color: 'var(--fg)',
             }}
           >
-            2,140 reviews. 4.9 average.<br />Mostly about pets.
+            {SITE_CONFIG.kickstarterBackers.toLocaleString()} reviews. 4.9 average.<br />Mostly about pets.
           </h2>
         </div>
       </div>

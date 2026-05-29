@@ -2,6 +2,8 @@ import React from 'react';
 
 export const metadata = { title: 'Press & Brand Kit', description: 'Brand assets, color swatches, and quick facts about Orbit Guard for journalists.' };
 import Header from '@/components/Header';
+import { FooterCta } from '@/components/Sections';
+import { PRODUCT_VARIANTS } from '@/components/data';
 import type { Variant } from '@/components/types';
 
 const POLAR: Variant = {
@@ -31,6 +33,7 @@ const BRAND_COLORS = [
 ];
 
 export default function PressPage() {
+  const polar = PRODUCT_VARIANTS.find(v => v.key === 'polar') ?? PRODUCT_VARIANTS[0];
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
       <Header dark={false} variant={POLAR} />
@@ -444,26 +447,7 @@ export default function PressPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        style={{
-          padding: '32px 56px',
-          borderTop: '1px solid var(--border)',
-          background: '#fff',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 12,
-        }}
-      >
-        <div style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
-          © 2026 OrbitGuard, Inc.
-        </div>
-        <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
-          Made in Atlanta
-        </div>
-      </footer>
+      <FooterCta v={polar} />
     </div>
   );
 }

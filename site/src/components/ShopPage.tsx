@@ -1,17 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Image from 'next/image';
 import * as LucideIcons from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import { PRODUCT_VARIANTS, PACK_SIZES } from './data';
+
+const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false });
 import type { Variant } from './types';
 import { useCart } from './CartContext';
+import { useActiveVariant } from './ActiveVariantContext';
 
 // ── helpers ──────────────────────────────────────────────────────────
 function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
   if (v.key === 'polar') return v.ring;
   return v.hex;
+}
+
+import UNIQUE_MIX_NAMES from './names.json';
+
+function getMixName(topKey: string, bottomKey: string): string {
+  if (topKey === bottomKey) return PRODUCT_VARIANTS.find(v => v.key === topKey)?.name || '';
+  return (UNIQUE_MIX_NAMES as Record<string, string>)[`${topKey}|${bottomKey}`] || 'Cosmic Blend';
 }
 
 // ── PuckView (inline) ────────────────────────────────────────────────
@@ -119,7 +131,7 @@ function ShopPalettePicker({
           Color
         </span>
         <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13 }}>
-          {label} · {v.hex}
+          {label}
         </span>
       </div>
       <div
@@ -153,7 +165,7 @@ function ShopPalettePicker({
                 cursor: 'pointer',
                 padding: 0,
                 boxShadow: active
-                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.25)`
+                  ? `0 0 0 2px #fff, 0 0 0 3px #5A74FF`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
                 transition: 'box-shadow 200ms var(--ease-bounce)',
               }}
@@ -187,7 +199,7 @@ function HalfColorPicker({
           {label}
         </span>
         <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13 }}>
-          {displayName} · {selected.hex}
+          {displayName}
         </span>
       </div>
       <div style={{
@@ -219,7 +231,7 @@ function HalfColorPicker({
                 cursor: 'pointer',
                 padding: 0,
                 boxShadow: active
-                  ? `0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.25)`
+                  ? `0 0 0 2px #fff, 0 0 0 3px #5A74FF`
                   : '0 1px 2px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06)',
                 transition: 'box-shadow 200ms var(--ease-bounce)',
               }}
@@ -256,8 +268,8 @@ function ShopPackSelector({
           padding: 4,
           gap: 4,
           borderRadius: 14,
-          background: 'rgba(0,0,0,0.04)',
-          border: '1px solid rgba(0,0,0,0.06)',
+          background: 'rgba(255,255,255,0.5)',
+          border: '1px solid rgba(0,0,0,0.05)',
         }}
       >
         {PACK_SIZES.map((p, i) => {
@@ -274,13 +286,14 @@ function ShopPackSelector({
                 borderRadius: 10,
                 background: active ? '#5A74FF' : 'transparent',
                 color: active ? '#fff' : 'var(--fg-2)',
-                fontFamily: 'var(--font-ui)',
                 fontWeight: 700,
                 fontSize: 14,
                 transition: 'all 160ms var(--ease-out)',
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             >
-              {p.count}
+              {p.count} Pack (${p.price})
             </button>
           );
         })}
@@ -392,18 +405,49 @@ interface GuardSlot {
 
 // ── Main ShopPage ────────────────────────────────────────────────────
 export default function ShopPage() {
-  const [variantKey, setVariantKey] = useState('blueberry');
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#fff' }} />}>
+      <ShopPageContent />
+    </Suspense>
+  );
+}
+
+function ShopPageContent() {
+  const { activeVariant: v, setActiveVariant } = useActiveVariant();
+  const searchParams = useSearchParams();
+  
+  React.useEffect(() => {
+    const colorParam = searchParams.get('color');
+    if (colorParam) {
+      const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === colorParam);
+      if (newVariant) setActiveVariant(newVariant);
+    }
+    
+    const mixTopParam = searchParams.get('mixTop');
+    const mixBottomParam = searchParams.get('mixBottom');
+    if (mixTopParam && mixBottomParam) {
+      setMixMode(true);
+      setMixTopKey(mixTopParam);
+      setMixBottomKey(mixBottomParam);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  const setVariantKey = (key: string) => {
+    const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === key);
+    if (newVariant) setActiveVariant(newVariant);
+  };
   const [packIdx, setPackIdx] = useState(1);
 
   // Mix & Match state
   const [mixMode, setMixMode] = useState(false);
+  const [exploded, setExploded] = useState(false);
   const [mixTopKey, setMixTopKey] = useState('blueberry');
   const [mixBottomKey, setMixBottomKey] = useState('clover');
   const [activeSlot, setActiveSlot] = useState(0);
   const [guardSlots, setGuardSlots] = useState<GuardSlot[]>([]);
 
   const cart = useCart();
-  const v = PRODUCT_VARIANTS.find(x => x.key === variantKey) || PRODUCT_VARIANTS[0];
   const pack = PACK_SIZES[packIdx];
 
   const mixTopVariant = PRODUCT_VARIANTS.find(x => x.key === mixTopKey) || PRODUCT_VARIANTS[0];
@@ -468,7 +512,7 @@ export default function ShopPage() {
     const bottomVariant = mixBottomVariant;
     cart.addItem({
       variantKey: `mix-${mixTopKey}-${mixBottomKey}`,
-      variantName: `${topVariant.name} / ${bottomVariant.name}`,
+      variantName: getMixName(mixTopKey, mixBottomKey),
       hex: `linear-gradient(to bottom, ${topVariant.hex} 50%, ${bottomVariant.hex} 50%)`,
       packCount: pack.count,
       packPrice: pack.price,
@@ -493,27 +537,30 @@ export default function ShopPage() {
     <div style={{ minHeight: '100vh', background: '#fff' }}>
 
       <div
+        className="og-shop-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: '40% 60%',
-          minHeight: '100vh',
-          paddingTop: 72,
+          minHeight: 'calc(100vh - var(--og-announce-h, 0px))',
         }}
       >
-        {/* LEFT PANEL */}
         <div
+          className="og-shop-left"
           style={{
             background: leftPanelBg,
             color: mixMode ? 'var(--fg)' : v.text,
             position: 'sticky',
-            top: 72,
-            height: 'calc(100vh - 72px)',
+            top: 0,
+            paddingTop: 'calc(100px + var(--og-announce-h, 0px))',
+            height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 24,
-            padding: 40,
+            paddingBottom: 40,
+            paddingLeft: 40,
+            paddingRight: 40,
             transition: 'background 420ms var(--ease-out), color 420ms var(--ease-out)',
             overflow: 'hidden',
           }}
@@ -541,17 +588,55 @@ export default function ShopPage() {
           </svg>
 
           {mixMode ? (
-            <SplitPuckView
-              topColor={previewTopVariant.hex}
-              bottomColor={previewBottomVariant.hex}
-            />
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'scale(0.9)' : 'scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              <Product3DViewer
+                topColor={previewTopVariant.hex}
+                bottomColor={previewBottomVariant.hex}
+                exploded={exploded}
+                cameraPosition={[0, 3.5, 3.0]}
+              />
+            </div>
           ) : (
-            <PuckView v={v} size={280} />
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'scale(0.9)' : 'scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              <Product3DViewer
+                topColor={v.hex}
+                bottomColor={v.hex}
+                exploded={exploded}
+                cameraPosition={[0, 3.5, 3.0]}
+              />
+            </div>
           )}
+
+          {/* Toggle Detach Button */}
+          <button
+            onClick={() => setExploded(!exploded)}
+            style={{
+              position: 'absolute',
+              top: 160,
+              right: 20,
+              background: 'rgba(255,255,255,0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid var(--border)',
+              borderRadius: 999,
+              padding: '8px 16px',
+              fontFamily: 'var(--font-ui)',
+              fontWeight: 600,
+              fontSize: 13,
+              color: 'var(--fg)',
+              cursor: 'pointer',
+              zIndex: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}
+          >
+            {exploded ? <LucideIcons.Minimize2 size={14} /> : <LucideIcons.Maximize2 size={14} />}
+            {exploded ? 'Snap together' : 'Detach'}
+          </button>
 
           {/* Floating chips — only in normal mode */}
           {!mixMode && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', position: 'relative', zIndex: 2 }}>
+            <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', zIndex: 2, pointerEvents: 'none' }}>
               {v.floatChips.map((chip, i) => (
                 <FloatChip key={i} v={v} icon={chip.icon} text={chip.text} />
               ))}
@@ -574,13 +659,16 @@ export default function ShopPage() {
           )}
         </div>
 
-        {/* RIGHT PANEL */}
         <div
+          className="og-shop-right"
           style={{
-            padding: '48px 48px 80px',
+            paddingTop: 'calc(60px + var(--og-announce-h, 0px) + 24px)',
+            paddingBottom: 40,
+            paddingLeft: 48,
+            paddingRight: 48,
             display: 'flex',
             flexDirection: 'column',
-            gap: 32,
+            gap: 24,
             maxWidth: 640,
           }}
         >
@@ -593,7 +681,7 @@ export default function ShopPage() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
                   <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 'clamp(32px, 3vw, 48px)', letterSpacing: '-0.025em', lineHeight: 1, margin: 0 }}>
-                    {mixMode ? 'Half & Half' : v.name}
+                    {mixMode ? getMixName(previewTopVariant.key, previewBottomVariant.key) : v.name}
                   </h1>
                   {mixMode && (
                     <span style={{
@@ -672,67 +760,6 @@ export default function ShopPage() {
                 onSelect={handleMixBottomChange}
               />
 
-              {/* Guard configurator for packs > 1 */}
-              {pack.count > 1 && guardSlots.length > 0 && (
-                <div>
-                  <div style={{
-                    fontSize: 11,
-                    fontFamily: 'var(--font-mono)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
-                    opacity: 0.65,
-                    marginBottom: 10,
-                  }}>
-                    Configure each guard
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {guardSlots.map((slot, i) => {
-                      const slotTop = PRODUCT_VARIANTS.find(x => x.key === slot.topKey) || PRODUCT_VARIANTS[0];
-                      const slotBottom = PRODUCT_VARIANTS.find(x => x.key === slot.bottomKey) || PRODUCT_VARIANTS[1];
-                      const isActive = i === activeSlot;
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => selectSlot(i)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            padding: '10px 14px',
-                            borderRadius: 12,
-                            border: isActive ? '2px solid #5A74FF' : '1px solid var(--border)',
-                            background: isActive ? '#F0F3FF' : 'var(--bg-inset)',
-                            cursor: 'pointer',
-                            textAlign: 'left',
-                            transition: 'all 160ms var(--ease-out)',
-                          }}
-                        >
-                          <MiniSplitDot top={slotTop.hex} bottom={slotBottom.hex} size={20} />
-                          <span style={{
-                            fontFamily: 'var(--font-ui)',
-                            fontWeight: isActive ? 700 : 500,
-                            fontSize: 13,
-                            color: isActive ? '#5A74FF' : 'var(--fg)',
-                          }}>
-                            Guard {i + 1}: {slotTop.name} / {slotBottom.name}
-                          </span>
-                          {isActive && (
-                            <span style={{
-                              marginLeft: 'auto',
-                              fontSize: 11,
-                              fontFamily: 'var(--font-mono)',
-                              color: '#5A74FF',
-                              opacity: 0.7,
-                            }}>
-                              editing
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Pricing note */}
               <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
@@ -820,6 +847,72 @@ export default function ShopPage() {
 
         </div>
       </div>
+
+      {/* Full-width bottom configurator panel */}
+      {mixMode && pack.count > 1 && guardSlots.length > 0 && (
+        <div style={{ maxWidth: 1100, margin: '0 auto', borderTop: '1px solid var(--border)', paddingTop: 16, paddingBottom: 40 }}>
+          <div style={{
+            fontSize: 13,
+            fontFamily: 'var(--font-mono)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            fontWeight: 700,
+            marginBottom: 16,
+            color: 'var(--fg)',
+          }}>
+            Configure each guard
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            {guardSlots.map((slot, i) => {
+              const slotTop = PRODUCT_VARIANTS.find(x => x.key === slot.topKey) || PRODUCT_VARIANTS[0];
+              const slotBottom = PRODUCT_VARIANTS.find(x => x.key === slot.bottomKey) || PRODUCT_VARIANTS[1];
+              const isActive = i === activeSlot;
+              return (
+                <button
+                  key={i}
+                  onClick={() => selectSlot(i)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '14px 20px',
+                    borderRadius: 16,
+                    border: isActive ? '1px solid #5A74FF' : '1px solid var(--border)',
+                    background: isActive ? '#F0F3FF' : 'var(--bg-inset)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 160ms var(--ease-out)',
+                    minWidth: 220,
+                    boxShadow: isActive ? '0 8px 24px rgba(90,116,255,0.1)' : 'none',
+                  }}
+                >
+                  <MiniSplitDot top={slotTop.hex} bottom={slotBottom.hex} size={24} />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: isActive ? 800 : 600,
+                      fontSize: 15,
+                      color: isActive ? '#5A74FF' : 'var(--fg)',
+                    }}>
+                      Guard {i + 1}
+                    </span>
+                    <span style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 12,
+                      color: 'var(--fg-2)',
+                      marginTop: 2,
+                    }}>
+                      {slotTop.name} / {slotBottom.name}
+                    </span>
+                  </div>
+
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

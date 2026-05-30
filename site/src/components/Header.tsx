@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { useCart } from './CartContext';
-import CartDrawer from './CartDrawer';
+import CartPopup from './CartPopup';
 import type { Variant } from './types';
 
 function vAccent(v: Variant): string {
@@ -52,20 +52,6 @@ function CartIconButton({
       {totalItems > 0 && (
         <span
           style={{
-            position: 'absolute',
-            top: 4,
-            right: 4,
-            minWidth: 15,
-            height: 15,
-            padding: '0 3px',
-            background: 'var(--og-blue)',
-            color: '#fff',
-            fontSize: 10,
-            fontWeight: 800,
-            borderRadius: 999,
-            display: 'grid',
-            placeItems: 'center',
-            border: `2px solid ${badgeBorder ?? '#fff'}`,
           }}
         >
           {totalItems}
@@ -77,6 +63,7 @@ function CartIconButton({
 
 export default function Header({ dark, variant }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handler = () => setCartOpen(true);
@@ -124,82 +111,71 @@ export default function Header({ dark, variant }: HeaderProps) {
           }}
         >
           {/* LEFT: OrbitGuard text */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <a
               href="/"
               style={{
-                fontFamily: 'var(--font-ui)',
-                fontWeight: 800,
-                fontSize: 17,
-                color: '#5A74FF',
+                display: 'flex',
+                alignItems: 'center',
                 textDecoration: 'none',
-                letterSpacing: '-0.01em',
               }}
             >
-              OrbitGuard
+              <img src="/assets/svg/OrbitGuard.svg" alt="OrbitGuard" style={{ height: 32, objectFit: 'contain' }} />
             </a>
           </div>
 
-          {/* CENTER: Orbit icon mark (mono SVG colored with variant accent) */}
+          {/* CENTER: Orbit icon mark (always blue) */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <a href="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div
                 style={{
                   width: 38,
                   height: 38,
-                  background: accentColor,
-                  WebkitMaskImage: "url('/assets/orbit-mark-mono.svg')",
-                  maskImage: "url('/assets/orbit-mark-mono.svg')",
+                  background: '#5A74FF',
+                  WebkitMaskImage: "url('/assets/svg/Orbit%20Icon.svg')",
+                  maskImage: "url('/assets/svg/Orbit%20Icon.svg')",
                   WebkitMaskRepeat: 'no-repeat',
                   maskRepeat: 'no-repeat',
                   WebkitMaskPosition: 'center',
                   maskPosition: 'center',
                   WebkitMaskSize: 'contain',
                   maskSize: 'contain',
-                  transition: 'background 420ms var(--ease-out)',
                 } as React.CSSProperties}
               />
             </a>
           </div>
 
-          {/* RIGHT: Kickstarter, Cart, CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
-            {/* Desktop-only: Kickstarter pill */}
-            <span className="og-header-desktop">
-              <a href="https://www.kickstarter.com" target="_blank" rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '10px 16px', borderRadius: 999,
-                  background: '#05CE78', color: '#0A0A0A',
-                  fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13,
-                  textDecoration: 'none', whiteSpace: 'nowrap',
-                  transition: 'opacity 140ms',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
-                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.5 17.5l-3-4.5 3-1.5v6zm0-8l-3-1.5 3-4.5v6zm1.5 9l4.5-3-4.5-1.5V18.5zm0-10.5L16.5 6.5 12 5v3z"/>
-                </svg>
-                Back us
-              </a>
-            </span>
-            {/* Cart icon always visible */}
-            <CartIconButton
-              hoverBg={chipBg}
-              badgeBorder={dark ? 'transparent' : '#fff'}
-              onClick={() => setCartOpen(prev => !prev)}
-            />
-            {/* Desktop-only: CTA button */}
+          {/* RIGHT: Desktop CTA + Mobile Hamburger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'flex-end' }}>
+            <a
+              href="/lp/launch"
+              className="og-header-desktop"
+              style={{
+                background: '#05CE78',
+                color: '#000',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: 999,
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 800,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(5, 206, 120, 0.3)',
+              }}
+            >
+              Back us
+            </a>
             <a
               href="/shop"
               className="og-header-desktop"
               style={{
-                marginLeft: 8,
-                background: 'var(--og-blue)',
-                color: '#fff',
+                background: 'rgba(0,0,0,0.05)',
+                color: ink,
                 border: 'none',
-                padding: '12px 18px 12px 20px',
+                padding: '12px 18px',
                 borderRadius: 999,
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 700,
@@ -207,29 +183,130 @@ export default function Header({ dark, variant }: HeaderProps) {
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 8,
-                boxShadow: '0 6px 16px rgba(90,116,255,0.32)',
                 textDecoration: 'none',
               }}
             >
-              Get a pack
-              <LucideIcons.ArrowRight size={16} />
+              Explore
             </a>
+
+            {/* Mobile hamburger */}
+            <button
+              className="og-header-mobile"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: '50%',
+                background: 'transparent',
+                border: 'none',
+                color: ink,
+                cursor: 'pointer',
+                display: 'none',
+                placeItems: 'center',
+              }}
+            >
+              {mobileMenuOpen ? <LucideIcons.X size={22} strokeWidth={1.6} /> : <LucideIcons.Menu size={22} strokeWidth={1.6} />}
+            </button>
           </div>
         </header>
       </div>
 
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      {/* Mobile Nav Drawer */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 49,
+            background: 'rgba(0,0,0,0.3)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+          }}
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <nav
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: 'calc(90px + var(--og-announce-h, 0px))',
+              left: 16,
+              right: 16,
+              background: 'rgba(255,255,255,0.95)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderRadius: 20,
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+              boxShadow: '0 24px 60px rgba(0,0,0,0.15)',
+            }}
+          >
+            {[
+              { href: '/', label: 'Home' },
+              { href: '/shop', label: 'Shop' },
+              { href: '/about', label: 'About' },
+              { href: '/faq', label: 'FAQ' },
+              { href: '/contact', label: 'Contact' },
+            ].map(link => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: 12,
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  color: 'var(--fg)',
+                  textDecoration: 'none',
+                  background: 'rgba(0,0,0,0.03)',
+                  transition: 'background 0.15s',
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="/lp/launch"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                padding: '16px 20px',
+                borderRadius: 12,
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 800,
+                fontSize: 16,
+                color: '#fff',
+                textDecoration: 'none',
+                background: '#05CE78',
+                textAlign: 'center',
+                boxShadow: '0 6px 18px rgba(5, 206, 120, 0.3)',
+              }}
+            >
+              Back us on Kickstarter
+            </a>
+          </nav>
+        </div>
+      )}
+
+      <CartPopup open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <style>{`
+        .og-header-desktop {
+          display: inline-flex;
+          align-items: center;
+        }
+        .og-header-mobile {
+          display: none !important;
+        }
         @media (max-width: 768px) {
           .og-header-desktop {
             display: none !important;
           }
-        }
-        .og-header-desktop {
-          display: inline-flex;
-          align-items: center;
+          .og-header-mobile {
+            display: grid !important;
+          }
         }
       `}</style>
     </>

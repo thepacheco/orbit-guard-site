@@ -8,6 +8,10 @@ import type { Variant } from './types';
 import * as LucideIcons from 'lucide-react';
 import NotifyForm from './NotifyForm';
 import { SITE_CONFIG } from '../config/products';
+import dynamic from 'next/dynamic';
+import confetti from 'canvas-confetti';
+
+const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false });
 
 export function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
@@ -128,24 +132,8 @@ export function AboutOrbit({ v }: { v: Variant }) {
               maxWidth: 520,
             }}
           >
-            Five soft TPU shells clip onto every caster on your chair. They wrap, they cushion,
-            they roll. Your cat&apos;s tail, your laptop cable and your big toe will never know
-            they were close.
+            Orbit guards fit into every caster wheel on your chair.
           </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3,1fr)',
-              gap: 8,
-              marginTop: 32,
-              borderTop: '1px solid var(--border)',
-              paddingTop: 24,
-            }}
-          >
-            <Stat big="2.1k" small="happy chairs" v={v} />
-            <Stat big="95%" small="chairs fit" v={v} />
-            <Stat big="60d" small="free returns" v={v} />
-          </div>
         </div>
       </div>
     </section>
@@ -155,10 +143,10 @@ export function AboutOrbit({ v }: { v: Variant }) {
 // ──────────────────────────────────────────────────────────────────
 export function HowItWorks({ v }: { v: Variant }) {
   const steps = [
-    { n: '01', title: 'Tip the chair', body: 'Lay it on its side, or have someone hold it. Two seconds.' },
-    { n: '02', title: 'Pop the casters', body: 'Most stems pull out by hand. No tools, no swearing.' },
-    { n: '03', title: 'Click a guard', body: 'One snap per caster. You\'ll hear the cork-soft click.' },
-    { n: '04', title: 'Roll on', body: 'Done. Two minutes start to finish, every time.' },
+    { n: '01', title: 'Tip the chair', body: 'Tip the chair over, lay it on its side, or have someone hold it two seconds.' },
+    { n: '02', title: 'Slide it on', body: 'Slide the OrbitGuard so the wheel fits inside your OrbitGuard.' },
+    { n: '03', title: 'Repeat', body: 'Place chair down and repeat for the other ones.' },
+    { n: '04', title: 'Roll on', body: 'Roll on. Done. Two minutes finish every time.' },
   ];
   return (
     <section
@@ -370,6 +358,8 @@ function StackDiagram({ v }: { v: Variant }) {
 }
 
 export function StemFit({ v }: { v: Variant }) {
+  const [exploded, setExploded] = React.useState(false);
+
   return (
     <section
       style={{
@@ -409,16 +399,14 @@ export function StemFit({ v }: { v: Variant }) {
             style={{
               fontFamily: 'var(--font-ui)',
               fontWeight: 700,
-              fontSize: 'clamp(36px, 3.8vw, 56px)',
+              fontSize: 'clamp(32px, 3.8vw, 48px)',
               letterSpacing: '-0.02em',
-              lineHeight: 1.05,
+              lineHeight: 1.1,
               margin: '10px 0 22px',
             }}
           >
-            One guard is{' '}
-            <em style={{ fontStyle: 'normal', color: vAccent(v) }}>2.5 cm</em>.<br />
-            Two stacked is{' '}
-            <em style={{ fontStyle: 'normal', color: vAccent(v) }}>5 cm</em>.
+            Stackable protection.<br />
+            <em style={{ fontStyle: 'normal', color: vAccent(v) }}>Custom height.</em>
           </h2>
           <p
             style={{
@@ -431,20 +419,46 @@ export function StemFit({ v }: { v: Variant }) {
             }}
           >
             Every Orbit clips on at 2.5cm tall. Stack a second one on top for taller stems, gaming
-            chairs, or to dial in your roll height. Every pack ships with{' '}
-            <strong style={{ color: 'var(--fg)' }}>one extra guard</strong> — for stacking, or
-            just in case.
+            chairs, or to dial in your preferred roll height. The orbits can go from 5 centimeters to 2 centimeters.
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 28 }}>
-            <Pill v={v} icon="Ruler" label="2.5 cm single" />
-            <Pill v={v} icon="Layers" label="5 cm stacked" />
-            <Pill v={v} icon="Gift" label="+1 spare in every pack" />
-          </div>
         </div>
 
-        {/* RIGHT: stacked-puck diagram */}
-        <div style={{ position: 'relative', height: 380, display: 'grid', placeItems: 'center' }}>
-          <StackDiagram v={v} />
+        {/* RIGHT: 3D interactive model */}
+        <div style={{ position: 'relative', height: 420, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ position: 'absolute', inset: -40, transform: exploded ? 'scale(0.8)' : 'scale(1)', transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={exploded} />
+          </div>
+          
+          <div style={{ position: 'absolute', bottom: -40, zIndex: 20 }}>
+            <button
+              onClick={() => setExploded(!exploded)}
+              style={{
+                background: '#fff',
+                border: '1px solid var(--border)',
+                color: 'var(--fg)',
+                padding: '10px 20px',
+                borderRadius: 999,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.borderColor = vAccent(v);
+                e.currentTarget.style.color = vAccent(v);
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.color = 'var(--fg)';
+              }}
+            >
+              {exploded ? 'Attach pieces' : 'Separate pieces'}
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -524,9 +538,22 @@ export function Kickstarter({ v }: { v: Variant }) {
 
   React.useEffect(() => {
     if (!visible) return;
-    const t = setTimeout(() => setBarWidth(85), 300);
+    const targetWidth = Math.min(SITE_CONFIG.kickstarterFunded, 100);
+    const t = setTimeout(() => {
+      setBarWidth(targetWidth);
+      if (SITE_CONFIG.kickstarterFunded >= 100) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#05CE78', '#5A74FF', '#FF90FE']
+        });
+      }
+    }, 300);
     return () => clearTimeout(t);
   }, [visible]);
+
+  const isFunded = SITE_CONFIG.kickstarterFunded >= 100;
 
   const raised = useCountUp(Math.round(SITE_CONFIG.kickstarterRaised / 1000), 1800, visible);
   const backers = useCountUp(SITE_CONFIG.kickstarterBackers, 1800, visible);
@@ -603,7 +630,7 @@ export function Kickstarter({ v }: { v: Variant }) {
               maxWidth: 320,
             }}
           >
-            Backed by {SITE_CONFIG.kickstarterBackers.toLocaleString()} chair-owners (and counting). Ships from Atlanta this fall.
+            Backed by {SITE_CONFIG.kickstarterBackers.toLocaleString()} chair-owners (and counting). Ships out this fall.
           </div>
         </div>
 
@@ -621,27 +648,54 @@ export function Kickstarter({ v }: { v: Variant }) {
         >
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
             <KStat value={`$${raised}k`} small="raised so far" />
-            <KStat value={backers >= 1000 ? `${(backers / 1000).toFixed(backers % 1000 === 0 ? 0 : 1).replace(/\.0$/, '')},${String(backers).slice(-3).padStart(3, '0')}` : String(backers)} small="backers" />
+            <KStat value={backers >= 1000 ? backers.toLocaleString() : String(backers)} small="backers" />
             <KStat value={String(days)} small="days to go" />
           </div>
           <div
             style={{
-              height: 8,
+              height: 12,
               borderRadius: 999,
               background: 'rgba(255,255,255,0.1)',
               overflow: 'hidden',
+              position: 'relative',
             }}
           >
             <div
               style={{
                 width: `${barWidth}%`,
                 height: '100%',
-                background: '#05CE78',
+                background: isFunded ? 'linear-gradient(90deg, #F59E0B, #FBBF24, #F59E0B)' : '#05CE78',
+                backgroundSize: '200% 100%',
                 borderRadius: 999,
                 transition: 'width 2s cubic-bezier(.16,.84,.32,1)',
+                animation: isFunded ? 'ogGoldShine 2s linear infinite' : 'none',
+                boxShadow: isFunded ? '0 0 10px rgba(251, 191, 36, 0.5)' : 'none',
               }}
             />
+            {isFunded && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                  animation: 'ogShineSweep 2s ease-in-out infinite',
+                }}
+              />
+            )}
           </div>
+          <style>{`
+            @keyframes ogGoldShine {
+              0% { background-position: 100% 0; }
+              100% { background-position: -100% 0; }
+            }
+            @keyframes ogShineSweep {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(100%); }
+            }
+          `}</style>
           <div
             style={{
               display: 'flex',
@@ -659,8 +713,7 @@ export function Kickstarter({ v }: { v: Variant }) {
                 maxWidth: 380,
               }}
             >
-              Early-bird perks: 3 stretch goals unlocked, including a free spare guard and the
-              Polar finish.
+              Early-bird perks: 3 stretch goals unlocked.
             </div>
             <a
               href={SITE_CONFIG.kickstarterUrl}
@@ -925,21 +978,19 @@ export function FooterCta({ v }: { v: Variant }) {
           {/* Top row: OrbitGuard parent lockup, masked to brand blue */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 28 }}>
             <div
-              role="img"
-              aria-label="OrbitGuard"
               style={{
-                height: 42,
-                width: 260,
-                background: 'var(--og-blue)',
-                WebkitMaskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
-                maskImage: 'url(/assets/orbitguard-lockup-white-solid.png)',
+                width: 140,
+                height: 26,
+                background: '#5A74FF',
+                WebkitMaskImage: "url('/assets/svg/OrbitGuard.svg')",
+                maskImage: "url('/assets/svg/OrbitGuard.svg')",
                 WebkitMaskRepeat: 'no-repeat',
                 maskRepeat: 'no-repeat',
                 WebkitMaskPosition: 'left center',
                 maskPosition: 'left center',
                 WebkitMaskSize: 'contain',
                 maskSize: 'contain',
-              } as React.CSSProperties}
+              }}
             />
           </div>
           <div
@@ -953,7 +1004,7 @@ export function FooterCta({ v }: { v: Variant }) {
           >
             <FootCol title="Shop" items={[{ label: 'All colors', href: '/shop' }, { label: '5-pack', href: '/shop' }]} />
             <FootCol title="Learn" items={[{ label: 'How it works', href: '/#how' }, { label: 'FAQ', href: '/faq' }]} />
-            <FootCol title="Company" items={[{ label: 'About', href: '/about' }, { label: 'Press', href: '/press' }]} />
+            <FootCol title="Company" items={[{ label: 'About', href: '/about' }, { label: 'Press', href: '/press' }, { label: 'Admin', href: '/admin' }]} />
             <FootCol title="Help" items={[{ label: 'Contact', href: '/contact' }]} />
           </div>
           <div
@@ -970,7 +1021,7 @@ export function FooterCta({ v }: { v: Variant }) {
           >
             <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>© 2026 OrbitGuard, Inc.</div>
             <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>
-              An OrbitGuard product · Made in Atlanta
+              Made in Atlanta
             </div>
           </div>
         </div>

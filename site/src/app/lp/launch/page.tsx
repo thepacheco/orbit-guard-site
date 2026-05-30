@@ -4,6 +4,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '../../../components/Header';
 import { PRODUCT_VARIANTS } from '../../../components/data';
 import type { Variant } from '../../../components/types';
+import dynamic from 'next/dynamic';
+
+const Product3DViewer = dynamic(() => import('../../../components/Product3DViewer'), { ssr: false });
 
 const onyxVariant = PRODUCT_VARIANTS.find((v: Variant) => v.key === 'onyx')!;
 
@@ -70,73 +73,39 @@ function useCountUp(
   return count;
 }
 
-function spawnConfetti(paletteColors: string[]) {
-  const container = document.createElement('div');
-  container.style.cssText =
-    'position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;';
-  document.body.appendChild(container);
+import confetti from 'canvas-confetti';
 
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
-  const particles: { el: HTMLDivElement; vx: number; vy: number; gravity: number }[] = [];
+let confettiInterval: ReturnType<typeof setInterval> | null = null;
 
-  for (let i = 0; i < 60; i++) {
-    const el = document.createElement('div');
-    const color = paletteColors[i % paletteColors.length];
-    el.style.cssText = `
-      position:absolute;
-      width:8px;height:8px;
-      background:${color};
-      left:${centerX}px;top:${centerY}px;
-      border-radius:2px;
-      opacity:1;
-    `;
-    container.appendChild(el);
-    const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 0.5;
-    const speed = 4 + Math.random() * 8;
-    particles.push({
-      el,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 4,
-      gravity: 0.15 + Math.random() * 0.1,
+function startConfettiWaterfall(paletteColors: string[]) {
+  if (confettiInterval) return;
+  confettiInterval = setInterval(() => {
+    confetti({
+      particleCount: 2,
+      angle: 270,
+      spread: 90,
+      startVelocity: 10,
+      gravity: 0.6,
+      origin: { x: Math.random(), y: -0.1 },
+      colors: paletteColors,
+      disableForReducedMotion: true,
+      zIndex: 999,
+      ticks: 300,
     });
-  }
-
-  const startTime = performance.now();
-  const duration = 2000;
-
-  function animateParticles(now: number) {
-    const elapsed = now - startTime;
-    const progress = elapsed / duration;
-
-    if (progress >= 1) {
-      document.body.removeChild(container);
-      return;
-    }
-
-    particles.forEach((p) => {
-      p.vy += p.gravity;
-      const x = centerX + p.vx * elapsed * 0.06;
-      const y = centerY + p.vy * elapsed * 0.06;
-      p.el.style.left = `${x}px`;
-      p.el.style.top = `${y}px`;
-      p.el.style.opacity = String(Math.max(0, 1 - progress * 1.5));
-    });
-
-    requestAnimationFrame(animateParticles);
-  }
-
-  requestAnimationFrame(animateParticles);
-
-  setTimeout(() => {
-    if (document.body.contains(container)) {
-      document.body.removeChild(container);
-    }
-  }, 3000);
+  }, 150);
 }
 
-export default function LaunchLandingPage() {
-  const [accentHex, setAccentHex] = useState('#4361EE');
+  export default function LaunchLandingPage() {
+    useEffect(() => {
+      return () => {
+        if (confettiInterval) {
+          clearInterval(confettiInterval);
+          confettiInterval = null;
+        }
+      };
+    }, []);
+
+    const [accentHex, setAccentHex] = useState('#4361EE');
   const [barWidth, setBarWidth] = useState(0);
   const [barColor, setBarColor] = useState(accentHex);
   const [confettiFired, setConfettiFired] = useState(false);
@@ -172,7 +141,7 @@ export default function LaunchLandingPage() {
     if (!confettiFired) {
       setConfettiFired(true);
       setBarColor('#FFD700');
-      spawnConfetti(PALETTE.map((p) => p.hex));
+      startConfettiWaterfall(PALETTE.map((p) => p.hex));
     }
   }, [confettiFired]);
 
@@ -194,13 +163,15 @@ export default function LaunchLandingPage() {
     if (!confettiFired) {
       setBarColor(hex);
     }
-    setConfettiFired(false);
   };
+
+  const activeVariant = PRODUCT_VARIANTS.find(v => v.hex === accentHex) || PRODUCT_VARIANTS[0];
+  const matchTextColor = activeVariant.dark ? '#fff' : accentHex;
 
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - var(--og-announce-h, 0px))',
         background: '#15171B',
         color: '#fff',
         fontFamily: 'var(--font-ui)',
@@ -266,258 +237,151 @@ export default function LaunchLandingPage() {
         />
       </div>
 
-      <Header dark={true} variant={onyxVariant} />
-
       {/* Content layer */}
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Top: Orbit icon mark */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 24px 0', paddingTop: 100 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/orbit-icon-mark.png"
-            alt="Orbit"
-            width={48}
-            height={48}
-            style={{ width: 48, height: 48 }}
-          />
-        </div>
+        <Header dark={true} variant={onyxVariant} />
+        
 
-        {/* Hero */}
-        <section
-          style={{
-            padding: '64px 56px 32px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: 20,
-          }}
-        >
-          <h1
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 800,
-              fontSize: 'clamp(56px, 8vw, 96px)',
-              letterSpacing: '-0.03em',
-              lineHeight: 1.0,
-              margin: 0,
-              maxWidth: 900,
-            }}
-          >
-            11 colors. One chair.
-          </h1>
-          <div
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 800,
-              fontSize: 'clamp(32px, 4.5vw, 56px)',
-              letterSpacing: '-0.02em',
-              color: accentHex,
-              transition: 'color 400ms ease',
-            }}
-          >
-            Zero excuses.
-          </div>
 
-          {/* Palette picker */}
-          <div
-            style={{
-              display: 'flex',
-              gap: 10,
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              padding: '18px 24px',
-              background: 'rgba(255,255,255,0.06)',
-              borderRadius: 999,
-              border: '1px solid rgba(255,255,255,0.08)',
-              marginTop: 8,
-            }}
-          >
-            {PALETTE.map((p) => {
-              const isSelected = p.hex === accentHex;
-              return (
-                <button
-                  key={p.hex}
-                  onClick={() => handleColorChange(p.hex)}
-                  title={p.name}
-                  aria-label={`Select ${p.name}`}
-                  style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: '50%',
-                    background: p.hex,
-                    border: 'none',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                    boxShadow: isSelected
-                      ? `0 0 0 3px #15171B, 0 0 0 5px ${p.hex}`
-                      : '0 2px 6px rgba(0,0,0,0.4)',
-                    transition: 'box-shadow 200ms ease, transform 150ms ease',
-                    transform: isSelected ? 'scale(1.15)' : 'scale(1)',
-                  }}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Kickstarter stats */}
+        {/* Hero — everything in one viewport */}
         <section
           ref={sectionRef}
+          className="og-lp-grid"
           style={{
-            padding: '32px 56px 40px',
-            display: 'flex',
-            justifyContent: 'center',
+            padding: '120px 56px 80px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            alignItems: 'center',
+            gap: 48,
+            minHeight: 'calc(100vh - var(--og-announce-h, 0px))',
+            position: 'relative',
           }}
         >
-          <div
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              borderRadius: 24,
-              padding: '32px 40px',
-              border: '1px solid rgba(255,255,255,0.08)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 20,
-              textAlign: 'center',
-              maxWidth: 540,
-              width: '100%',
-            }}
-          >
-            {/* 342% funded heading */}
+          {/* LEFT: Copy & CTA */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32, maxWidth: 600 }}>
             <div>
-              <div
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFD700', fontWeight: 700, display: 'inline-block', background: 'rgba(255,215,0,0.1)', padding: '6px 16px', borderRadius: 999, marginBottom: 24 }}>
+                Now live on Kickstarter
+              </div>
+              <h1
                 style={{
                   fontFamily: 'var(--font-ui)',
                   fontWeight: 800,
                   fontSize: 'clamp(48px, 6vw, 72px)',
                   letterSpacing: '-0.03em',
-                  lineHeight: 0.95,
-                  color: '#05CE78',
+                  lineHeight: 1.0,
+                  margin: '0 0 16px',
                 }}
               >
-                {funded}%
-              </div>
+                One chair. 11 colors.
+              </h1>
               <div
                 style={{
                   fontFamily: 'var(--font-ui)',
-                  fontWeight: 700,
-                  fontSize: 20,
-                  color: 'rgba(255,255,255,0.6)',
-                  marginTop: 4,
+                  fontWeight: 800,
+                  fontSize: 'clamp(28px, 4vw, 42px)',
+                  letterSpacing: '-0.02em',
+                  color: matchTextColor,
+                  transition: 'color 400ms ease',
                 }}
               >
-                funded
+                Match any setup.
               </div>
             </div>
 
-            {/* Progress bar */}
-            <div
-              style={{
-                height: 8,
-                width: '100%',
-                borderRadius: 999,
-                background: 'rgba(255,255,255,0.1)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  width: `${barWidth}%`,
-                  height: '100%',
-                  background: barColor,
-                  borderRadius: 999,
-                  transition: 'width 2s cubic-bezier(.16,.84,.32,1), background 400ms ease',
-                }}
-              />
-            </div>
-
-            {/* Stats row */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3,1fr)',
-                gap: 16,
-                width: '100%',
-              }}
-            >
-              {[
-                { value: `$${raised}k`, label: 'raised' },
-                { value: formatBackers(backers), label: 'backers' },
-                { value: String(days), label: 'days left' },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-ui)',
-                      fontWeight: 800,
-                      fontSize: 24,
-                      letterSpacing: '-0.02em',
-                      color: '#fff',
-                    }}
-                  >
-                    {stat.value}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 10, flexWrap: 'wrap' }}>
+              {/* Animated pulse ring around stats */}
+              <div style={{ position: 'relative', width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `3px solid ${barColor}`, opacity: 0.3, animation: 'ogPulseRing 2s ease-out infinite' }} />
+                <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: `2px solid ${barColor}`, opacity: 0.15, animation: 'ogPulseRing 2s ease-out infinite 0.5s' }} />
+                <style>{`
+                  @keyframes ogPulseRing {
+                    0% { transform: scale(0.8); opacity: 0.4; }
+                    100% { transform: scale(1.4); opacity: 0; }
+                  }
+                `}</style>
+                <div style={{ textAlign: 'center', zIndex: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 46, letterSpacing: '-0.03em', lineHeight: 0.95, color: '#05CE78' }}>
+                    {funded}%
                   </div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 10,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.12em',
-                      color: 'rgba(255,255,255,0.5)',
-                      marginTop: 4,
-                    }}
-                  >
-                    {stat.label}
+                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>
+                    funded
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* CTA & Mini Stats */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16 }}>
+                <a
+                  href="https://kickstarter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    background: accentHex, color: textColor, borderRadius: 999, padding: '20px 48px',
+                    fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 18, textDecoration: 'none',
+                    display: 'inline-flex', alignItems: 'center', gap: 10,
+                    boxShadow: `0 14px 40px ${accentHex}55`,
+                    transition: 'background 400ms ease, box-shadow 400ms ease, color 200ms ease',
+                  }}
+                >
+                  Back us on Kickstarter →
+                </a>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em' }}>
+                  <span style={{ color: '#05CE78' }}>${raised}k raised</span> · <span style={{ color: '#05CE78' }}>{formatBackers(backers)} backers</span> · <span style={{ color: '#05CE78' }}>{days} days left</span>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
 
-        {/* CTA */}
-        <section
-          style={{
-            padding: '8px 56px 100px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 16,
-          }}
-        >
-          <a
-            href="https://kickstarter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              background: accentHex,
-              color: textColor,
-              borderRadius: 999,
-              padding: '20px 48px',
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 800,
-              fontSize: 18,
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
-              boxShadow: `0 14px 40px ${accentHex}55`,
-              transition: 'background 400ms ease, box-shadow 400ms ease, color 200ms ease',
-            }}
-          >
-            Back us on Kickstarter →
-          </a>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.4)',
-              letterSpacing: '0.08em',
-            }}
-          >
-            342% funded · 2,140 backers · 14 days left
+          {/* RIGHT: 3D Orbit & Palette */}
+          <div style={{ position: 'relative', height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 450, height: 450, position: 'relative', zIndex: 10, animation: 'ogFarToClose 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+              <Product3DViewer topColor={accentHex} bottomColor={accentHex} exploded={false} />
+            </div>
+
+            {/* Vertical palette picker */}
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12,
+                padding: '16px 12px',
+                background: 'rgba(255,255,255,0.06)',
+                borderRadius: 999,
+                border: '1px solid rgba(255,255,255,0.08)',
+                zIndex: 20,
+              }}
+            >
+              {PALETTE.map((p) => {
+                const isSelected = p.hex === accentHex;
+                return (
+                  <button
+                    key={p.hex}
+                    onClick={() => handleColorChange(p.hex)}
+                    title={p.name}
+                    aria-label={`Select ${p.name}`}
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: '50%',
+                      background: p.hex,
+                      border: 'none',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      boxShadow: isSelected
+                        ? `0 0 0 3px #15171B, 0 0 0 5px ${p.hex}`
+                        : '0 2px 6px rgba(0,0,0,0.4)',
+                      transition: 'box-shadow 200ms ease, transform 150ms ease',
+                      transform: isSelected ? 'scale(1.15)' : 'scale(1)',
+                    }}
+                  />
+                );
+              })}
+            </div>
           </div>
         </section>
       </div>

@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { DynIcon } from './primitives';
 import type { Variant, FloatChip } from './types';
+
+const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false });
 
 function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
@@ -17,23 +20,11 @@ function PuckView({ v }: { v: Variant }) {
         position: 'relative',
         width: 340,
         height: 340,
-        borderRadius: '50%',
-        background: v.hex,
-        boxShadow: `inset 0 0 0 38px rgba(255,255,255,0.32), 0 30px 60px rgba(0,0,0,0.18)`,
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          inset: '50%',
-          width: 92,
-          height: 92,
-          transform: 'translate(-50%,-50%)',
-          borderRadius: '50%',
-          background: v.bg,
-          boxShadow: 'inset 0 0 0 6px rgba(0,0,0,0.06)',
-        }}
-      />
+      <div style={{ position: 'absolute', inset: -40, animation: 'ogScaleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+        <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={false} cameraPosition={[0, 3.5, 3.0]} />
+      </div>
     </div>
   );
 }
@@ -204,6 +195,7 @@ function FeatureChip({ v, chip, style }: { v: Variant; chip: FloatChip; style?: 
         fontWeight: 600,
         backdropFilter: 'blur(8px)',
         whiteSpace: 'nowrap',
+        zIndex: 20,
       }}
     >
       <span
@@ -240,23 +232,29 @@ export default function ProductHero({ v, view = 'product' }: ProductHeroProps) {
         placeItems: 'center',
       }}
     >
-      {/* Arched backdrop */}
-      <svg
-        viewBox="0 0 480 660"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-        preserveAspectRatio="xMidYMid meet"
+      {/* Irregular blob backdrop */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 360,
+          height: 360,
+          zIndex: 0,
+        }}
       >
-        <defs>
-          <linearGradient id={`arch-${v.key}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={v.dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)'} />
-            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M 80 620 L 80 260 A 160 160 0 0 1 400 260 L 400 620 Z"
-          fill={`url(#arch-${v.key})`}
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            background: v.hex,
+            opacity: v.dark ? 0.2 : 0.15,
+            borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+            animation: 'ogSpin 40s linear infinite alternate',
+          }}
         />
-      </svg>
+      </div>
 
       {/* Orbital ring */}
       {view === 'product' && (

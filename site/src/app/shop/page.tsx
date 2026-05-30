@@ -6,7 +6,7 @@ export default function Page() {
   const blueberryVariant = PRODUCT_VARIANTS.find(v => v.key === 'blueberry') ?? PRODUCT_VARIANTS[0];
   return (
     <>
-      <Header variant={blueberryVariant} dark={false} />
+      
       <ShopPage />
     </>
   );

@@ -37,19 +37,13 @@ export default function AnnounceBar() {
   // null until mounted, so server and first client render match (SSR safe).
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
   const [visible, setVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Read dismissal state on the client only.
-    const dismissed =
-      typeof window !== 'undefined' &&
-      window.localStorage.getItem(DISMISS_KEY) === '1';
-    if (dismissed) {
-      setVisible(false);
-      return;
-    }
-
     setVisible(true);
     setTimeLeft(computeTimeLeft());
+    setMounted(true);
+    
     const id = setInterval(() => setTimeLeft(computeTimeLeft()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -73,7 +67,7 @@ export default function AnnounceBar() {
     setVisible(false);
   };
 
-  if (!visible) return null;
+  if (!mounted || !visible) return null;
 
   // Stable placeholder until mounted (timeLeft === null) to avoid hydration mismatch.
   let timerNode: React.ReactNode;
@@ -122,8 +116,8 @@ export default function AnnounceBar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'var(--og-blue)',
-        color: '#fff',
+        background: '#05CE78', // Kickstarter green
+        color: '#0A0A0A',
         fontFamily: 'var(--font-ui)',
         fontSize: 14,
         lineHeight: 1,
@@ -161,30 +155,45 @@ export default function AnnounceBar() {
             rel="noopener noreferrer"
             className="og-announce-link"
             style={{
-              color: '#fff',
+              color: '#0A0A0A',
               textDecoration: 'none',
-              fontWeight: 700,
+              fontWeight: 800,
               whiteSpace: 'nowrap',
+              background: '#FFD700',
+              padding: '6px 14px',
+              borderRadius: 999,
+              marginLeft: 12,
+              boxShadow: '0 4px 12px rgba(255,215,0,0.32)',
             }}
           >
             Now live — back us on Kickstarter →
           </a>
         ) : (
           <>
-            <span style={{ whiteSpace: 'nowrap', opacity: 0.95 }}>
+            <span className="og-hide-mobile" style={{ whiteSpace: 'nowrap', opacity: 0.95 }}>
               {`${SITE_CONFIG.kickstarterFunded}% funded`} — launches in
             </span>
-            {timerNode}
+            <span className="og-show-mobile" style={{ whiteSpace: 'nowrap', opacity: 0.95, fontWeight: 700 }}>
+              {`${SITE_CONFIG.kickstarterFunded}% funded`}
+            </span>
+            <span className="og-hide-mobile">
+              {timerNode}
+            </span>
             <a
               href={SITE_CONFIG.kickstarterUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="og-announce-link"
               style={{
-                color: '#fff',
+                color: '#0A0A0A',
                 textDecoration: 'none',
-                fontWeight: 700,
+                fontWeight: 800,
                 whiteSpace: 'nowrap',
+                background: '#FFD700',
+                padding: '6px 14px',
+                borderRadius: 999,
+                marginLeft: 12,
+                boxShadow: '0 4px 12px rgba(255,215,0,0.32)',
               }}
             >
               Back us →
@@ -208,7 +217,7 @@ export default function AnnounceBar() {
           placeItems: 'center',
           background: 'transparent',
           border: 'none',
-          color: '#fff',
+          color: '#0A0A0A',
           opacity: 0.8,
           cursor: 'pointer',
           fontSize: 18,

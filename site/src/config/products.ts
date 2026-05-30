@@ -26,10 +26,8 @@ export const SITE_CONFIG = {
 
   // Pricing
   packPricing: [
-    { count: 1,  price: 6,  label: 'Single',     tag: null },
-    { count: 5,  price: 24, label: 'One chair',  tag: null },
-    { count: 6,  price: 28, label: '+1 spare',   tag: 'Best for 1' },
-    { count: 10, price: 44, label: 'Two chairs', tag: null },
-    { count: 12, price: 48, label: 'Bulk',       tag: 'Save 33%' },
+    { count: 5,  price: 24, label: '',  tag: null },
+    { count: 6,  price: 28, label: '',   tag: null },
+    { count: 10, price: 44, label: '', tag: null },
   ],
 } as const;

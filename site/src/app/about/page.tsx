@@ -22,7 +22,7 @@ const POLAR: Variant = {
 export default function AboutPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
-      <Header dark={false} variant={POLAR} />
+      
 
       {/* Hero */}
       <section
@@ -55,28 +55,16 @@ export default function AboutPage() {
           style={{
             fontFamily: 'var(--font-ui)',
             fontWeight: 800,
-            fontSize: 'clamp(36px, 4.5vw, 60px)',
+            fontSize: 'clamp(32px, 4vw, 52px)',
             letterSpacing: '-0.025em',
-            lineHeight: 1.05,
+            lineHeight: 1.1,
             margin: '0 0 24px',
             maxWidth: 780,
             color: '#fff',
           }}
         >
-          Built for the spaces between the desk and the floor.
-        </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 18,
-            lineHeight: 1.65,
-            color: 'rgba(255,255,255,0.70)',
-            maxWidth: 520,
-            margin: '0 0 0',
-          }}
-        >
           A small team. A real problem. A simple fix.
-        </p>
+        </h1>
         {/* Orbit icon mark */}
         <img
           src="/assets/orbit-wordmark-white.png"
@@ -88,12 +76,14 @@ export default function AboutPage() {
 
       {/* Origin section */}
       <section
+        className="og-about-section"
         style={{
           padding: '100px 56px',
           background: '#fff',
         }}
       >
         <div
+          className="og-about-origin-grid"
           style={{
             maxWidth: 1180,
             margin: '0 auto',
@@ -106,6 +96,7 @@ export default function AboutPage() {
           {/* LEFT */}
           <div>
             <div
+              className="og-about-big-year"
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 800,
@@ -115,7 +106,7 @@ export default function AboutPage() {
                 letterSpacing: '-0.04em',
               }}
             >
-              2026
+              2023
             </div>
             <div
               style={{
@@ -156,20 +147,8 @@ export default function AboutPage() {
               }}
             >
               Every office chair has five wheels. Every wheel is a hazard. A tail, a charging cable, a bare foot at midnight
-              — all of them find the wheel eventually. We built Orbit to sit between the floor and the wheel, quietly doing
+              — all of them find the wheel eventually. We built Orbit to sit between the floor and the wheel, safely doing
               nothing until it needs to do everything. Small, soft, and out of sight.
-            </p>
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 17,
-                lineHeight: 1.7,
-                color: 'var(--fg-2)',
-                margin: 0,
-              }}
-            >
-              We&apos;re a small team in Atlanta. We design everything here, manufacture in small runs, and ship every order
-              ourselves. That&apos;s not a selling point — it&apos;s just how we prefer to work.
             </p>
           </div>
         </div>
@@ -177,6 +156,7 @@ export default function AboutPage() {
 
       {/* Values section */}
       <section
+        className="og-about-section"
         style={{
           padding: '100px 56px',
           background: '#F6F6F4',
@@ -220,6 +200,7 @@ export default function AboutPage() {
             </h2>
           </div>
           <div
+            className="og-about-values-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
@@ -236,8 +217,8 @@ export default function AboutPage() {
                 body: 'Not labs or showrooms. Homes with pets, cables, bare feet, and hardwood floors.',
               },
               {
-                title: 'Built to last',
-                body: 'Soft TPU that doesn\'t yellow or crack. Replace the chair before you replace the Orbit.',
+                title: 'Made for daily use',
+                body: 'Used on carpet or hardwood and is durable to take the tough hits.',
               },
             ].map(card => (
               <div
@@ -278,61 +259,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Stats row */}
-      <section
-        style={{
-          padding: '80px 56px',
-          background: '#5A74FF',
-          color: '#fff',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1180,
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 24,
-            textAlign: 'center',
-          }}
-        >
-          {[
-            { big: '2,140', label: 'chairs protected' },
-            { big: '4.9', label: 'average rating' },
-            { big: '11', label: 'colors' },
-            { big: '60-day', label: 'free returns' },
-          ].map(stat => (
-            <div key={stat.big}>
-              <div
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 800,
-                  fontSize: 48,
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1,
-                  marginBottom: 8,
-                }}
-              >
-                {stat.big}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  opacity: 0.75,
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Team section */}
       <section
+        className="og-about-section"
         style={{
           padding: '120px 56px',
           background: '#fff',
@@ -388,7 +318,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <FooterCta v={POLAR} />
+      
     </div>
   );
 }

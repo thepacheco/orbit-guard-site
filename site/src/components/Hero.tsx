@@ -96,9 +96,9 @@ function PackSelector({
           padding: 4,
           gap: 4,
           borderRadius: 14,
-          background: dark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)',
+          background: 'rgba(255,255,255,0.5)',
           backdropFilter: 'blur(8px)',
-          border: `1px solid ${dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.05)'}`,
+          border: '1px solid rgba(0,0,0,0.05)',
         }}
       >
         {PACK_SIZES.map((p, i) => {
@@ -114,11 +114,13 @@ function PackSelector({
                 padding: '10px 0',
                 borderRadius: 10,
                 background: active ? vAccent(v) : 'transparent',
-                color: active ? '#fff' : dark ? 'rgba(255,255,255,0.8)' : 'var(--fg-2)',
+                color: active ? '#fff' : 'var(--fg-2)',
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 700,
                 fontSize: 14,
                 transition: 'all 160ms var(--ease-out)',
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             >
               {p.count}
@@ -173,9 +175,9 @@ function PalettePicker({
           padding: 8,
           gap: 6,
           borderRadius: 999,
-          background: v.dark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)',
+          background: 'rgba(255,255,255,0.5)',
           backdropFilter: 'blur(8px)',
-          border: `1px solid ${v.dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.05)'}`,
+          border: '1px solid rgba(0,0,0,0.05)',
           flexWrap: 'wrap',
           width: 'fit-content',
         }}
@@ -232,9 +234,9 @@ function ViewToggle({
         padding: 4,
         gap: 4,
         borderRadius: 999,
-        background: v.dark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)',
+        background: 'rgba(255,255,255,0.5)',
         backdropFilter: 'blur(8px)',
-        border: `1px solid ${v.dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.05)'}`,
+        border: '1px solid rgba(0,0,0,0.05)',
         alignSelf: 'flex-start',
       }}
     >
@@ -280,10 +282,10 @@ function FeatureRow({ v, f }: { v: Variant; f: { icon: string; title: string; su
         gridTemplateColumns: '44px 1fr',
         gap: 14,
         padding: '12px 14px',
-        background: v.dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
+        background: 'rgba(255,255,255,0.55)',
         backdropFilter: 'blur(6px)',
         borderRadius: 14,
-        border: `1px solid ${v.dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.05)'}`,
+        border: '1px solid rgba(0,0,0,0.05)',
         alignItems: 'center',
       }}
     >
@@ -374,7 +376,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
         display: 'grid',
         gridTemplateColumns: '0.95fr 1fr 1.05fr',
         alignItems: 'center',
-        padding: '150px 64px 60px',
+        padding: '100px 64px 60px',
         gap: 32,
         position: 'relative',
         overflow: 'hidden',

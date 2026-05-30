@@ -114,7 +114,12 @@
 }
 
 .og-announce-label { display: inline; }
-@media (max-width: 600px) { .og-announce-label { display: none !important; } }
+.og-show-mobile { display: none; }
+@media (max-width: 600px) { 
+  .og-announce-label { display: none !important; } 
+  .og-hide-mobile { display: none !important; }
+  .og-show-mobile { display: inline !important; }
+}
 
 /* ===== Animations ===== */
 @keyframes ogSpin {
@@ -131,9 +136,24 @@
 @keyframes ogFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px, 60px); } }
 @keyframes ogFloat3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px, 50px); } }
 
+@keyframes ogZoomIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 @keyframes ogFadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ogFarToClose {
+  from { opacity: 0; transform: scale(0.1); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ogScaleUp {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes ogChipFloat1 {
@@ -181,34 +201,182 @@ body {
 }
 
 /* ===== Mobile breakpoints ===== */
-@media (max-width: 900px) {
+
+/* ---------- Tablet (≤1024px) ---------- */
+@media (max-width: 1024px) {
   section[data-og-section] {
-    padding-left: 24px !important;
-    padding-right: 24px !important;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
   }
-  section[data-og-grid] > div:first-child {
+}
+
+/* ---------- Small Tablet / Large Phone (≤768px) ---------- */
+@media (max-width: 768px) {
+  /* Header: hide desktop nav items */
+  .og-header-desktop { display: none !important; }
+
+  /* Hero: single column */
+  .og-hero-grid {
+    grid-template-columns: 1fr !important;
+    padding: 100px 24px 40px !important;
+    gap: 24px !important;
+    min-height: auto !important;
+  }
+
+  /* General two-column → single */
+  .og-two-col {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
+  }
+
+  /* HowItWorks steps: 2 col on tablet */
+  .og-four-col { grid-template-columns: 1fr 1fr !important; }
+
+  /* Sections: reduce padding */
+  section[data-og-section] {
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
-}
+  section[data-og-grid] > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 
-@media (max-width: 720px) {
-  h1, h2 {
+  /* Shop Page: single column */
+  .og-shop-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .og-shop-left {
+    position: relative !important;
+    height: 60vh !important;
+    min-height: 400px !important;
+  }
+  .og-shop-right {
+    padding-top: 24px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-bottom: 40px !important;
+  }
+
+  /* LP grids: single column */
+  .og-lp-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding: 100px 24px 60px !important;
+  }
+  .og-lp-hero-text {
+    text-align: center !important;
+    align-items: center !important;
+  }
+
+  /* FAQ: single column */
+  .og-faq-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* About: stats row */
+  .og-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+  }
+  .og-about-values-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .og-about-origin-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  /* Typography: scale down */
+  h1 {
     font-size: 36px !important;
     line-height: 1.1 !important;
   }
+  h2 {
+    font-size: 28px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* Contact form */
+  .og-contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
 }
 
-@media (max-width: 768px) {
-  /* Hero: single column */
-  .og-hero-grid { grid-template-columns: 1fr !important; }
-  /* Sections: single column */
-  .og-two-col { grid-template-columns: 1fr !important; }
-  /* HowItWorks steps: 2 col on mobile */
-  .og-four-col { grid-template-columns: 1fr 1fr !important; }
-}
+/* ---------- Phone (≤480px) ---------- */
 @media (max-width: 480px) {
   .og-four-col { grid-template-columns: 1fr !important; }
+
+  .og-hero-grid {
+    padding: 90px 16px 32px !important;
+    gap: 20px !important;
+  }
+
+  .og-shop-left {
+    height: 50vh !important;
+    min-height: 320px !important;
+  }
+  .og-shop-right {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .og-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .og-lp-grid {
+    padding: 80px 16px 40px !important;
+  }
+
+  h1 {
+    font-size: 28px !important;
+    line-height: 1.1 !important;
+  }
+  h2 {
+    font-size: 24px !important;
+  }
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* About page sections */
+.og-about-section {
+  padding-left: 56px;
+  padding-right: 56px;
+}
+@media (max-width: 768px) {
+  .og-about-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .og-about-big-year {
+    font-size: 100px !important;
+  }
+}
+@media (max-width: 480px) {
+  .og-about-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+  .og-about-big-year {
+    font-size: 72px !important;
+  }
+}
+
+/* Fade-in-up animation for LP pages */
+@keyframes ogFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

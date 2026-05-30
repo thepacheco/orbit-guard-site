@@ -14,14 +14,12 @@ const POLAR: Variant = {
 };
 
 const QUICK_FACTS = [
-  { fact: 'Founded', detail: '2026' },
+  { fact: 'Founded', detail: '2023' },
   { fact: 'Headquarters', detail: 'Atlanta, Georgia' },
-  { fact: 'Product', detail: 'Chair caster guards (soft TPU)' },
+  { fact: 'Product', detail: 'Chair caster guards (soft protective shell)' },
   { fact: 'Sizes', detail: '2.5cm per guard, stackable to 5cm' },
   { fact: 'Colors', detail: 'Blueberry, Clover, Coral, Lavender, Fawn, Rooster, Flamingo, Bear, Pomegranate, Onyx, Polar' },
-  { fact: 'Price', detail: 'From $6 (single) to $48 (12-pack)' },
   { fact: 'Compatibility', detail: '95% of office chairs (7–11mm stems)' },
-  { fact: 'Kickstarter', detail: '342% funded, 2,140 backers' },
 ];
 
 const BRAND_COLORS = [
@@ -36,12 +34,12 @@ export default function PressPage() {
   const polar = PRODUCT_VARIANTS.find(v => v.key === 'polar') ?? PRODUCT_VARIANTS[0];
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
-      <Header dark={false} variant={POLAR} />
+      
 
       {/* Hero */}
       <section
         style={{
-          padding: '160px 56px 80px',
+          padding: '140px 56px 80px',
           background: 'var(--bg-inset)',
           textAlign: 'center',
         }}
@@ -265,70 +263,139 @@ export default function PressPage() {
         </div>
       </section>
 
-      {/* Brand colors */}
+      {/* Colors */}
       <section style={{ padding: '0 56px 80px', background: '#fff' }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: 'var(--fg-3)',
-              marginBottom: 28,
-            }}
-          >
-            Brand colors
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: 32,
-              flexWrap: 'wrap',
-            }}
-          >
-            {BRAND_COLORS.map(color => (
-              <div
-                key={color.hex}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 10,
-                }}
-              >
+        <div style={{ maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 64 }}>
+          {/* Brand colors */}
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: 'var(--fg-3)',
+                marginBottom: 28,
+              }}
+            >
+              Brand colors
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                gap: 24,
+                flexWrap: 'wrap',
+              }}
+            >
+              {BRAND_COLORS.map(color => (
                 <div
+                  key={color.hex}
                   style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    fontSize: 13,
-                    color: 'var(--fg)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 10,
                   }}
                 >
-                  {color.name}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 600,
+                      fontSize: 13,
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {color.name}
+                  </div>
+                  <div
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      background: color.hex,
+                      border: color.hex === '#FFFFFF' ? '1px solid var(--border)' : undefined,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 12,
+                      color: 'var(--fg-3)',
+                    }}
+                  >
+                    {color.hex}
+                  </div>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Product colors */}
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: 'var(--fg-3)',
+                marginBottom: 28,
+              }}
+            >
+              Product colors
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                gap: 24,
+                flexWrap: 'wrap',
+              }}
+            >
+              {PRODUCT_VARIANTS.map(color => (
                 <div
+                  key={color.hex}
                   style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: '50%',
-                    background: color.hex,
-                    border: color.hex === '#FFFFFF' ? '1px solid var(--border)' : undefined,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                  }}
-                />
-                <div
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 12,
-                    color: 'var(--fg-3)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 10,
                   }}
                 >
-                  {color.hex}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 600,
+                      fontSize: 13,
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {color.name}
+                  </div>
+                  <div
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      background: color.hex,
+                      border: color.hex === '#FFFFFF' || color.key === 'polar' ? '1px solid var(--border)' : undefined,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 12,
+                      color: 'var(--fg-3)',
+                    }}
+                  >
+                    {color.hex}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
         </div>
       </section>
 
@@ -439,15 +506,13 @@ export default function PressPage() {
                 fontStyle: 'italic',
               }}
             >
-              &ldquo;Orbit Guard makes soft TPU caster guards for office chairs. Each guard clips onto a chair&apos;s wheels
-              to protect pets, cables, and feet from getting caught in rolling chairs. Available in 11 colors and compatible
-              with 95% of office chairs, Orbit ships from Atlanta, Georgia. orbitguard.com&rdquo;
+              &ldquo;Orbit Guard makes caster guards for office chairs. Each Orbit fits to the chair wheel and protects, kids, pets and cables. It is available in 11 colors.&rdquo;
             </p>
           </blockquote>
         </div>
       </section>
 
-      <FooterCta v={polar} />
+      
     </div>
   );
 }

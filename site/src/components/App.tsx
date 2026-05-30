@@ -1,28 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import Header from './Header';
+import React, { useEffect } from 'react';
 import Hero from './Hero';
-import { AboutOrbit, HowItWorks, StemFit, Reviews, Kickstarter, FooterCta } from './Sections';
+import { AboutOrbit, HowItWorks, StemFit, Reviews, Kickstarter } from './Sections';
 import { PRODUCT_VARIANTS } from './data';
-import { CartProvider } from './CartContext';
+import { useActiveVariant } from './ActiveVariantContext';
 
 export default function App() {
-  const [variantKey, setVariantKey] = useState('blueberry');
-  const variant = PRODUCT_VARIANTS.find(v => v.key === variantKey) || PRODUCT_VARIANTS[0];
+  const { activeVariant, setActiveVariant } = useActiveVariant();
+
+  // For Hero component, we wrap setActiveVariant to take a string key
+  const setVariantKey = (key: string) => {
+    const v = PRODUCT_VARIANTS.find(variant => variant.key === key);
+    if (v) setActiveVariant(v);
+  };
 
   return (
-    <CartProvider>
-      <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
-        <Header dark={variant.dark} variant={variant} />
-        <Hero variant={variant} setVariantKey={setVariantKey} />
-        <AboutOrbit v={variant} />
-        <HowItWorks v={variant} />
-        <StemFit v={variant} />
-        <Reviews v={variant} />
-        <Kickstarter v={variant} />
-        <FooterCta v={variant} />
-      </div>
-    </CartProvider>
+    <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
+      <Hero variant={activeVariant} setVariantKey={setVariantKey} />
+      <AboutOrbit v={activeVariant} />
+      <HowItWorks v={activeVariant} />
+      <StemFit v={activeVariant} />
+      <Reviews v={activeVariant} />
+      <Kickstarter v={activeVariant} />
+    </div>
   );
 }

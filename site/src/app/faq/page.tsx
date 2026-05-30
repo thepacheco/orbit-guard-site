@@ -11,93 +11,42 @@ const polarVariant =
 
 export default function FaqPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
-      <Header variant={polarVariant} dark={false} />
+    <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#F8FBFC' }}>
+      <Header dark={false} variant={polarVariant} />
 
-      {/* Hero */}
-      <section
-        style={{
-          background: '#fff',
-          padding: '140px 56px 64px',
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 11,
-            textTransform: 'uppercase',
-            letterSpacing: '0.14em',
-            color: 'var(--og-blue)',
-            marginBottom: 20,
-          }}
-        >
-          Help
-        </div>
-        <h1
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontWeight: 700,
-            fontSize: 'clamp(40px, 5vw, 60px)',
-            letterSpacing: '-0.03em',
-            lineHeight: 1.05,
-            margin: '0 0 24px',
-            maxWidth: 820,
-          }}
-        >
-          Questions, answered.
-        </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 19,
-            lineHeight: 1.65,
-            color: 'var(--fg-2)',
-            maxWidth: 560,
-            margin: 0,
-          }}
-        >
-          Everything about fit, install, and getting started — in one place.
-        </p>
-      </section>
+      {/* Soft gradient background matching the inspiration */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        background: `
+          radial-gradient(circle at 10% 20%, rgba(255, 228, 225, 0.4) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(224, 255, 255, 0.5) 0%, transparent 40%),
+          radial-gradient(circle at 80% 10%, rgba(240, 248, 255, 0.6) 0%, transparent 50%),
+          radial-gradient(circle at 20% 80%, rgba(250, 235, 215, 0.4) 0%, transparent 40%)
+        `
+      }} />
 
-      {/* FAQ list */}
-      <section
-        style={{
-          padding: '40px 56px 100px',
-          background: '#fff',
-        }}
-      >
-        <div style={{ maxWidth: 820, margin: '0 auto' }}>
-          <Faq />
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 16,
-              lineHeight: 1.6,
-              color: 'var(--fg-2)',
-              margin: '40px 0 0',
-            }}
-          >
-            Still stuck? Email us at{' '}
-            <a
-              href="mailto:hello@orbitguard.com"
-              style={{
-                color: 'var(--og-blue)',
-                textDecoration: 'none',
-                fontWeight: 600,
-              }}
-            >
-              hello@orbitguard.com
-            </a>
-          </p>
-        </div>
-      </section>
+      {/* Floating geometric dots/shapes for the background */}
+      <div style={{ position: 'absolute', top: '15%', left: '20%', width: 12, height: 12, borderRadius: '50%', background: '#8CE3F0', opacity: 0.5, animation: 'ogFloat1 8s ease-in-out infinite' }} />
+      <div style={{ position: 'absolute', top: '25%', left: '8%', width: 24, height: 24, borderRadius: '50%', background: '#FFC8C8', opacity: 0.8, animation: 'ogFloat2 12s ease-in-out infinite alternate' }} />
+      <div style={{ position: 'absolute', top: '10%', right: '40%', width: 16, height: 16, borderRadius: '50%', background: '#C4D2FF', opacity: 0.6, animation: 'ogFloat3 10s ease-in-out infinite reverse' }} />
+      <div style={{ position: 'absolute', top: '30%', right: '15%', width: 32, height: 32, borderRadius: '50%', background: '#BBEAF4', opacity: 0.7, animation: 'ogFloat1 15s ease-in-out infinite alternate' }} />
+      <div style={{ position: 'absolute', bottom: '20%', left: '25%', width: 8, height: 8, borderRadius: '50%', background: '#A390E4', opacity: 0.5, animation: 'ogFloat2 9s ease-in-out infinite' }} />
+      <div style={{ position: 'absolute', bottom: '40%', right: '10%', width: 14, height: 14, borderRadius: '50%', background: '#BBEAF4', opacity: 0.8, animation: 'ogFloat3 11s ease-in-out infinite alternate-reverse' }} />
 
-      <FooterCta v={polarVariant} />
+      <main style={{
+        position: 'relative',
+        zIndex: 10,
+        padding: '100px 40px 100px',
+        minHeight: 'calc(100vh - 80px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Faq />
+      </main>
     </div>
   );
 }

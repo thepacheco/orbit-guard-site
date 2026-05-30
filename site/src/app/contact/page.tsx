@@ -87,7 +87,7 @@ export default function ContactPage() {
               margin: 0,
             }}
           >
-            We&apos;re a small team and we read every message. Expect a reply within one business day.
+            We&apos;re a small team and we read every message. Expect a reply within two to three business days.
           </p>
         </div>
       </section>
@@ -95,6 +95,7 @@ export default function ContactPage() {
       {/* Two-column layout */}
       <section style={{ padding: '80px 56px' }}>
         <div
+          className="og-contact-grid"
           style={{
             maxWidth: 1100,
             margin: '0 auto',
@@ -219,7 +220,7 @@ export default function ContactPage() {
                     lineHeight: 1.6,
                   }}
                 >
-                  We&apos;ll reply to your email within one business day.
+                  We&apos;ll reply to your email within two to three business days.
                 </div>
               </div>
             ) : (
@@ -340,7 +341,7 @@ export default function ContactPage() {
             margin: 0,
           }}
         >
-          Based in Atlanta, Georgia &middot; Reply within 1 business day &middot;{' '}
+          Based in Atlanta, Georgia &middot; Reply within 2 to 3 business days &middot;{' '}
           <a
             href="mailto:hello@orbitguard.com"
             style={{ color: '#5A74FF', textDecoration: 'none', fontWeight: 600 }}
@@ -350,26 +351,7 @@ export default function ContactPage() {
         </p>
       </section>
 
-      {/* Footer */}
-      <footer
-        style={{
-          padding: '32px 56px',
-          borderTop: '1px solid var(--border)',
-          background: '#fff',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 12,
-        }}
-      >
-        <div style={{ fontSize: 12, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
-          &copy; 2026 OrbitGuard, Inc.
-        </div>
-        <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
-          Made in Atlanta
-        </div>
-      </footer>
+
     </div>
   );
 }

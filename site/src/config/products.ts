@@ -11,9 +11,9 @@ export const SITE_CONFIG = {
   shopUrl: '/shop',
 
   // Contact
-  emailGeneral: 'hello@orbitguard.com',
-  emailPress: 'press@orbitguard.com',
-  emailSupport: 'support@orbitguard.com',
+  emailGeneral: 'hello@orbitguards.com',
+  emailPress: 'press@orbitguards.com',
+  emailSupport: 'support@orbitguards.com',
 
   // Kickstarter live stats — update these as they change
   kickstarterFunded: 342,       // percent funded
@@ -26,8 +26,10 @@ export const SITE_CONFIG = {
 
   // Pricing
   packPricing: [
-    { count: 5,  price: 24, label: '',  tag: null },
-    { count: 6,  price: 28, label: '',   tag: null },
+    { count: 1,  price: 6,  label: '', tag: null },
+    { count: 5,  price: 24, label: '', tag: null },
+    { count: 6,  price: 28, label: '', tag: null },
     { count: 10, price: 44, label: '', tag: null },
+    { count: 12, price: 48, label: '', tag: null },
   ],
 } as const;

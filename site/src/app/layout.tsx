@@ -19,7 +19,7 @@ const abeeZee = ABeeZee({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://orbitguard.com'),
+  metadataBase: new URL('https://orbitguards.com'),
   title: {
     default: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
     template: '%s | Orbit Guard',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     siteName: 'Orbit Guard',
     title: 'Orbit Guard — Caster Guards for Pets, Cords & Feet',
     description: 'Soft caster guards that protect pets, cords, and toes. 11 colors, fits 95% of chairs. Live on Kickstarter.',
-    url: 'https://orbitguard.com',
+    url: 'https://orbitguards.com',
     images: [{ url: '/assets/orbit-icon-mark.png', width: 800, height: 800, alt: 'Orbit Guard caster guards' }],
   },
   twitter: {

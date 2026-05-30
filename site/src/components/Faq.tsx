@@ -18,7 +18,7 @@ export const CATEGORIZED_FAQ = [
     items: [
       { q: 'When does Orbit ship?', a: 'We are live on Kickstarter now at 342% funded. Backers get first shipment, shipping from Atlanta this fall. Enter your email on the homepage to get notified the moment orders open.' },
       { q: 'What if they do not fit?', a: 'Return them within 60 days for a full refund — shipping included, no questions asked.' },
-      { q: 'How do I contact support?', a: 'Email us at hello@orbitguard.com and our team will get back to you within 2 to 3 business days to help with any issues.' },
+      { q: 'How do I contact support?', a: 'Email us at hello@orbitguards.com and our team will get back to you within 2 to 3 business days to help with any issues.' },
     ]
   },
   {
@@ -117,7 +117,7 @@ export default function Faq() {
             );
           })}
           <div style={{ marginTop: 24 }}>
-            <a href="mailto:hello@orbitguard.com" style={{
+            <a href="mailto:hello@orbitguards.com" style={{
               display: 'block',
               background: '#5A74FF',
               color: '#fff',

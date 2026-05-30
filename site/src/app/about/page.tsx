@@ -305,14 +305,14 @@ export default function AboutPage() {
           >
             Want to talk? Reach us at{' '}
             <a
-              href="mailto:hello@orbitguard.com"
+              href="mailto:hello@orbitguards.com"
               style={{
                 color: '#5A74FF',
                 textDecoration: 'none',
                 fontWeight: 600,
               }}
             >
-              hello@orbitguard.com
+              hello@orbitguards.com
             </a>
           </p>
         </div>

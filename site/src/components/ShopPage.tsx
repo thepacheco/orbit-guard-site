@@ -862,7 +862,7 @@ function ShopPageContent() {
           }}>
             Configure each guard
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: guardSlots.length === 10 ? 'repeat(5, 1fr)' : guardSlots.length === 12 ? 'repeat(4, 1fr)' : guardSlots.length === 1 ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
             {guardSlots.map((slot, i) => {
               const slotTop = PRODUCT_VARIANTS.find(x => x.key === slot.topKey) || PRODUCT_VARIANTS[0];
               const slotBottom = PRODUCT_VARIANTS.find(x => x.key === slot.bottomKey) || PRODUCT_VARIANTS[1];
@@ -882,7 +882,7 @@ function ShopPageContent() {
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 160ms var(--ease-out)',
-                    minWidth: 220,
+                    width: '100%',
                     boxShadow: isActive ? '0 8px 24px rgba(90,116,255,0.1)' : 'none',
                   }}
                 >

@@ -110,17 +110,17 @@ export default function ContactPage() {
             {[
               {
                 title: 'General',
-                email: 'hello@orbitguard.com',
+                email: 'hello@orbitguards.com',
                 desc: 'Questions, feedback, or just want to say hi.',
               },
               {
                 title: 'Orders & Support',
-                email: 'support@orbitguard.com',
+                email: 'support@orbitguards.com',
                 desc: 'Order status, fit questions, or anything about your Orbit.',
               },
               {
                 title: 'Press',
-                email: 'press@orbitguard.com',
+                email: 'press@orbitguards.com',
                 desc: 'Coverage, review units, or brand assets.',
               },
             ].map(card => (
@@ -343,10 +343,10 @@ export default function ContactPage() {
         >
           Based in Atlanta, Georgia &middot; Reply within 2 to 3 business days &middot;{' '}
           <a
-            href="mailto:hello@orbitguard.com"
+            href="mailto:hello@orbitguards.com"
             style={{ color: '#5A74FF', textDecoration: 'none', fontWeight: 600 }}
           >
-            hello@orbitguard.com
+            hello@orbitguards.com
           </a>
         </p>
       </section>

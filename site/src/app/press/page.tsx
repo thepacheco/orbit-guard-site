@@ -80,10 +80,10 @@ export default function PressPage() {
           >
             Assets, facts, and context — all in one place. For press inquiries:{' '}
             <a
-              href="mailto:press@orbitguard.com"
+              href="mailto:press@orbitguards.com"
               style={{ color: '#5A74FF', textDecoration: 'none', fontWeight: 600 }}
             >
-              press@orbitguard.com
+              press@orbitguards.com
             </a>
           </p>
         </div>

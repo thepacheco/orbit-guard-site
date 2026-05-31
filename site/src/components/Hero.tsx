@@ -68,6 +68,7 @@ function PackSelector({
   return (
     <div>
       <div
+        className="og-pack-header"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -147,6 +148,7 @@ function PalettePicker({
   return (
     <div>
       <div
+        className="og-palette-header"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -287,6 +289,7 @@ function FeatureRow({ v, f }: { v: Variant; f: { icon: string; title: string; su
         borderRadius: 14,
         border: '1px solid rgba(0,0,0,0.05)',
         alignItems: 'center',
+        textAlign: 'left',
       }}
     >
       <div
@@ -341,6 +344,7 @@ function RatingRow({ v }: { v: Variant }) {
         color: 'white',
         borderRadius: 14,
         boxShadow: '0 10px 24px rgba(0,0,0,0.14)',
+        textAlign: 'left',
       }}
     >
       <div>

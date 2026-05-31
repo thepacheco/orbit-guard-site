@@ -219,18 +219,52 @@ body {
   .og-hero-grid {
     grid-template-columns: 1fr !important;
     padding: 100px 24px 40px !important;
-    gap: 24px !important;
+    gap: 32px !important;
     min-height: auto !important;
+    text-align: center;
+  }
+  .og-hero-grid > div:first-child,
+  .og-hero-grid > div:last-child {
+    max-width: 100% !important;
+    align-items: center !important;
+  }
+  .og-hero-grid > div:first-child > div {
+    font-size: 16px !important; /* Expand text slightly on mobile */
+  }
+  .og-hero-grid .og-pack-header, 
+  .og-hero-grid .og-palette-header {
+    justify-content: center !important;
+    gap: 12px;
+  }
+  .og-hero-grid button {
+    margin: 0 auto;
   }
 
   /* General two-column → single */
   .og-two-col {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
+    text-align: center;
+  }
+  .og-two-col > div {
+    align-items: center !important;
+    margin: 0 auto;
   }
 
   /* HowItWorks steps: 2 col on tablet */
-  .og-four-col { grid-template-columns: 1fr 1fr !important; }
+  .og-four-col { 
+    grid-template-columns: 1fr 1fr !important;
+    text-align: center;
+  }
+  .og-step-circle {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .og-section-header {
+    justify-content: center !important;
+    text-align: center;
+    align-items: center !important;
+  }
 
   /* Sections: reduce padding */
   section[data-og-section] {
@@ -293,11 +327,11 @@ body {
 
   /* Typography: scale down */
   h1 {
-    font-size: 36px !important;
+    font-size: 40px !important;
     line-height: 1.1 !important;
   }
   h2 {
-    font-size: 28px !important;
+    font-size: 32px !important;
     line-height: 1.15 !important;
   }
 
@@ -335,11 +369,11 @@ body {
   }
 
   h1 {
-    font-size: 28px !important;
+    font-size: 34px !important;
     line-height: 1.1 !important;
   }
   h2 {
-    font-size: 24px !important;
+    font-size: 28px !important;
   }
 }
 

@@ -180,6 +180,7 @@ export function HowItWorks({ v }: { v: Variant }) {
       </svg>
       <div style={{ maxWidth: 1180, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div
+          className="og-section-header"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -231,6 +232,7 @@ export function HowItWorks({ v }: { v: Variant }) {
           {steps.map(s => (
             <div key={s.n} style={{ position: 'relative', padding: '0 4px' }}>
               <div
+                className="og-step-circle"
                 style={{
                   width: 56,
                   height: 56,

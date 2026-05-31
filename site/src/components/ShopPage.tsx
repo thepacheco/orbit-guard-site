@@ -320,46 +320,55 @@ function ShopPackSelector({
   );
 }
 
-// ── Feature chips (floating on left panel) ───────────────────────────
-function FloatChip({ v, icon, text }: { v: Variant; icon: string; text: string }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Icon = (LucideIcons as any)[
-    icon.split('-').map((p: string) => p.charAt(0).toUpperCase() + p.slice(1)).join('')
-  ] as React.ComponentType<{ size?: number; strokeWidth?: number }> | undefined;
+// ── Product details & specs (bottom of shop page) ────────────────────
+function ProductDetails({ v }: { v: Variant }) {
+  const specs: { label: string; value: string }[] = [
+    { label: 'Material', value: 'Soft-touch TPU, non-marking' },
+    { label: 'Height', value: '2.5 cm each · stack to 5 cm' },
+    { label: 'Compatibility', value: 'Fits 95% of office-chair casters' },
+    { label: 'Colors', value: '11 shades · mix tops & bottoms' },
+    { label: 'Care', value: 'Wipe clean · pet- and floor-safe' },
+  ];
+
   return (
-    <div
+    <section
+      className="og-shop-details"
       style={{
-        background: v.dark ? 'rgba(20,22,28,0.88)' : 'white',
-        color: v.dark ? 'white' : 'var(--fg)',
-        borderRadius: 999,
-        padding: '10px 16px 10px 12px',
-        boxShadow: '0 10px 24px rgba(0,0,0,0.14)',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 10,
-        fontFamily: 'var(--font-ui)',
-        fontSize: 13,
-        fontWeight: 600,
-        backdropFilter: 'blur(8px)',
-        whiteSpace: 'nowrap',
+        borderTop: '1px solid var(--border)',
+        background: '#fff',
+        padding: '64px 48px 80px',
+        maxWidth: 1080,
+        margin: '0 auto',
+        width: '100%',
       }}
     >
-      <span
-        style={{
-          width: 26,
-          height: 26,
-          borderRadius: '50%',
-          background: vAccent(v),
-          color: 'white',
-          display: 'grid',
-          placeItems: 'center',
-          flexShrink: 0,
-        }}
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: vAccent(v), marginBottom: 12 }}>
+        The details
+      </div>
+      <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 30, fontWeight: 800, margin: '0 0 14px', color: 'var(--fg)' }}>
+        About Your Orbit
+      </h2>
+      <p style={{ fontFamily: 'var(--font-ui)', fontSize: 16, lineHeight: 1.6, color: 'var(--fg-2)', maxWidth: 620, margin: '0 0 40px' }}>
+        Orbit is a soft caster guard you slip your chair&rsquo;s wheel into. It cushions the roll
+        and protects pets, cords, and toes from the wheels &mdash; no tools, no chair disassembly.
+      </p>
+
+      <div
+        className="og-shop-details-grid"
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 48px', marginBottom: 44 }}
       >
-        {Icon && <Icon size={14} strokeWidth={2} />}
-      </span>
-      <span>{text}</span>
-    </div>
+        {specs.map((s) => (
+          <div key={s.label} style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--fg-3)', marginBottom: 6 }}>
+              {s.label}
+            </div>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 15, fontWeight: 600, color: 'var(--fg)' }}>
+              {s.value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -613,7 +622,7 @@ function ShopPageContent() {
           <div
             style={{
               position: 'absolute',
-              top: 'calc(100px + var(--og-announce-h, 0px))',
+              bottom: 20,
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 20,
@@ -760,15 +769,6 @@ function ShopPageContent() {
             {exploded ? <LucideIcons.Minimize2 size={14} /> : <LucideIcons.Maximize2 size={14} />}
             {exploded ? 'Snap together' : 'Detach'}
           </button>
-          )}
-
-          {/* Floating chips — only in normal mode */}
-          {!mixMode && (
-            <div className="og-hide-on-mobile" style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', zIndex: 2, pointerEvents: 'none' }}>
-              {v.floatChips.map((chip, i) => (
-                <FloatChip key={i} v={v} icon={chip.icon} text={chip.text} />
-              ))}
-            </div>
           )}
 
           {/* Mix mode label on left panel */}
@@ -1070,6 +1070,9 @@ function ShopPageContent() {
           </div>
         </div>
       )}
+
+      {/* Product details & specs — full width, below the configurator */}
+      <ProductDetails v={v} />
 
       {/* Mix & Match per-guard editor — mobile bottom sheet */}
       {mixMode && sheetOpen && (

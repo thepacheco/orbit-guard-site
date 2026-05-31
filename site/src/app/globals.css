@@ -306,6 +306,13 @@ body {
     padding-right: 20px !important;
     padding-bottom: 40px !important;
   }
+  .og-shop-details {
+    padding: 48px 20px 64px !important;
+  }
+  .og-shop-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
 
   /* LP grids: single column */
   .og-lp-grid {

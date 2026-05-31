@@ -58,7 +58,7 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   useFrame((state, delta) => {
     // "Cracking an egg" separation: twist in opposite directions + a gentle
     // hinge tilt while opening, rather than a robotic lateral slide.
-    const targetY = exploded ? 80 : 0;          // pull-apart gap so pieces don't touch
+    const targetY = exploded ? 60 : 0;          // pull-apart gap so pieces don't touch
     const targetTwist = exploded ? 0.5 : 0;     // opposite Y-rotation (radians)
     const targetTilt = exploded ? 0.28 : 0;     // gentle hinge/tilt about X
     const k = 10 * delta;                        // lerp factor (eased)
@@ -72,7 +72,7 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
     // in frame. Done on the model group (not the camera) so it never fights
     // OrbitControls — smooth, no snap-back.
     if (groupRef.current) {
-      const targetScale = exploded ? 0.62 : 1;
+      const targetScale = exploded ? 0.5 : 1;
       const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, k);
       groupRef.current.scale.setScalar(s);
     }

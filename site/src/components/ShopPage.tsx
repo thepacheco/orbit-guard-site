@@ -13,6 +13,11 @@ import { useCart } from './CartContext';
 import { useActiveVariant } from './ActiveVariantContext';
 import ColorDropdown from './ColorDropdown';
 
+// Real usage/product photos for the shop viewer. Add image paths here, e.g.
+// '/assets/photos/product-1.jpg'. Empty → labeled placeholder frames.
+const SHOP_PHOTOS: string[] = [];
+const SHOP_PHOTO_PLACEHOLDERS = 4;
+
 // ── helpers ──────────────────────────────────────────────────────────
 function vAccent(v: Variant): string {
   if (v.dark) return v.ring;
@@ -458,6 +463,12 @@ function ShopPageContent() {
   const [guardSlots, setGuardSlots] = useState<GuardSlot[]>([]);
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  // Product viewer mode: interactive 3D model vs. real usage photos
+  const [showPhotos, setShowPhotos] = useState(false);
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const photoCount = SHOP_PHOTOS.length > 0 ? SHOP_PHOTOS.length : SHOP_PHOTO_PLACEHOLDERS;
+  const curPhoto = Math.min(photoIdx, photoCount - 1);
+
   const cart = useCart();
   const pack = PACK_SIZES[packIdx];
 
@@ -598,7 +609,111 @@ function ShopPageContent() {
             />
           </svg>
 
-          {mixMode ? (
+          {/* 3D / Photos switch */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(100px + var(--og-announce-h, 0px))',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 20,
+              display: 'flex',
+              gap: 4,
+              padding: 4,
+              borderRadius: 999,
+              background: 'rgba(255,255,255,0.8)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            {[
+              { id: false, label: '3D model', icon: 'Box' },
+              { id: true, label: 'Photos', icon: 'Image' },
+            ].map((opt) => {
+              const active = showPhotos === opt.id;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const Icon = (LucideIcons as any)[opt.icon];
+              return (
+                <button
+                  key={opt.label}
+                  onClick={() => setShowPhotos(opt.id)}
+                  style={{
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '8px 16px',
+                    borderRadius: 999,
+                    background: active ? vAccent(v) : 'transparent',
+                    color: active ? '#fff' : 'var(--fg)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    transition: 'all 160ms var(--ease-out)',
+                  }}
+                >
+                  {Icon && <Icon size={15} strokeWidth={1.75} />}
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {showPhotos ? (
+            <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 5 }}>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio: '4 / 3',
+                  borderRadius: 20,
+                  overflow: 'hidden',
+                  background: 'linear-gradient(135deg, #f3f5f7 0%, #e6ebf0 100%)',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  display: 'grid',
+                  placeItems: 'center',
+                }}
+              >
+                {SHOP_PHOTOS.length > 0 ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={SHOP_PHOTOS[curPhoto]} alt={`Orbit photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ textAlign: 'center', color: 'var(--fg-3)' }}>
+                    <LucideIcons.Image size={48} strokeWidth={1.5} />
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 12 }}>
+                      Product photo {curPhoto + 1}
+                    </div>
+                  </div>
+                )}
+                {photoCount > 1 && (
+                  <>
+                    <button
+                      aria-label="Previous photo"
+                      onClick={() => setPhotoIdx((x) => (x - 1 + photoCount) % photoCount)}
+                      style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center' }}
+                    >
+                      <LucideIcons.ChevronLeft size={20} strokeWidth={2.25} />
+                    </button>
+                    <button
+                      aria-label="Next photo"
+                      onClick={() => setPhotoIdx((x) => (x + 1) % photoCount)}
+                      style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center' }}
+                    >
+                      <LucideIcons.ChevronRight size={20} strokeWidth={2.25} />
+                    </button>
+                  </>
+                )}
+              </div>
+              {photoCount > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 7, marginTop: 14 }}>
+                  {Array.from({ length: photoCount }).map((_, d) => (
+                    <span key={d} style={{ width: d === curPhoto ? 18 : 7, height: 7, borderRadius: 999, background: d === curPhoto ? vAccent(v) : 'rgba(0,0,0,0.18)', transition: 'all 200ms var(--ease-out)' }} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : mixMode ? (
             <div style={{ width: '100%', height: '100%', transform: exploded ? 'scale(0.9)' : 'scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
               <Product3DViewer
                 topColor={previewTopVariant.hex}
@@ -618,7 +733,8 @@ function ShopPageContent() {
             </div>
           )}
 
-          {/* Toggle Detach Button */}
+          {/* Toggle Detach Button — only in 3D mode */}
+          {!showPhotos && (
           <button
             onClick={() => setExploded(!exploded)}
             style={{
@@ -644,6 +760,7 @@ function ShopPageContent() {
             {exploded ? <LucideIcons.Minimize2 size={14} /> : <LucideIcons.Maximize2 size={14} />}
             {exploded ? 'Snap together' : 'Detach'}
           </button>
+          )}
 
           {/* Floating chips — only in normal mode */}
           {!mixMode && (

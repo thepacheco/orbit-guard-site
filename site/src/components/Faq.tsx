@@ -4,28 +4,28 @@ import { Plus, X, ChevronRight } from 'lucide-react';
 
 export const CATEGORIZED_FAQ = [
   {
-    category: 'General Questions',
+    category: 'General',
     items: [
-      { q: 'What is Orbit Guard?', a: 'Orbit Guard is the company that creates protective solutions for office chairs.' },
-      { q: 'What is an Orbit?', a: 'An Orbit is the donut shaped device that has a hole inside. When you lift up the chair, you put the wheel inside the hole. This way, it covers around the wheels, and any items or anything that\'s outside when you move it, it will push away. It acts as a barrier.' },
-      { q: 'Will Orbit fit my chair?', a: 'Orbit fits 95% of office chairs — any caster with a stem between 7 and 11mm. That covers nearly every standard task chair, gaming chair, and rolling stool. If you\'re unsure, measure the metal post your wheel slots into.' },
-      { q: 'How do I install them?', a: 'Tip the chair on its side. Place either half an Orbit Guard or the entire Orbit Guard inside the wheel so the wheel sits inside the Orbit Guard. Place the seat down and do that for each and every office chair wheel. About 1 to 2 minutes for installing on all chair wheels.' },
-      { q: 'Do they work on hardwood and carpet?', a: 'Yes. The OrbitGuard is built to work on hardwood floor and carpet. We suggest using half an OrbitGuard and moving the chair around to ensure that it is safe to use since at times the Orbit guard can flip and get caught.' },
+      { q: 'What is Orbit Guard?', a: 'Orbit Guard is the company behind Orbit — a simple piece of hardware that protects your floors, walls, and furniture from rolling office chairs.' },
+      { q: 'What is an Orbit?', a: 'An Orbit is a small, donut-shaped guard with an opening in the center. You lift the chair, slip a caster wheel into the opening, and the Orbit wraps around the wheel. As the chair rolls, the rounded shell pushes obstacles aside instead of letting the wheel ram into them — so it works as a soft barrier between your chair and everything around it.' },
+      { q: 'Will an Orbit fit my chair?', a: 'Orbit fits about 95% of office chairs — any caster with a stem between 7 and 11mm. That covers nearly every standard task chair, gaming chair, and rolling stool. If you\'re not sure, measure the metal post your wheel slots into.' },
+      { q: 'How do I install them?', a: 'Tip the chair on its side, then slip an Orbit (a full one or a single half) around each caster so the wheel sits inside the shell. Stand the chair back up and repeat for every wheel. The whole chair takes about 1 to 2 minutes.' },
+      { q: 'Do they work on hardwood and carpet?', a: 'Yes — Orbit is built for both hardwood and carpet. On carpet we recommend using a single half and rolling the chair around first to make sure it tracks smoothly, since a full Orbit can occasionally flip or catch on deeper pile.' },
     ]
   },
   {
-    category: 'Support team',
+    category: 'Shipping & Support',
     items: [
-      { q: 'When does Orbit ship?', a: 'We are live on Kickstarter now at 342% funded. Backers get first shipment, shipping from Atlanta this fall. Enter your email on the homepage to get notified the moment orders open.' },
-      { q: 'What if they do not fit?', a: 'Return them within 60 days for a full refund — shipping included, no questions asked.' },
-      { q: 'How do I contact support?', a: 'Email us at hello@orbitguards.com and our team will get back to you within 2 to 3 business days to help with any issues.' },
+      { q: 'When does Orbit ship?', a: 'We\'re live on Kickstarter now at 342% funded. Backers ship first, going out from Atlanta this fall. Enter your email on the homepage and we\'ll notify you the moment orders open.' },
+      { q: 'What if they don\'t fit?', a: 'Return them within 60 days for a full refund — shipping included, no questions asked.' },
+      { q: 'How do I contact support?', a: 'Email us at hello@orbitguards.com and we\'ll get back to you within 2 to 3 business days.' },
     ]
   },
   {
-    category: 'Miscellaneous',
+    category: 'Product & Care',
     items: [
-      { q: 'What is the stacking system?', a: 'Each Orbit is 2.5cm tall and splits into two halves. Stack two to reach 5cm for taller stems or gaming chairs. Since the sizes of chairs wheels vary, you are allowed to split the OrbitGuard in half horizontally so it is easier to place an OrbitGuard on different caster wheel chairs.' },
-      { q: 'Are they really pet-safe?', a: 'Yes. The rounded, closed shell means no gap for a tail, paw, or cable to get pinched. We tested every colorway with three very curious cats.' },
+      { q: 'How does the stacking system work?', a: 'Each Orbit is 2.5cm tall and splits into two halves. Use a single half for shorter stems, a full Orbit for standard chairs, or stack two to reach 5cm for taller stems and gaming chairs. Splitting horizontally also makes it easier to fit Orbit onto a wider range of caster wheels.' },
+      { q: 'Are they really pet-safe?', a: 'Yes. The rounded, fully closed shell leaves no gap for a tail, paw, or cable to get pinched. We tested every colorway with three very curious cats.' },
     ]
   }
 ];

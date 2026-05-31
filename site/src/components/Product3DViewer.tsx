@@ -28,7 +28,7 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   const bottomMesh = useMemo(() => bottomObj.clone(), [bottomObj]);
   const topRef = useRef<THREE.Group>(null);
   const bottomRef = useRef<THREE.Group>(null);
-  const baseRadius = useRef<number | null>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
   useMemo(() => {
     const topMat = new THREE.MeshStandardMaterial({
@@ -68,15 +68,14 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
       topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, targetTwist, k);
       topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, targetTilt, k);
     }
-    // Dolly the camera back when detached so the whole separated assembly
-    // stays in frame (and remains grabbable for orbit). OrbitControls targets
-    // the origin, so the orbit radius == camera position length.
-    const cam = state.camera;
-    if (baseRadius.current === null) baseRadius.current = cam.position.length();
-    const targetRadius = baseRadius.current * (exploded ? 1.75 : 1);
-    const newRadius = THREE.MathUtils.lerp(cam.position.length(), targetRadius, k);
-    cam.position.setLength(newRadius);
-
+    // Scale the whole assembly down when detached so the separated halves stay
+    // in frame. Done on the model group (not the camera) so it never fights
+    // OrbitControls — smooth, no snap-back.
+    if (groupRef.current) {
+      const targetScale = exploded ? 0.62 : 1;
+      const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, k);
+      groupRef.current.scale.setScalar(s);
+    }
     if (bottomRef.current) {
       bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, -targetY, k);
       bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, -targetTwist, k);
@@ -85,7 +84,7 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   });
 
   return (
-    <group dispose={null}>
+    <group dispose={null} ref={groupRef}>
       <group ref={topRef}>
         <primitive object={topMesh} />
       </group>

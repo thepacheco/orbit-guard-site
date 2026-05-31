@@ -250,6 +250,18 @@ body {
     align-items: center !important;
     margin: 0 auto;
   }
+  /* Sections with inline 56px side padding that lack data-og-section */
+  .og-pad-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  /* 3D stackable viewer column collapses to 0 width on mobile because its
+     only child is absolutely positioned — force full width + a usable height */
+  .og-stack-viewer {
+    width: 100% !important;
+    height: 340px !important;
+    margin: 0 !important;
+  }
 
   /* HowItWorks steps: 2 col on tablet */
   .og-four-col { 
@@ -485,9 +497,20 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   .og-hero-cta-row {
     justify-content: center !important;
   }
-  /* ViewToggle: hide text labels to prevent overflow, show icons only */
+  /* ViewToggle: center it and KEEP the labels so it's clear what each does */
+  .og-view-toggle {
+    align-self: center !important;
+    justify-content: center !important;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .og-view-toggle button {
+    flex: 1 1 0;
+    justify-content: center;
+  }
   .og-view-toggle-label {
-    display: none !important;
+    display: inline !important;
   }
 }
 

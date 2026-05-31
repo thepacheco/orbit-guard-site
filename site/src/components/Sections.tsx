@@ -74,17 +74,37 @@ export function AboutOrbit({ v }: { v: Variant }) {
         }}
       >
         <div>
+          {/* Product photo — replace this placeholder with a real image, e.g.
+              <img src="/assets/photos/orbit-in-use.jpg" alt="Orbit on a chair caster" /> */}
           <div
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 220,
-              lineHeight: 0.85,
-              color: vAccent(v),
-              letterSpacing: '-0.02em',
-              transition: 'color 420ms var(--ease-out)',
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '4 / 3',
+              borderRadius: 20,
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, #f3f5f7 0%, #e8edf1 100%)',
+              border: '1px solid rgba(0,0,0,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            ¹⁄₆₄
+            <span style={{ fontSize: 96, lineHeight: 1 }} role="img" aria-label="cat">🐱</span>
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 14,
+                left: 16,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: 'var(--fg-3)',
+              }}
+            >
+              Product photo
+            </span>
           </div>
           <div
             style={{
@@ -96,6 +116,7 @@ export function AboutOrbit({ v }: { v: Variant }) {
               marginTop: 16,
             }}
           >
+            <span style={{ color: vAccent(v), transition: 'color 420ms var(--ease-out)' }}>¹⁄₆₄</span>{' '}
             of the chair, all of the protection
           </div>
         </div>
@@ -134,6 +155,116 @@ export function AboutOrbit({ v }: { v: Variant }) {
           >
             Orbit guards fit into every caster wheel on your chair.
           </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────
+// Story section: text on the LEFT, image on the RIGHT.
+export function OrbitInUse({ v }: { v: Variant }) {
+  return (
+    <section
+      className="og-pad-section"
+      style={{
+        padding: '120px 56px',
+        background: '#fff',
+        color: 'var(--fg)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        className="og-two-col"
+        style={{
+          maxWidth: 1180,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 64,
+          alignItems: 'center',
+        }}
+      >
+        {/* LEFT: copy */}
+        <div>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: vAccent(v),
+              marginBottom: 16,
+              transition: 'color 420ms var(--ease-out)',
+            }}
+          >
+            Built for everyday life
+          </div>
+          <h2
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontWeight: 700,
+              fontSize: 'clamp(32px, 3.4vw, 48px)',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.08,
+              margin: 0,
+            }}
+          >
+            Made to disappear into{' '}
+            <em style={{ fontStyle: 'normal', color: vAccent(v), transition: 'color 420ms var(--ease-out)' }}>
+              your space
+            </em>
+            .
+          </h2>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 17,
+              lineHeight: 1.6,
+              color: 'var(--fg-2)',
+              margin: '24px 0 0',
+              maxWidth: 480,
+            }}
+          >
+            Whether it&apos;s the home office, a studio, or the gaming corner, Orbit slips onto every
+            caster and quietly does its job — protecting floors, walls, and the curious pets weaving
+            between your chair legs. No tools, no marks, no second thoughts.
+          </p>
+        </div>
+
+        {/* RIGHT: product photo placeholder — replace with a real <img> */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            aspectRatio: '4 / 3',
+            borderRadius: 20,
+            overflow: 'hidden',
+            background: 'linear-gradient(135deg, #eef1f4 0%, #e2e8ee 100%)',
+            border: '1px solid rgba(0,0,0,0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {/* Replace this placeholder, e.g.:
+              <img src="/assets/photos/orbit-lifestyle.jpg" alt="Orbit in use" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> */}
+          <span style={{ fontSize: 96, lineHeight: 1 }} role="img" aria-label="cat">🐱</span>
+          <span
+            style={{
+              position: 'absolute',
+              bottom: 14,
+              left: 16,
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--fg-3)',
+            }}
+          >
+            Lifestyle photo
+          </span>
         </div>
       </div>
     </section>
@@ -364,6 +495,7 @@ export function StemFit({ v }: { v: Variant }) {
 
   return (
     <section
+      className="og-pad-section"
       style={{
         padding: '120px 56px',
         background: '#fff',
@@ -378,13 +510,13 @@ export function StemFit({ v }: { v: Variant }) {
           maxWidth: 1180,
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: '1fr 1.1fr',
+          gridTemplateColumns: '1.1fr 1fr',
           gap: 64,
           alignItems: 'center',
         }}
       >
-        {/* LEFT: copy */}
-        <div>
+        {/* RIGHT (desktop): copy — placed second via order so the 3D model sits left */}
+        <div style={{ order: 2 }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -425,8 +557,8 @@ export function StemFit({ v }: { v: Variant }) {
           </p>
         </div>
 
-        {/* RIGHT: 3D interactive model */}
-        <div style={{ position: 'relative', height: 420, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        {/* LEFT (desktop): 3D interactive model — order 1 places it on the left */}
+        <div className="og-stack-viewer" style={{ order: 1, position: 'relative', height: 420, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ position: 'absolute', inset: -40, transform: exploded ? 'scale(0.8)' : 'scale(1)', transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)' }}>
             <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={exploded} cameraPosition={[104.74, -96.92, 138.54]} />
           </div>

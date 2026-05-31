@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Hero from './Hero';
-import { AboutOrbit, HowItWorks, StemFit, Reviews, Kickstarter } from './Sections';
+import { AboutOrbit, OrbitInUse, HowItWorks, StemFit, Reviews, Kickstarter } from './Sections';
 import { PRODUCT_VARIANTS } from './data';
 import { useActiveVariant } from './ActiveVariantContext';
 
@@ -19,8 +19,9 @@ export default function App() {
     <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
       <Hero variant={activeVariant} setVariantKey={setVariantKey} />
       <AboutOrbit v={activeVariant} />
-      <HowItWorks v={activeVariant} />
+      <OrbitInUse v={activeVariant} />
       <StemFit v={activeVariant} />
+      <HowItWorks v={activeVariant} />
       <Reviews v={activeVariant} />
       <Kickstarter v={activeVariant} />
     </div>

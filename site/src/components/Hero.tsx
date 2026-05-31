@@ -240,6 +240,7 @@ function ViewToggle({
   ];
   return (
     <div
+      className="og-view-toggle"
       style={{
         display: 'flex',
         padding: 4,

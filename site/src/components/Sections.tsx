@@ -428,7 +428,7 @@ export function StemFit({ v }: { v: Variant }) {
         {/* RIGHT: 3D interactive model */}
         <div style={{ position: 'relative', height: 420, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ position: 'absolute', inset: -40, transform: exploded ? 'scale(0.8)' : 'scale(1)', transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-            <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={exploded} cameraPosition={[0, 3.5, 3.0]} />
+            <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={exploded} cameraPosition={[104.74, -96.92, 138.54]} />
           </div>
           
           <div style={{ position: 'absolute', bottom: -40, zIndex: 20 }}>

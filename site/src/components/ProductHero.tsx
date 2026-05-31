@@ -23,7 +23,7 @@ function PuckView({ v }: { v: Variant }) {
       }}
     >
       <div style={{ position: 'absolute', inset: -40, animation: 'ogScaleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-        <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={false} cameraPosition={[0, 3.5, 3.0]} />
+        <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={false} cameraPosition={[104.74, -96.92, 138.54]} />
       </div>
     </div>
   );

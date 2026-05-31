@@ -604,7 +604,7 @@ function ShopPageContent() {
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
-                cameraPosition={[0, 3.5, 3.0]}
+                cameraPosition={[104.74, -96.92, 138.54]}
               />
             </div>
           ) : (
@@ -613,7 +613,7 @@ function ShopPageContent() {
                 topColor={v.hex}
                 bottomColor={v.hex}
                 exploded={exploded}
-                cameraPosition={[0, 3.5, 3.0]}
+                cameraPosition={[104.74, -96.92, 138.54]}
               />
             </div>
           )}

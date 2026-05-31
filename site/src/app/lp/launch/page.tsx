@@ -412,7 +412,7 @@ function startConfettiWaterfall(paletteColors: string[]) {
           {/* RIGHT: 3D Orbit & Palette */}
           <div style={{ position: 'relative', height: 500, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
             <div className="og-lp-viewer" style={{ width: 450, height: 450, position: 'relative', zIndex: 10, animation: 'ogFarToClose 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
-              <Product3DViewer topColor={accentHex} bottomColor={accentHex} exploded={false} cameraPosition={[0, 3.5, 3.0]} />
+              <Product3DViewer topColor={accentHex} bottomColor={accentHex} exploded={false} cameraPosition={[104.74, -96.92, 138.54]} />
             </div>
 
             {/* Mobile: color dropdown */}

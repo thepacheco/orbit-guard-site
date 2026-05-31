@@ -102,7 +102,7 @@ export default function GamerLandingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', gap: 28 }}>
             
             {/* Edition Selector (Up Top) */}
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div className="og-gamer-editions" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {EDITIONS.map((ed, i) => (
                 <button
                   key={ed.name}

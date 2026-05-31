@@ -306,6 +306,12 @@ body {
     align-items: center !important;
   }
 
+  /* Gamer: push edition selector clear of the floating header */
+  .og-gamer-editions {
+    margin-top: 40px !important;
+    justify-content: center !important;
+  }
+
   /* FAQ: single column */
   .og-faq-grid {
     grid-template-columns: 1fr !important;

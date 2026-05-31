@@ -11,6 +11,7 @@ const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false 
 import type { Variant } from './types';
 import { useCart } from './CartContext';
 import { useActiveVariant } from './ActiveVariantContext';
+import ColorDropdown from './ColorDropdown';
 
 // ── helpers ──────────────────────────────────────────────────────────
 function vAccent(v: Variant): string {
@@ -134,7 +135,9 @@ function ShopPalettePicker({
           {label}
         </span>
       </div>
+      {/* Desktop: swatch pill */}
       <div
+        className="og-hide-on-mobile"
         style={{
           display: 'flex',
           padding: 8,
@@ -151,6 +154,7 @@ function ShopPalettePicker({
           return (
             <button
               key={opt.key}
+              className="og-swatch-btn"
               onClick={() => setVariantKey(opt.key)}
               onMouseEnter={() => setHover(opt.name)}
               onMouseLeave={() => setHover(null)}
@@ -172,6 +176,11 @@ function ShopPalettePicker({
             />
           );
         })}
+      </div>
+
+      {/* Mobile: dropdown */}
+      <div className="og-show-on-mobile">
+        <ColorDropdown value={v.key} onChange={setVariantKey} />
       </div>
     </div>
   );
@@ -217,6 +226,7 @@ function HalfColorPicker({
           return (
             <button
               key={opt.key}
+              className="og-swatch-btn"
               onClick={() => onSelect(opt.key)}
               onMouseEnter={() => setHover(opt.key)}
               onMouseLeave={() => setHover(null)}
@@ -293,7 +303,7 @@ function ShopPackSelector({
                 boxSizing: 'border-box',
               }}
             >
-              {p.count} Pack (${p.price})
+              {p.count} · ${p.price}
             </button>
           );
         })}
@@ -446,6 +456,7 @@ function ShopPageContent() {
   const [mixBottomKey, setMixBottomKey] = useState('clover');
   const [activeSlot, setActiveSlot] = useState(0);
   const [guardSlots, setGuardSlots] = useState<GuardSlot[]>([]);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const cart = useCart();
   const pack = PACK_SIZES[packIdx];
@@ -746,20 +757,50 @@ function ShopPageContent() {
               {/* Pack selector */}
               <ShopPackSelector idx={packIdx} setIdx={setPackIdx} />
 
-              {/* Top half color picker */}
-              <HalfColorPicker
-                label="Top 2.5mm"
-                selectedKey={mixTopKey}
-                onSelect={handleMixTopChange}
-              />
+              {/* Desktop: inline top/bottom pickers */}
+              <div className="og-hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {/* Top half color picker */}
+                <HalfColorPicker
+                  label="Top 2.5mm"
+                  selectedKey={mixTopKey}
+                  onSelect={handleMixTopChange}
+                />
 
-              {/* Bottom half color picker */}
-              <HalfColorPicker
-                label="Bottom 2.5mm"
-                selectedKey={mixBottomKey}
-                onSelect={handleMixBottomChange}
-              />
+                {/* Bottom half color picker */}
+                <HalfColorPicker
+                  label="Bottom 2.5mm"
+                  selectedKey={mixBottomKey}
+                  onSelect={handleMixBottomChange}
+                />
+              </div>
 
+              {/* Mobile: tap to customize colors via bottom sheet */}
+              <button
+                className="og-show-on-mobile"
+                onClick={() => { selectSlot(0); setSheetOpen(true); }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '14px 16px',
+                  borderRadius: 'var(--r-md)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-inset)',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 700,
+                  fontSize: 15,
+                  color: 'var(--fg)',
+                  textAlign: 'left',
+                }}
+              >
+                <MiniSplitDot top={mixTopVariant.hex} bottom={mixBottomVariant.hex} size={26} />
+                <span style={{ flex: 1 }}>
+                  {pack.count > 1 ? 'Customize each guard' : 'Choose top & bottom colors'}
+                </span>
+                <LucideIcons.ChevronRight size={18} strokeWidth={2} style={{ opacity: 0.5 }} />
+              </button>
 
               {/* Pricing note */}
               <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>
@@ -862,7 +903,7 @@ function ShopPageContent() {
           }}>
             Configure each guard
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: guardSlots.length === 10 ? 'repeat(5, 1fr)' : guardSlots.length === 12 ? 'repeat(4, 1fr)' : guardSlots.length === 1 ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
+          <div className="og-guard-grid" style={{ display: 'grid', gridTemplateColumns: guardSlots.length === 10 ? 'repeat(5, 1fr)' : guardSlots.length === 12 ? 'repeat(4, 1fr)' : guardSlots.length === 1 ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
             {guardSlots.map((slot, i) => {
               const slotTop = PRODUCT_VARIANTS.find(x => x.key === slot.topKey) || PRODUCT_VARIANTS[0];
               const slotBottom = PRODUCT_VARIANTS.find(x => x.key === slot.bottomKey) || PRODUCT_VARIANTS[1];
@@ -870,7 +911,7 @@ function ShopPageContent() {
               return (
                 <button
                   key={i}
-                  onClick={() => selectSlot(i)}
+                  onClick={() => { selectSlot(i); setSheetOpen(true); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -912,6 +953,155 @@ function ShopPageContent() {
           </div>
         </div>
       )}
+
+      {/* Mix & Match per-guard editor — mobile bottom sheet */}
+      {mixMode && sheetOpen && (
+        <div className="og-show-on-mobile">
+          {/* Backdrop */}
+          <div
+            onClick={() => setSheetOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 200,
+              background: 'rgba(0,0,0,0.35)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+            }}
+          />
+          {/* Sheet */}
+          <div
+            style={{
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 201,
+              background: '#fff',
+              borderRadius: '20px 20px 0 0',
+              boxShadow: '0 -12px 48px rgba(0,0,0,0.18)',
+              padding: '20px 20px calc(24px + env(safe-area-inset-bottom, 0px))',
+              maxHeight: '88vh',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 18,
+            }}
+          >
+            {/* Grab handle */}
+            <div style={{ width: 40, height: 4, borderRadius: 999, background: 'var(--border-strong)', margin: '0 auto 4px' }} />
+
+            {/* Header: preview + title */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <MiniSplitDot top={mixTopVariant.hex} bottom={mixBottomVariant.hex} size={40} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 18 }}>
+                  {pack.count > 1 ? `Guard ${activeSlot + 1} of ${pack.count}` : 'Customize colors'}
+                </div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13, color: 'var(--fg-3)' }}>
+                  {mixTopVariant.name} top · {mixBottomVariant.name} bottom
+                </div>
+              </div>
+              <button
+                onClick={() => setSheetOpen(false)}
+                aria-label="Close"
+                style={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  border: '1px solid var(--border)', background: 'transparent',
+                  cursor: 'pointer', display: 'grid', placeItems: 'center', color: 'var(--fg-2)',
+                  flexShrink: 0,
+                }}
+              >
+                <LucideIcons.X size={18} strokeWidth={2} />
+              </button>
+            </div>
+
+            {/* Top / Bottom dropdowns */}
+            <ColorDropdown label="Top 2.5mm" value={mixTopKey} onChange={handleMixTopChange} />
+            <ColorDropdown label="Bottom 2.5mm" value={mixBottomKey} onChange={handleMixBottomChange} />
+
+            {/* Prev / Next navigation (multi-pack only) */}
+            {pack.count > 1 && (
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  onClick={() => selectSlot(Math.max(0, activeSlot - 1))}
+                  disabled={activeSlot === 0}
+                  style={{
+                    flex: 1, padding: '12px 0', borderRadius: 'var(--r-md)',
+                    border: '1px solid var(--border)', background: '#fff',
+                    cursor: activeSlot === 0 ? 'default' : 'pointer',
+                    opacity: activeSlot === 0 ? 0.4 : 1,
+                    fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  }}
+                >
+                  <LucideIcons.ChevronLeft size={16} /> Prev
+                </button>
+                <button
+                  onClick={() => selectSlot(Math.min(pack.count - 1, activeSlot + 1))}
+                  disabled={activeSlot >= pack.count - 1}
+                  style={{
+                    flex: 1, padding: '12px 0', borderRadius: 'var(--r-md)',
+                    border: '1px solid var(--border)', background: '#fff',
+                    cursor: activeSlot >= pack.count - 1 ? 'default' : 'pointer',
+                    opacity: activeSlot >= pack.count - 1 ? 0.4 : 1,
+                    fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  }}
+                >
+                  Next <LucideIcons.ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* Done */}
+            <button
+              onClick={() => setSheetOpen(false)}
+              style={{
+                width: '100%', padding: '15px 0', borderRadius: 999,
+                border: 'none', background: '#5A74FF', color: '#fff',
+                fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 16, cursor: 'pointer',
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Add to Cart bar — mobile only */}
+      <div className="og-sticky-cta">
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 18, lineHeight: 1 }}>
+            ${pack.price}
+          </div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>
+            {pack.count} guard{pack.count > 1 ? 's' : ''}
+          </div>
+        </div>
+        <button
+          onClick={mixMode ? addMixToCart : addToCart}
+          style={{
+            background: '#5A74FF',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 999,
+            padding: '14px 28px',
+            fontFamily: 'var(--font-ui)',
+            fontWeight: 800,
+            fontSize: 16,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            boxShadow: '0 8px 20px rgba(90,116,255,0.35)',
+            flexShrink: 0,
+          }}
+        >
+          <LucideIcons.ShoppingBag size={18} strokeWidth={2} />
+          Add to cart
+        </button>
+      </div>
 
     </div>
   );

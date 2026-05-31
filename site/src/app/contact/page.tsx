@@ -59,6 +59,7 @@ export default function ContactPage() {
 
       {/* Hero */}
       <section
+        className="og-page-hero"
         style={{
           padding: '160px 56px 80px',
           background: 'var(--bg-inset)',
@@ -93,7 +94,7 @@ export default function ContactPage() {
       </section>
 
       {/* Two-column layout */}
-      <section style={{ padding: '80px 56px' }}>
+      <section className="og-page-pad" style={{ padding: '80px 56px' }}>
         <div
           className="og-contact-grid"
           style={{
@@ -324,6 +325,7 @@ export default function ContactPage() {
 
       {/* Bottom strip */}
       <section
+        className="og-page-pad"
         style={{
           padding: '28px 56px',
           background: 'var(--bg-inset)',

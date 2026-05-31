@@ -285,7 +285,8 @@ body {
   .og-shop-left {
     position: relative !important;
     height: 60vh !important;
-    min-height: 400px !important;
+    min-height: 360px !important;
+    padding-top: 80px !important;
   }
   .og-shop-right {
     padding-top: 24px !important;
@@ -413,4 +414,153 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 @keyframes ogFadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════
+   Mobile Shopping Improvements
+   ══════════════════════════════════════════════════ */
+
+/* ── Mobile / desktop visibility helpers ── */
+.og-show-on-mobile { display: none; }
+@media (max-width: 768px) {
+  .og-show-on-mobile { display: block; }
+  .og-hide-on-mobile { display: none !important; }
+}
+
+/* ── Cart popup: bottom sheet on mobile ── */
+@media (max-width: 768px) {
+  .og-cart-popup {
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: auto !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 85vh !important;
+  }
+  /* Lift the minimized bubble above the sticky Add-to-cart bar */
+  .og-cart-popup-minimized {
+    right: 16px !important;
+    bottom: calc(88px + 16px + env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    width: 64px !important;
+    border-radius: 32px !important;
+  }
+}
+
+/* ── Sticky Add to Cart bar (mobile only) ── */
+.og-sticky-cta {
+  display: none;
+}
+@media (max-width: 768px) {
+  .og-sticky-cta {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid var(--border);
+    z-index: 60;
+    gap: 12px;
+    align-items: center;
+  }
+  /* Push shop right panel content above the sticky bar */
+  .og-shop-right {
+    padding-bottom: calc(40px + 88px) !important;
+  }
+}
+
+/* ── Hero CTA row: center on mobile ── */
+@media (max-width: 768px) {
+  .og-hero-cta-row {
+    justify-content: center !important;
+  }
+  /* ViewToggle: hide text labels to prevent overflow, show icons only */
+  .og-view-toggle-label {
+    display: none !important;
+  }
+}
+
+/* ── Mix & Match per-guard grid: 2 columns on mobile ── */
+@media (max-width: 768px) {
+  .og-guard-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ── Launch page: scale fixed-size media on mobile ── */
+@media (max-width: 768px) {
+  .og-lp-viewer {
+    width: 100% !important;
+    max-width: 320px !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 auto !important;
+  }
+  .og-lp-stats-ring {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
+/* ── Generic page hero / container padding on mobile ── */
+@media (max-width: 768px) {
+  .og-page-hero {
+    padding-top: 100px !important;
+    padding-bottom: 60px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .og-page-pad {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .og-faq-card {
+    padding: 48px 20px !important;
+  }
+  /* Press page: stack cards/colors and prevent swatch bleed */
+  .og-press-cards {
+    grid-template-columns: 1fr !important;
+  }
+  .og-press-colorgrid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .og-press-fact {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .og-press-fact-label {
+    min-width: 0 !important;
+  }
+  .og-press-fact-detail {
+    text-align: left !important;
+  }
+  /* Desk LP: stack hero so the before/after slider isn't crushed */
+  .og-lp-desk-hero {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    padding: 110px 20px 60px !important;
+    min-height: 0 !important;
+  }
+}
+@media (max-width: 480px) {
+  .og-page-hero {
+    padding-top: 80px !important;
+    padding-bottom: 48px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .og-page-pad {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .og-faq-card {
+    padding: 40px 16px !important;
+  }
 }

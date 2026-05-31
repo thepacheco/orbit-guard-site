@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DynIcon } from './primitives';
 import ProductHero from './ProductHero';
+import ColorDropdown from './ColorDropdown';
 import { PRODUCT_VARIANTS, PACK_SIZES } from './data';
 import type { Variant } from './types';
 import * as LucideIcons from 'lucide-react';
@@ -171,7 +172,9 @@ function PalettePicker({
           {label}
         </span>
       </div>
+      {/* Desktop: swatch pill */}
       <div
+        className="og-palette-swatches og-hide-on-mobile"
         style={{
           display: 'flex',
           padding: 8,
@@ -189,6 +192,7 @@ function PalettePicker({
           return (
             <button
               key={opt.key}
+              className="og-swatch-btn"
               onClick={() => setVariantKey(opt.key)}
               onMouseEnter={() => setHover(opt.name)}
               onMouseLeave={() => setHover(null)}
@@ -210,6 +214,11 @@ function PalettePicker({
             />
           );
         })}
+      </div>
+
+      {/* Mobile: dropdown */}
+      <div className="og-show-on-mobile">
+        <ColorDropdown value={v.key} onChange={setVariantKey} />
       </div>
     </div>
   );
@@ -268,7 +277,7 @@ function ViewToggle({
             }}
           >
             {Icon && <Icon size={15} strokeWidth={1.75} />}
-            <span>{it.label}</span>
+            <span className="og-view-toggle-label">{it.label}</span>
           </button>
         );
       })}
@@ -414,7 +423,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
         <PackSelector v={v} idx={packIdx} setIdx={setPackIdx} />
         <PalettePicker v={v} setVariantKey={setVariantKey} />
 
-        <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+        <div className="og-hero-cta-row" style={{ display: 'flex', gap: 10, marginTop: 8 }}>
           <a
             href="/shop"
             style={{

@@ -37,7 +37,7 @@ export default function Faq() {
   const currentCategoryData = CATEGORIZED_FAQ.find(c => c.category === activeCategory);
 
   return (
-    <div style={{
+    <div className="og-faq-card" style={{
       background: 'rgba(255, 255, 255, 0.8)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',

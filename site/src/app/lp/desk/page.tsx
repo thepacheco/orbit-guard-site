@@ -46,7 +46,7 @@ export default function DeskLandingPage() {
     <div style={{ minHeight: '100vh', background: bg, color: fg, fontFamily: 'var(--font-ui)', position: 'relative', overflowX: 'hidden' }}>
       
       {/* Hero — text left, comparison right */}
-      <section style={{ padding: '140px 56px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center', maxWidth: 1300, margin: '0 auto', minHeight: '100vh' }}>
+      <section className="og-lp-desk-hero" style={{ padding: '140px 56px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center', maxWidth: 1300, margin: '0 auto', minHeight: '100vh' }}>
         
         {/* Left: Text */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, animation: 'ogFadeUp 0.8s ease-out' }}>

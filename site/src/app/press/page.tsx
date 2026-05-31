@@ -38,6 +38,7 @@ export default function PressPage() {
 
       {/* Hero */}
       <section
+        className="og-page-hero"
         style={{
           padding: '140px 56px 80px',
           background: 'var(--bg-inset)',
@@ -90,7 +91,7 @@ export default function PressPage() {
       </section>
 
       {/* Brand assets */}
-      <section style={{ padding: '80px 56px', background: '#fff' }}>
+      <section className="og-page-pad" style={{ padding: '80px 56px', background: '#fff' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
           <div
             style={{
@@ -105,6 +106,7 @@ export default function PressPage() {
             Brand assets
           </div>
           <div
+            className="og-press-cards"
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
@@ -264,8 +266,8 @@ export default function PressPage() {
       </section>
 
       {/* Colors */}
-      <section style={{ padding: '0 56px 80px', background: '#fff' }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 64 }}>
+      <section className="og-page-pad" style={{ padding: '0 56px 80px', background: '#fff' }}>
+        <div className="og-press-colorgrid" style={{ maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 64 }}>
           {/* Brand colors */}
           <div>
             <div
@@ -401,6 +403,7 @@ export default function PressPage() {
 
       {/* Quick facts */}
       <section
+        className="og-page-pad"
         style={{
           padding: '0 56px 80px',
           background: '#fff',
@@ -429,6 +432,7 @@ export default function PressPage() {
             {QUICK_FACTS.map((row, i) => (
               <div
                 key={row.fact}
+                className="og-press-fact"
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -440,6 +444,7 @@ export default function PressPage() {
                 }}
               >
                 <div
+                  className="og-press-fact-label"
                   style={{
                     fontFamily: 'var(--font-ui)',
                     fontWeight: 600,
@@ -452,6 +457,7 @@ export default function PressPage() {
                   {row.fact}
                 </div>
                 <div
+                  className="og-press-fact-detail"
                   style={{
                     fontFamily: 'var(--font-body)',
                     fontSize: 15,
@@ -469,6 +475,7 @@ export default function PressPage() {
 
       {/* Suggested boilerplate */}
       <section
+        className="og-page-pad"
         style={{
           padding: '0 56px 100px',
           background: '#fff',

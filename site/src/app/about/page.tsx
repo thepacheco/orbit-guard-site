@@ -26,6 +26,7 @@ export default function AboutPage() {
 
       {/* Hero */}
       <section
+        className="og-page-hero"
         style={{
           background: 'var(--og-blue)',
           paddingTop: 160,
@@ -100,7 +101,7 @@ export default function AboutPage() {
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontWeight: 800,
-                fontSize: 180,
+                fontSize: 'clamp(96px, 34vw, 180px)',
                 lineHeight: 0.85,
                 color: '#5A74FF',
                 letterSpacing: '-0.04em',

@@ -36,7 +36,7 @@ export default function FaqPage() {
       <div style={{ position: 'absolute', bottom: '20%', left: '25%', width: 8, height: 8, borderRadius: '50%', background: '#A390E4', opacity: 0.5, animation: 'ogFloat2 9s ease-in-out infinite' }} />
       <div style={{ position: 'absolute', bottom: '40%', right: '10%', width: 14, height: 14, borderRadius: '50%', background: '#BBEAF4', opacity: 0.8, animation: 'ogFloat3 11s ease-in-out infinite alternate-reverse' }} />
 
-      <main style={{
+      <main className="og-page-pad" style={{
         position: 'relative',
         zIndex: 10,
         padding: '100px 40px 100px',

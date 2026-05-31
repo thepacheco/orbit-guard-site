@@ -74,6 +74,7 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
         onClick={() => {
           if (minimized) setMinimized(false);
         }}
+        className={minimized ? 'og-cart-popup-minimized' : 'og-cart-popup'}
         style={{
           position: 'fixed',
           right: 24,

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import * as LucideIcons from 'lucide-react';
 import Header from '../../../components/Header';
 import { PRODUCT_VARIANTS } from '../../../components/data';
 import type { Variant } from '../../../components/types';
@@ -23,6 +24,81 @@ const PALETTE = [
   { hex: '#212529', name: 'Onyx' },
   { hex: '#F4F4F0', name: 'Polar' },
 ];
+
+function LaunchPaletteDropdown({ value, onChange }: { value: string; onChange: (hex: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = PALETTE.find(p => p.hex === value) || PALETTE[0];
+
+  useEffect(() => {
+    if (!open) return;
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') setOpen(false); }
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey); };
+  }, [open]);
+
+  const dot = (hex: string, size = 22) => (
+    <span style={{ width: size, height: size, minWidth: size, borderRadius: '50%', background: hex, display: 'inline-block', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.2)', flexShrink: 0 }} />
+  );
+
+  return (
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        style={{
+          width: '100%', minHeight: 48, display: 'flex', alignItems: 'center', gap: 12,
+          padding: '12px 16px', borderRadius: 14, border: '1px solid rgba(255,255,255,0.18)',
+          background: 'rgba(255,255,255,0.06)', cursor: 'pointer',
+          fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 15, color: '#fff', textAlign: 'left',
+          boxSizing: 'border-box',
+        }}
+      >
+        {dot(selected.hex)}
+        <span style={{ flex: 1 }}>{selected.name}</span>
+        <LucideIcons.ChevronDown size={18} strokeWidth={2} style={{ transition: 'transform 180ms ease', transform: open ? 'rotate(180deg)' : 'none', opacity: 0.7 }} />
+      </button>
+
+      {open && (
+        <div role="listbox" style={{
+          position: 'absolute', bottom: 'calc(100% + 6px)', left: 0, right: 0, zIndex: 30,
+          maxHeight: 280, overflowY: 'auto', background: '#1B1D22',
+          border: '1px solid rgba(255,255,255,0.14)', borderRadius: 14,
+          boxShadow: '0 12px 32px rgba(0,0,0,0.5)', padding: 6, boxSizing: 'border-box',
+        }}>
+          {PALETTE.map(p => {
+            const active = p.hex === value;
+            return (
+              <button
+                key={p.hex}
+                type="button"
+                role="option"
+                aria-selected={active}
+                onClick={() => { onChange(p.hex); setOpen(false); }}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px',
+                  borderRadius: 10, border: 'none', background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  cursor: 'pointer', fontFamily: 'var(--font-ui)', fontWeight: active ? 700 : 600, fontSize: 15,
+                  color: '#fff', textAlign: 'left',
+                }}
+              >
+                {dot(p.hex)}
+                <span style={{ flex: 1 }}>{p.name}</span>
+                {active && <LucideIcons.Check size={16} strokeWidth={2.5} color="#05CE78" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function hexToRgb(hex: string): [number, number, number] {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -291,7 +367,7 @@ function startConfettiWaterfall(paletteColors: string[]) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 10, flexWrap: 'wrap' }}>
               {/* Animated pulse ring around stats */}
-              <div style={{ position: 'relative', width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div className="og-lp-stats-ring" style={{ position: 'relative', width: 160, height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `3px solid ${barColor}`, opacity: 0.3, animation: 'ogPulseRing 2s ease-out infinite' }} />
                 <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: `2px solid ${barColor}`, opacity: 0.15, animation: 'ogPulseRing 2s ease-out infinite 0.5s' }} />
                 <style>{`
@@ -334,13 +410,19 @@ function startConfettiWaterfall(paletteColors: string[]) {
           </div>
 
           {/* RIGHT: 3D Orbit & Palette */}
-          <div style={{ position: 'relative', height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: 450, height: 450, position: 'relative', zIndex: 10, animation: 'ogFarToClose 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+          <div style={{ position: 'relative', height: 500, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+            <div className="og-lp-viewer" style={{ width: 450, height: 450, position: 'relative', zIndex: 10, animation: 'ogFarToClose 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
               <Product3DViewer topColor={accentHex} bottomColor={accentHex} exploded={false} />
             </div>
 
-            {/* Vertical palette picker */}
+            {/* Mobile: color dropdown */}
+            <div className="og-show-on-mobile" style={{ width: '100%', maxWidth: 320 }}>
+              <LaunchPaletteDropdown value={accentHex} onChange={handleColorChange} />
+            </div>
+
+            {/* Vertical palette picker (desktop) */}
             <div
+              className="og-hide-on-mobile"
               style={{
                 position: 'absolute',
                 right: 0,

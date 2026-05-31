@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { DM_Sans, ABeeZee } from 'next/font/google';
 import { Providers } from '../components/Providers';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const dmSans = DM_Sans({
@@ -51,7 +52,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${abeeZee.variable}`}>
-      <body><Providers><GlobalLayoutClient>{children}</GlobalLayoutClient></Providers></body>
+      <body><Providers><GlobalLayoutClient>{children}</GlobalLayoutClient></Providers><Analytics /></body>
     </html>
   );
 }

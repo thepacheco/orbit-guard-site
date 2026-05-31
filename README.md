@@ -13,6 +13,7 @@ Marketing and e-commerce site for **Orbit Guard** — soft caster guards for off
 | Styling | Inline styles + a global stylesheet (`src/app/globals.css`) with CSS media queries |
 | 3D | Three.js via `@react-three/fiber` and `@react-three/drei` |
 | Icons / FX | `lucide-react`, `canvas-confetti` |
+| Analytics | Vercel Analytics (`@vercel/analytics`) |
 
 ---
 
@@ -154,3 +155,4 @@ Resolving these means upgrading to a newer major of Next.js (a breaking change) 
 
 - Run `npm run build` then `npm run start` for a production server, or deploy to a Next.js-compatible host.
 - Because `/api/config` writes to the local filesystem, the admin/config workflow is for authoring content locally; review how (or whether) it should be exposed before deploying publicly.
+- **Analytics:** `<Analytics />` (from `@vercel/analytics/next`) is rendered in `src/app/layout.tsx`. It collects page views automatically when deployed on Vercel — data only appears in production, not in local dev.

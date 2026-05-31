@@ -647,7 +647,7 @@ function ShopPageContent() {
 
           {/* Floating chips — only in normal mode */}
           {!mixMode && (
-            <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', zIndex: 2, pointerEvents: 'none' }}>
+            <div className="og-hide-on-mobile" style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', zIndex: 2, pointerEvents: 'none' }}>
               {v.floatChips.map((chip, i) => (
                 <FloatChip key={i} v={v} icon={chip.icon} text={chip.text} />
               ))}

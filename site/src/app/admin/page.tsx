@@ -19,7 +19,6 @@ const ALL_PAGES = [
   '/lp/meet-orbit',
   '/lp/meeting-orbit',
   '/lp/orbit-intro',
-  '/admin/config',
 ];
 
 export default function AdminPage() {

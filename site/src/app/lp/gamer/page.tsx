@@ -44,7 +44,7 @@ export default function GamerLandingPage() {
         color: fg,
         fontFamily: 'var(--font-ui)',
         position: 'relative',
-        overflowX: 'hidden',
+        overflowX: 'clip',
       }}
     >
       {/* Animated background stripes */}
@@ -153,10 +153,10 @@ export default function GamerLandingPage() {
           {/* Right Column: 3D Viewer with RGB glow */}
           <div style={{ position: 'relative', width: '100%', height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-20px)' }}>
             {/* Animated RGB Glow */}
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 300, height: 300, borderRadius: '50%', background: 'conic-gradient(from 0deg, #FF1053, #7b2cbf, #00F0FF, #06D6A0, #FF1053)', filter: 'blur(60px)', animation: 'ogRotate 4s linear infinite', opacity: 0.5, zIndex: -1 }} />
+            <div style={{ position: 'absolute', top: '44%', left: '50%', transform: 'translate(-50%, -50%)', width: 340, height: 340, borderRadius: '50%', background: 'conic-gradient(from 0deg, #FF1053, #7b2cbf, #00F0FF, #06D6A0, #FF1053)', filter: 'blur(60px)', animation: 'ogRotate 4s linear infinite', opacity: 0.5, zIndex: -1 }} />
 
             <div style={{ position: 'absolute', inset: -40, zIndex: 10, transform: exploded ? 'scale(0.8)' : 'scale(0.95)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-              <Product3DViewer topColor={topColor} bottomColor={bottomColor} exploded={exploded} />
+              <Product3DViewer topColor={topColor} bottomColor={bottomColor} exploded={exploded} cameraPosition={[0, 3.5, 3.0]} />
             </div>
 
             {/* Attach/Detach Toggle */}

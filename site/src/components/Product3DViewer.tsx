@@ -2,9 +2,14 @@
 
 import React, { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
-import { OrbitControls, Stage } from '@react-three/drei';
+import { OrbitControls, Center } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
+
+// Preload the meshes so they're cached before the viewer mounts (reduces the
+// visible "pop-in" delay on first paint).
+useLoader.preload(OBJLoader, '/assets/models/Snap_Top/Snap_Top.obj');
+useLoader.preload(OBJLoader, '/assets/models/Snap_Bottom/Snap_Bottom.obj');
 
 interface Product3DViewerProps {
   topColor: string;
@@ -23,6 +28,7 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   const bottomMesh = useMemo(() => bottomObj.clone(), [bottomObj]);
   const topRef = useRef<THREE.Group>(null);
   const bottomRef = useRef<THREE.Group>(null);
+  const baseRadius = useRef<number | null>(null);
 
   useMemo(() => {
     const topMat = new THREE.MeshStandardMaterial({
@@ -50,13 +56,31 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   }, [topMesh, bottomMesh, topColor, bottomColor]);
 
   useFrame((state, delta) => {
-    // Increased distance for a clearer "detach" so pieces don't touch
-    const targetY = exploded ? 90 : 0; 
+    // "Cracking an egg" separation: twist in opposite directions + a gentle
+    // hinge tilt while opening, rather than a robotic lateral slide.
+    const targetY = exploded ? 80 : 0;          // pull-apart gap so pieces don't touch
+    const targetTwist = exploded ? 0.5 : 0;     // opposite Y-rotation (radians)
+    const targetTilt = exploded ? 0.28 : 0;     // gentle hinge/tilt about X
+    const k = 10 * delta;                        // lerp factor (eased)
+
     if (topRef.current) {
-      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, targetY, 14 * delta);
+      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, targetY, k);
+      topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, targetTwist, k);
+      topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, targetTilt, k);
     }
+    // Dolly the camera back when detached so the whole separated assembly
+    // stays in frame (and remains grabbable for orbit). OrbitControls targets
+    // the origin, so the orbit radius == camera position length.
+    const cam = state.camera;
+    if (baseRadius.current === null) baseRadius.current = cam.position.length();
+    const targetRadius = baseRadius.current * (exploded ? 1.75 : 1);
+    const newRadius = THREE.MathUtils.lerp(cam.position.length(), targetRadius, k);
+    cam.position.setLength(newRadius);
+
     if (bottomRef.current) {
-      bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, -targetY, 14 * delta);
+      bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, -targetY, k);
+      bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, -targetTwist, k);
+      bottomRef.current.rotation.x = THREE.MathUtils.lerp(bottomRef.current.rotation.x, -targetTilt, k);
     }
   });
 
@@ -87,11 +111,16 @@ export default function Product3DViewer({
 
   return (
     <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10 }}>
-      <Canvas dpr={[1, 2]} camera={{ position: cameraPosition, fov: 45 }}>
+      <Canvas dpr={[1, 2]} frameloop="always" camera={{ position: cameraPosition, fov: 45 }}>
         <Suspense fallback={null}>
-          <Stage environment="city" intensity={0.6} adjustCamera={1.3} shadows={false}>
+          {/* Local lighting (no remote HDR fetch) keeps load fast and reliable */}
+          <ambientLight intensity={0.7} />
+          <hemisphereLight intensity={0.5} groundColor="#444" />
+          <directionalLight position={[5, 8, 6]} intensity={1.1} />
+          <directionalLight position={[-6, 3, -4]} intensity={0.5} />
+          <Center>
             <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} />
-          </Stage>
+          </Center>
           {(interactive || camLog) && (
             <OrbitControls
               autoRotate={camLog ? false : autoRotate}

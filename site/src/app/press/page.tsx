@@ -14,12 +14,12 @@ const POLAR: Variant = {
 };
 
 const QUICK_FACTS = [
-  { fact: 'Founded', detail: '2023' },
+  { fact: 'Founded', detail: '2024' },
   { fact: 'Headquarters', detail: 'Atlanta, Georgia' },
-  { fact: 'Product', detail: 'Chair caster guards (soft protective shell)' },
-  { fact: 'Sizes', detail: '2.5cm per guard, stackable to 5cm' },
+  { fact: 'Product', detail: 'Chair caster guards (Orbit Guards)' },
+  { fact: 'Sizes', detail: 'Full Orbit Guard is 5cm - Half Orbit Guard is 2.5cm' },
   { fact: 'Colors', detail: 'Blueberry, Clover, Coral, Lavender, Fawn, Rooster, Flamingo, Bear, Pomegranate, Onyx, Polar' },
-  { fact: 'Compatibility', detail: '95% of office chairs (7–11mm stems)' },
+  { fact: 'Compatibility', detail: '95% of office chairs' },
 ];
 
 const BRAND_COLORS = [
@@ -228,7 +228,7 @@ export default function PressPage() {
                   color: 'var(--fg)',
                 }}
               >
-                Brand Kit ZIP
+                Brand Kit
               </div>
               <p
                 style={{
@@ -513,7 +513,7 @@ export default function PressPage() {
                 fontStyle: 'italic',
               }}
             >
-              &ldquo;Orbit Guard makes caster guards for office chairs. Each Orbit fits to the chair wheel and protects, kids, pets and cables. It is available in 11 colors.&rdquo;
+              &ldquo;Orbit Guard makes caster guards for office chairs. Each Orbit fits to the chair wheel to protect kids, pets and cables. It is available in 11 colors.&rdquo;
             </p>
           </blockquote>
         </div>

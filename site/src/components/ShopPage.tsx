@@ -104,13 +104,22 @@ function SplitPuckView({ topColor, bottomColor }: { topColor: string; bottomColo
 
 // ── Mini Split Dot ───────────────────────────────────────────────────
 function MiniSplitDot({ top, bottom, size = 20 }: { top: string; bottom: string; size?: number }) {
+  const core = Math.max(4, Math.round(size * 0.34));
   return (
     <div style={{
+      position: 'relative',
       width: size, height: size, borderRadius: '50%', overflow: 'hidden',
       border: '1px solid rgba(0,0,0,0.1)', flexShrink: 0,
     }}>
       <div style={{ height: '50%', background: top }} />
       <div style={{ height: '50%', background: bottom }} />
+      {/* Center core — echoes the Orbit mark */}
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%',
+        width: core, height: core, transform: 'translate(-50%, -50%)',
+        borderRadius: '50%', background: '#fff',
+        boxShadow: '0 0 0 1px rgba(0,0,0,0.14)',
+      }} />
     </div>
   );
 }
@@ -1062,7 +1071,7 @@ function ShopPageContent() {
                       color: 'var(--fg-2)',
                       marginTop: 2,
                     }}>
-                      {slotTop.name} / {slotBottom.name}
+                      {getMixName(slot.topKey, slot.bottomKey)}
                     </span>
                   </div>
 

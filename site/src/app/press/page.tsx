@@ -420,7 +420,7 @@ export default function PressPage() {
               marginBottom: 24,
             }}
           >
-            Quick facts for press
+            Quick facts
           </div>
           <div
             style={{

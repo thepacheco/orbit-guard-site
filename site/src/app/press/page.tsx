@@ -14,7 +14,7 @@ const POLAR: Variant = {
 };
 
 const QUICK_FACTS = [
-  { fact: 'Founded', detail: '2024' },
+  { fact: 'Founded', detail: '2023' },
   { fact: 'Headquarters', detail: 'Atlanta, Georgia' },
   { fact: 'Product', detail: 'Chair caster guards (Orbit Guards)' },
   { fact: 'Sizes', detail: 'Full Orbit Guard is 5cm - Half Orbit Guard is 2.5cm' },

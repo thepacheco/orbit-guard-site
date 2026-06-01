@@ -55,7 +55,7 @@ export default function DeskLandingPage() {
           </div>
 
           <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 'clamp(40px, 4vw, 72px)', letterSpacing: '-0.03em', lineHeight: 1.05, margin: 0, color: fg }}>
-            Protect your setup. Protect your people.
+            Protect your setup. Protect your pets.
           </h1>
 
           <p style={{ fontFamily: 'var(--font-body)', fontSize: 20, lineHeight: 1.6, color: '#4B5563', maxWidth: 520, margin: 0 }}>

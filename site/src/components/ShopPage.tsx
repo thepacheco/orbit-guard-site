@@ -29,7 +29,9 @@ import UNIQUE_MIX_NAMES from './names.json';
 
 function getMixName(topKey: string, bottomKey: string): string {
   if (topKey === bottomKey) return PRODUCT_VARIANTS.find(v => v.key === topKey)?.name || '';
-  return (UNIQUE_MIX_NAMES as Record<string, string>)[`${topKey}|${bottomKey}`] || 'Cosmic Blend';
+  // Order-independent: a top/bottom combo and its flip share the same name.
+  const canonical = [topKey, bottomKey].sort().join('|');
+  return (UNIQUE_MIX_NAMES as Record<string, string>)[canonical] || 'Cosmic Blend';
 }
 
 // ── PuckView (inline) ────────────────────────────────────────────────
@@ -728,7 +730,7 @@ function ShopPageContent() {
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
-                cameraPosition={[104.74, -96.92, 138.54]}
+                cameraPosition={[104.74, 96.92, 138.54]}
               />
             </div>
           ) : (
@@ -893,11 +895,10 @@ function ShopPageContent() {
 
               {/* Mobile: tap to customize colors via bottom sheet */}
               <button
-                className="og-show-on-mobile"
+                className="og-mix-tap"
                 onClick={() => { selectSlot(0); setSheetOpen(true); }}
                 style={{
                   width: '100%',
-                  display: 'flex',
                   alignItems: 'center',
                   gap: 12,
                   padding: '14px 16px',

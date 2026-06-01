@@ -447,9 +447,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 /* ── Mobile / desktop visibility helpers ── */
 .og-show-on-mobile { display: none; }
+/* Mobile-only "Customize each guard" tap button (flex layout) */
+.og-mix-tap { display: none; }
 @media (max-width: 768px) {
   .og-show-on-mobile { display: block; }
   .og-hide-on-mobile { display: none !important; }
+  .og-mix-tap { display: flex; }
 }
 
 /* ── Cart popup: bottom sheet on mobile ── */

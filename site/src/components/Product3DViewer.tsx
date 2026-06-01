@@ -22,11 +22,14 @@ interface Product3DViewerProps {
   // piece never appears to flip top-over-bottom.
   spin?: boolean;
   spinSpeed?: number;
+  // When true, the model gently floats in place (a subtle bob + sway) instead
+  // of spinning — a calm idle motion that keeps the framed angle fixed.
+  float?: boolean;
   interactive?: boolean;
   cameraPosition?: [number, number, number];
 }
 
-function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45 }: Product3DViewerProps) {
+function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45, float = false }: Product3DViewerProps) {
   const topObj = useLoader(OBJLoader, '/assets/models/Snap_Top/Snap_Top.obj');
   const bottomObj = useLoader(OBJLoader, '/assets/models/Snap_Bottom/Snap_Bottom.obj');
 
@@ -84,6 +87,13 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
       // Turntable spin: rotate the model around its own vertical axis.
       if (spin) {
         groupRef.current.rotation.y += spinSpeed * delta;
+      }
+      // Gentle idle float: a subtle bob + slow sway, no full rotation.
+      if (float) {
+        const t = state.clock.elapsedTime;
+        groupRef.current.position.y = Math.sin(t * 1.1) * 9;
+        groupRef.current.rotation.y = Math.sin(t * 0.5) * 0.16;
+        groupRef.current.rotation.z = Math.sin(t * 0.8) * 0.04;
       }
     }
     if (bottomRef.current) {
@@ -192,6 +202,7 @@ export default function Product3DViewer({
   autoRotateSpeed = 1.0,
   spin = false,
   spinSpeed = 0.45,
+  float = false,
   interactive = true,
   cameraPosition = [0, 0, 4.5]
 }: Product3DViewerProps) {
@@ -210,11 +221,11 @@ export default function Product3DViewer({
           <directionalLight position={[5, 8, 6]} intensity={1.1} />
           <directionalLight position={[-6, 3, -4]} intensity={0.5} />
           <Center>
-            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin && !camLog} spinSpeed={spinSpeed} />
+            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin && !camLog} spinSpeed={spinSpeed} float={float && !camLog} />
           </Center>
           <CameraRig
             position={cameraPosition}
-            autoRotate={autoRotate && !spin}
+            autoRotate={autoRotate && !spin && !float}
             autoRotateSpeed={autoRotateSpeed}
             interactive={interactive}
             camLog={camLog}

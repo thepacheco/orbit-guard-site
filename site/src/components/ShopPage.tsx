@@ -730,6 +730,7 @@ function ShopPageContent() {
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
+                autoRotateSpeed={-1.0}
                 cameraPosition={[-11.41, -178.43, -87.13]}
               />
             </div>

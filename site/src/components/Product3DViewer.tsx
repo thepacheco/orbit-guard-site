@@ -16,6 +16,7 @@ interface Product3DViewerProps {
   bottomColor: string;
   exploded?: boolean;
   autoRotate?: boolean;
+  autoRotateSpeed?: number;
   interactive?: boolean;
   cameraPosition?: [number, number, number];
 }
@@ -104,11 +105,13 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
 function CameraRig({
   position,
   autoRotate,
+  autoRotateSpeed,
   interactive,
   camLog,
 }: {
   position: [number, number, number];
   autoRotate: boolean;
+  autoRotateSpeed: number;
   interactive: boolean;
   camLog: boolean;
 }) {
@@ -156,7 +159,7 @@ function CameraRig({
     <OrbitControls
       ref={controls}
       autoRotate={camLog ? false : autoRotate}
-      autoRotateSpeed={1.0}
+      autoRotateSpeed={autoRotateSpeed}
       enablePan={false}
       enableZoom={camLog}
       enableRotate={interactive || camLog}
@@ -177,6 +180,7 @@ export default function Product3DViewer({
   bottomColor,
   exploded,
   autoRotate = true,
+  autoRotateSpeed = 1.0,
   interactive = true,
   cameraPosition = [0, 0, 4.5]
 }: Product3DViewerProps) {
@@ -200,6 +204,7 @@ export default function Product3DViewer({
           <CameraRig
             position={cameraPosition}
             autoRotate={autoRotate}
+            autoRotateSpeed={autoRotateSpeed}
             interactive={interactive}
             camLog={camLog}
           />

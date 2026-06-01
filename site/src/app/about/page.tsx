@@ -136,7 +136,7 @@ export default function AboutPage() {
                 color: 'var(--fg)',
               }}
             >
-              We started with one chair and one cat.
+              We started with one chair and one curious chonky cat.
             </h3>
             <p
               style={{
@@ -292,8 +292,7 @@ export default function AboutPage() {
               margin: '0 0 24px',
             }}
           >
-            We don&apos;t have a big team photo or a mission statement poster. We have a product that works and customers who
-            tell their friends.
+            We don&apos;t have a big team photo...yet but we have an amazing product. And a photo of Edison who inspired Orbit.
           </p>
           <p
             style={{

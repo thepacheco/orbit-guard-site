@@ -739,7 +739,7 @@ function ShopPageContent() {
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
-                autoRotateSpeed={-1.0}
+                spin
                 cameraPosition={[-11.41, -178.43, -87.13]}
               />
             </div>
@@ -1071,7 +1071,7 @@ function ShopPageContent() {
                       color: 'var(--fg-2)',
                       marginTop: 2,
                     }}>
-                      {getMixName(slot.topKey, slot.bottomKey)}
+                      {slotTop.name} / {slotBottom.name} · {getMixName(slot.topKey, slot.bottomKey)}
                     </span>
                   </div>
 

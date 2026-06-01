@@ -17,11 +17,16 @@ interface Product3DViewerProps {
   exploded?: boolean;
   autoRotate?: boolean;
   autoRotateSpeed?: number;
+  // When true, spin the MODEL in place around its vertical axis (a turntable
+  // spin) instead of orbiting the camera. Keeps the framed angle fixed so the
+  // piece never appears to flip top-over-bottom.
+  spin?: boolean;
+  spinSpeed?: number;
   interactive?: boolean;
   cameraPosition?: [number, number, number];
 }
 
-function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
+function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45 }: Product3DViewerProps) {
   const topObj = useLoader(OBJLoader, '/assets/models/Snap_Top/Snap_Top.obj');
   const bottomObj = useLoader(OBJLoader, '/assets/models/Snap_Bottom/Snap_Bottom.obj');
 
@@ -76,6 +81,10 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
       const targetScale = exploded ? 0.5 : 1;
       const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, k);
       groupRef.current.scale.setScalar(s);
+      // Turntable spin: rotate the model around its own vertical axis.
+      if (spin) {
+        groupRef.current.rotation.y += spinSpeed * delta;
+      }
     }
     if (bottomRef.current) {
       bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, -targetY, k);
@@ -181,6 +190,8 @@ export default function Product3DViewer({
   exploded,
   autoRotate = true,
   autoRotateSpeed = 1.0,
+  spin = false,
+  spinSpeed = 0.45,
   interactive = true,
   cameraPosition = [0, 0, 4.5]
 }: Product3DViewerProps) {
@@ -199,11 +210,11 @@ export default function Product3DViewer({
           <directionalLight position={[5, 8, 6]} intensity={1.1} />
           <directionalLight position={[-6, 3, -4]} intensity={0.5} />
           <Center>
-            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} />
+            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin} spinSpeed={spinSpeed} />
           </Center>
           <CameraRig
             position={cameraPosition}
-            autoRotate={autoRotate}
+            autoRotate={autoRotate && !spin}
             autoRotateSpeed={autoRotateSpeed}
             interactive={interactive}
             camLog={camLog}

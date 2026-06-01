@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Suspense, useMemo, useRef } from 'react';
-import { Canvas, useLoader, useFrame } from '@react-three/fiber';
+import React, { Suspense, useMemo, useRef, useEffect } from 'react';
+import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Center } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
@@ -95,6 +95,83 @@ function Model({ topColor, bottomColor, exploded }: Product3DViewerProps) {
   );
 }
 
+/* CameraRig keeps OrbitControls and the camera in sync. When the target
+   `position` changes (e.g. switching into Mix & Match), it smoothly glides the
+   camera to the new angle and pauses auto-rotation until it arrives, so the
+   transition never looks like a jarring flip. Auto-rotation is azimuthal
+   (spins around the vertical axis), so the model turns "around the circle"
+   instead of tumbling to the wrong side. */
+function CameraRig({
+  position,
+  autoRotate,
+  interactive,
+  camLog,
+}: {
+  position: [number, number, number];
+  autoRotate: boolean;
+  interactive: boolean;
+  camLog: boolean;
+}) {
+  const { camera } = useThree();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const controls = useRef<any>(null);
+  const target = useRef(new THREE.Vector3(position[0], position[1], position[2]));
+  const first = useRef(true);
+  const transitioning = useRef(false);
+
+  const [px, py, pz] = position;
+  useEffect(() => {
+    target.current.set(px, py, pz);
+    if (!first.current) transitioning.current = true;
+  }, [px, py, pz]);
+
+  useFrame((_, delta) => {
+    if (first.current) {
+      // First paint: snap straight to the angle, no fly-in.
+      camera.position.copy(target.current);
+      camera.lookAt(0, 0, 0);
+      first.current = false;
+      controls.current?.update();
+      return;
+    }
+
+    if (transitioning.current) {
+      camera.position.lerp(target.current, Math.min(1, 3 * delta));
+      camera.lookAt(0, 0, 0);
+      if (camera.position.distanceTo(target.current) < 0.6) {
+        transitioning.current = false;
+      }
+    }
+
+    if (controls.current) {
+      // Pause spin while gliding to the new angle, resume once settled.
+      controls.current.autoRotate = !transitioning.current && !camLog && autoRotate;
+      controls.current.update();
+    }
+  });
+
+  if (!(interactive || camLog)) return null;
+
+  return (
+    <OrbitControls
+      ref={controls}
+      autoRotate={camLog ? false : autoRotate}
+      autoRotateSpeed={1.0}
+      enablePan={false}
+      enableZoom={camLog}
+      enableRotate={interactive || camLog}
+      onEnd={camLog ? ((e: unknown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const p = (e as any)?.target?.object?.position;
+        if (p) {
+          // eslint-disable-next-line no-console
+          console.log('cameraPosition={[' + p.x.toFixed(2) + ', ' + p.y.toFixed(2) + ', ' + p.z.toFixed(2) + ']}');
+        }
+      }) : undefined}
+    />
+  );
+}
+
 export default function Product3DViewer({
   topColor,
   bottomColor,
@@ -120,22 +197,12 @@ export default function Product3DViewer({
           <Center>
             <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} />
           </Center>
-          {(interactive || camLog) && (
-            <OrbitControls
-              autoRotate={camLog ? false : autoRotate}
-              autoRotateSpeed={1.0}
-              enablePan={false}
-              enableZoom={camLog}
-              enableRotate={interactive || camLog}
-              onEnd={camLog ? ((e: any) => {
-                const p = e?.target?.object?.position;
-                if (p) {
-                  // eslint-disable-next-line no-console
-                  console.log('cameraPosition={[' + p.x.toFixed(2) + ', ' + p.y.toFixed(2) + ', ' + p.z.toFixed(2) + ']}');
-                }
-              }) : undefined}
-            />
-          )}
+          <CameraRig
+            position={cameraPosition}
+            autoRotate={autoRotate}
+            interactive={interactive}
+            camLog={camLog}
+          />
         </Suspense>
       </Canvas>
     </div>

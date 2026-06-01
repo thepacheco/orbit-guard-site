@@ -730,7 +730,7 @@ function ShopPageContent() {
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
-                cameraPosition={[104.74, 96.92, 138.54]}
+                cameraPosition={[-11.41, -178.43, -87.13]}
               />
             </div>
           ) : (

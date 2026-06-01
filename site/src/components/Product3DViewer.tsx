@@ -210,7 +210,7 @@ export default function Product3DViewer({
           <directionalLight position={[5, 8, 6]} intensity={1.1} />
           <directionalLight position={[-6, 3, -4]} intensity={0.5} />
           <Center>
-            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin} spinSpeed={spinSpeed} />
+            <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin && !camLog} spinSpeed={spinSpeed} />
           </Center>
           <CameraRig
             position={cameraPosition}

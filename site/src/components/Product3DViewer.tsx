@@ -38,6 +38,7 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const topRef = useRef<THREE.Group>(null);
   const bottomRef = useRef<THREE.Group>(null);
   const groupRef = useRef<THREE.Group>(null);
+  const firstFrame = useRef(true);
 
   useMemo(() => {
     // Mix & Match (float) flips the whole assembly 180° so the shape reads
@@ -77,7 +78,12 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
     const targetY = exploded ? 60 : 0;          // pull-apart gap so pieces don't touch
     const targetTwist = exploded ? 0.5 : 0;     // opposite Y-rotation (radians)
     const targetTilt = exploded ? 0.28 : 0;     // gentle hinge/tilt about X
-    const k = 10 * delta;                        // lerp factor (eased)
+    const isFirst = firstFrame.current;
+    // On the very first frame, snap directly to target values instead of
+    // lerping — this prevents the visible "zoom in" glitch when the viewer
+    // mounts (e.g. toggling Mix & Match on/off on the shop page).
+    const k = isFirst ? 1 : 10 * delta;          // lerp factor (eased)
+    if (isFirst) firstFrame.current = false;
 
     if (topRef.current) {
       topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, targetY, k);

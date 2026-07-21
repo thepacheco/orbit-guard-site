@@ -947,8 +947,8 @@ export function MixAndMatchBanner() {
   return (
     <section
       style={{
-        padding: '80px 0 72px',
-        background: `linear-gradient(135deg, ${topVariant.hex}20 0%, ${bottomVariant.hex}20 100%)`,
+        padding: '64px 0 52px',
+        background: `linear-gradient(135deg, ${topVariant.hex}18 0%, ${bottomVariant.hex}18 100%)`,
         transition: 'background 800ms var(--ease-out)',
         overflow: 'hidden',
         position: 'relative',
@@ -956,44 +956,32 @@ export function MixAndMatchBanner() {
     >
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 40px' }}>
         
-        {/* HEADING — left-aligned */}
-        <div style={{ textAlign: 'left', marginBottom: 8 }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--fg-3)',
-            }}
-          >
-            Endless Possibilities
-          </div>
+        {/* HEADING — Centered */}
+        <div style={{ textAlign: 'center', marginBottom: 12 }}>
           <h2
             style={{
               fontFamily: 'var(--font-ui)',
               fontWeight: 800,
-              fontSize: 'clamp(34px, 4vw, 52px)',
+              fontSize: 'clamp(32px, 3.8vw, 48px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
-              margin: '8px 0 0',
+              margin: '0 auto',
               color: 'var(--fg)',
-              maxWidth: 550,
             }}
           >
             Mix and Match Any Orbit
           </h2>
         </div>
 
-        {/* CENTER: Extra Large 3D Model with Connected Pointer Callouts */}
+        {/* CENTER: Condensed 3D Model Showcase with Connected Callouts */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 880, height: 560, position: 'relative' }}>
+          <div style={{ width: '100%', maxWidth: 740, height: 420, position: 'relative' }}>
 
-            {/* Top Color Callout — connects directly to UPPER half of Orbit */}
+            {/* Top Color Callout — UPPER half */}
             <div style={{
               position: 'absolute',
-              top: '36%',
-              left: '8%',
+              top: '32%',
+              left: '6%',
               display: 'flex',
               alignItems: 'center',
               gap: 0,
@@ -1005,7 +993,7 @@ export function MixAndMatchBanner() {
                 textTransform: 'uppercase',
                 color: 'var(--fg)',
                 fontWeight: 700,
-                background: 'rgba(255, 255, 255, 0.92)',
+                background: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(8px)',
                 padding: '6px 14px',
                 borderRadius: 8,
@@ -1020,7 +1008,7 @@ export function MixAndMatchBanner() {
                 <span>Top: {topVariant.name}</span>
               </div>
               <div style={{
-                width: 90,
+                width: 70,
                 height: 2,
                 background: `linear-gradient(to right, ${topVariant.hex}, ${topVariant.hex}80)`,
                 transition: 'background 800ms ease',
@@ -1035,11 +1023,11 @@ export function MixAndMatchBanner() {
               }} />
             </div>
 
-            {/* Bottom Color Callout — connects directly to LOWER half of Orbit */}
+            {/* Bottom Color Callout — LOWER half */}
             <div style={{
               position: 'absolute',
-              bottom: '34%',
-              right: '8%',
+              bottom: '30%',
+              right: '6%',
               display: 'flex',
               alignItems: 'center',
               gap: 0,
@@ -1054,7 +1042,7 @@ export function MixAndMatchBanner() {
                 flexShrink: 0,
               }} />
               <div style={{
-                width: 90,
+                width: 70,
                 height: 2,
                 background: `linear-gradient(to left, ${bottomVariant.hex}, ${bottomVariant.hex}80)`,
                 transition: 'background 800ms ease',
@@ -1065,7 +1053,7 @@ export function MixAndMatchBanner() {
                 textTransform: 'uppercase',
                 color: 'var(--fg)',
                 fontWeight: 700,
-                background: 'rgba(255, 255, 255, 0.92)',
+                background: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(8px)',
                 padding: '6px 14px',
                 borderRadius: 8,
@@ -1097,19 +1085,19 @@ export function MixAndMatchBanner() {
           <div style={{
             zIndex: 20,
             textAlign: 'center',
-            marginTop: -32,
-            background: 'rgba(255,255,255,0.85)',
+            marginTop: -28,
+            background: 'rgba(255,255,255,0.88)',
             backdropFilter: 'blur(12px)',
-            padding: '14px 32px',
-            borderRadius: 16,
+            padding: '12px 28px',
+            borderRadius: 14,
             boxShadow: '0 8px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
           }}>
             <div style={{
               fontFamily: 'var(--font-ui)',
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: 800,
               color: 'var(--fg)',
-              marginBottom: 4,
+              marginBottom: 2,
               letterSpacing: '-0.01em',
               transition: 'color 800ms ease',
             }}>

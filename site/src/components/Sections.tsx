@@ -388,13 +388,13 @@ export function HowItWorks({ v }: { v: Variant }) {
                   marginBottom: 18,
                   position: 'relative',
                   zIndex: 1,
-                  cursor: s.n === '01' ? 'pointer' : 'default'
+                  cursor: 'pointer'
                 }}
-                onMouseEnter={() => s.n === '01' && setHoveredStep('01')}
-                onMouseLeave={() => s.n === '01' && setHoveredStep(null)}
+                onMouseEnter={() => setHoveredStep(s.n)}
+                onMouseLeave={() => setHoveredStep(null)}
               >
                 {s.n}
-                {s.n === '01' && hoveredStep === '01' && (
+                {hoveredStep === s.n && (
                   <div style={{
                     position: 'absolute',
                     top: '-160px',
@@ -420,7 +420,7 @@ export function HowItWorks({ v }: { v: Variant }) {
                       fontSize: 12,
                       fontFamily: 'var(--font-mono)'
                     }}>
-                      Image Placeholder
+                      Image for Step {s.n}
                     </div>
                   </div>
                 )}
@@ -593,7 +593,7 @@ export function StemFit({ v }: { v: Variant }) {
               maxWidth: 460,
             }}
           >
-            We understand that all chairs are made differently. So we created Orbit so it is more customizable to each person. Each orbit is able to split in half to fit chairs with different wheel heights or base heights. This allows users to have it on carpets or hardwood floors, and lets you seamlessly mix and match while maintaining stackable, premium protection.
+            Chairs and wheels come in all shapes and sizes, so we made Orbit fully customizable. Split them in half to adjust for wheel height, base clearance, or different floor types like carpet and hardwood. Mix, match, and stack for premium, personalized protection.
           </p>
         </div>
 
@@ -948,7 +948,8 @@ export function MixAndMatchBanner() {
     <section
       style={{
         padding: '120px 0',
-        background: 'var(--bg-inset)',
+        background: `linear-gradient(135deg, ${topVariant.hex}25 0%, ${bottomVariant.hex}25 100%)`,
+        transition: 'background 800ms var(--ease-out)',
         overflow: 'hidden',
         position: 'relative',
         display: 'flex',
@@ -957,7 +958,7 @@ export function MixAndMatchBanner() {
         textAlign: 'center',
       }}
     >
-      <div style={{ padding: '0 56px', marginBottom: 56 }}>
+      <div style={{ padding: '0 56px', marginBottom: 20 }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
           <div
             style={{
@@ -991,44 +992,21 @@ export function MixAndMatchBanner() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 24,
+          gap: 16,
         }}
       >
-        <div style={{ position: 'relative', width: 220, height: 220 }}>
-          {/* Top half */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: '50%',
-            background: topVariant.hex,
-            borderRadius: '110px 110px 0 0',
-            boxShadow: 'inset 0 0 0 24px rgba(255,255,255,0.28)',
-            transition: 'background 800ms var(--ease-out)',
-          }}/>
-          {/* Bottom half */}
-          <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
-            background: bottomVariant.hex,
-            borderRadius: '0 0 110px 110px',
-            boxShadow: 'inset 0 0 0 24px rgba(255,255,255,0.28)',
-            transition: 'background 800ms var(--ease-out)',
-          }}/>
-          {/* Center hole */}
-          <div style={{
-            position: 'absolute', top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 56, height: 56, borderRadius: '50%',
-            background: 'var(--bg-inset)',
-            boxShadow: 'inset 0 0 0 4px rgba(0,0,0,0.06)',
-            zIndex: 2,
-          }}/>
-          {/* Split line */}
-          <div style={{
-            position: 'absolute', top: '50%', left: '10%', right: '10%',
-            height: 2, background: 'rgba(255,255,255,0.6)',
-            transform: 'translateY(-50%)', zIndex: 3,
-          }}/>
+        <div style={{ width: 340, height: 340, transform: 'translateY(10px)' }}>
+          <Product3DViewer
+            topColor={topVariant.hex}
+            bottomColor={bottomVariant.hex}
+            exploded={true}
+            float={true}
+            interactive={false}
+            cameraPosition={[-17.0, -265.4, -129.6]}
+          />
         </div>
 
-        <div>
+        <div style={{ zIndex: 10 }}>
           <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
             {mixName}
           </div>

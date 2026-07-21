@@ -45,8 +45,8 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
     // right-side up. That flip also swaps which mesh is visually on top, so we
     // swap the color assignment here to keep the picker's Top/Bottom labels
     // matching what's actually shown. Non-float views keep colors as-is.
-    const topMeshColor = topColor;
-    const bottomMeshColor = bottomColor;
+    const topMeshColor = float ? topColor : bottomColor;
+    const bottomMeshColor = float ? bottomColor : topColor;
 
     const topMat = new THREE.MeshStandardMaterial({
       color: topMeshColor,

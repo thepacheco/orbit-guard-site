@@ -83,7 +83,7 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f9fa', color: '#111827', fontFamily: 'var(--font-body, system-ui, sans-serif)', padding: '40px 0 80px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8f9fa', color: '#111827', fontFamily: 'var(--font-body, system-ui, sans-serif)', padding: '130px 0 80px' }}>
       
       <div style={{ maxWidth: 1380, margin: '0 auto', padding: '0 40px' }}>
 

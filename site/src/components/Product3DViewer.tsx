@@ -197,7 +197,7 @@ function CameraRig({
       autoRotate={camLog ? false : autoRotate}
       autoRotateSpeed={autoRotateSpeed}
       enablePan={false}
-      enableZoom={camLog}
+      enableZoom={interactive || camLog}
       enableRotate={interactive || camLog}
       onEnd={camLog ? ((e: unknown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

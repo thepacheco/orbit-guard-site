@@ -10,6 +10,8 @@ import NotifyForm from './NotifyForm';
 import { SITE_CONFIG } from '../config/products';
 import dynamic from 'next/dynamic';
 import confetti from 'canvas-confetti';
+import { PRODUCT_VARIANTS } from './data';
+import UNIQUE_MIX_NAMES from './names.json';
 
 const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false });
 
@@ -273,8 +275,14 @@ export function OrbitInUse({ v }: { v: Variant }) {
 
 // ──────────────────────────────────────────────────────────────────
 export function HowItWorks({ v }: { v: Variant }) {
+  const [hoveredStep, setHoveredStep] = React.useState<string | null>(null);
   const steps = [
-    { n: '01', title: 'Tip the chair', body: 'Tip the chair over, lay it on its side, or have someone hold it two seconds.' },
+    { 
+      n: '01', 
+      title: 'Tip the chair', 
+      body: 'Lift the chair slightly up so one of the wheels is no longer touching the ground.',
+      image: '/assets/placeholder-step1.jpg' 
+    },
     { n: '02', title: 'Slide it on', body: 'Slide the OrbitGuard so the wheel fits inside your OrbitGuard.' },
     { n: '03', title: 'Repeat', body: 'Place chair down and repeat for the other ones.' },
     { n: '04', title: 'Roll on', body: 'Roll on. Done. Two minutes finish every time.' },
@@ -380,9 +388,42 @@ export function HowItWorks({ v }: { v: Variant }) {
                   marginBottom: 18,
                   position: 'relative',
                   zIndex: 1,
+                  cursor: s.n === '01' ? 'pointer' : 'default'
                 }}
+                onMouseEnter={() => s.n === '01' && setHoveredStep('01')}
+                onMouseLeave={() => s.n === '01' && setHoveredStep(null)}
               >
                 {s.n}
+                {s.n === '01' && hoveredStep === '01' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-160px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 200,
+                    height: 140,
+                    background: '#fff',
+                    borderRadius: 12,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                    padding: 6,
+                    zIndex: 50,
+                  }}>
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      background: '#f0f0f0',
+                      borderRadius: 8,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#999',
+                      fontSize: 12,
+                      fontFamily: 'var(--font-mono)'
+                    }}>
+                      Image Placeholder
+                    </div>
+                  </div>
+                )}
               </div>
               <div
                 style={{
@@ -552,8 +593,7 @@ export function StemFit({ v }: { v: Variant }) {
               maxWidth: 460,
             }}
           >
-            Every Orbit clips on at 2.5cm tall. Stack a second one on top for taller stems, gaming
-            chairs, or to dial in your preferred roll height. The orbits can go from 5 centimeters to 2 centimeters.
+            We understand that all chairs are made differently. So we created Orbit so it is more customizable to each person. Each orbit is able to split in half to fit chairs with different wheel heights or base heights. This allows users to have it on carpets or hardwood floors, and lets you seamlessly mix and match while maintaining stackable, premium protection.
           </p>
         </div>
 
@@ -880,15 +920,30 @@ export function Kickstarter({ v }: { v: Variant }) {
 }
 
 // ──────────────────────────────────────────────────────────────────
-export function Reviews({ v }: { v: Variant }) {
-  const reviews = [
-    { quote: 'Two cats sleep under my desk. I sleep better too.', name: 'Mira K.', role: 'Brooklyn, NY', color: '#A292FF' },
-    { quote: 'Robot vac and a corgi finally coexist.', name: 'Daniel J.', role: 'Austin, TX', color: '#06D6A0' },
-    { quote: 'Took longer to unbox than to install.', name: 'Priya R.', role: 'Toronto, ON', color: '#FFB4A2' },
-    { quote: 'My toes thank you. So does the laptop cable.', name: 'Sam O.', role: 'Seattle, WA', color: '#5A74FF' },
-    { quote: 'The Coral matches my walnut floor exactly.', name: 'Eli W.', role: 'Berlin', color: '#FF6B47' },
-    { quote: "Wish I'd bought these years ago.", name: 'Riley B.', role: 'Chicago, IL', color: '#E7BC91' },
-  ];
+export function MixAndMatchBanner() {
+  const [index, setIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % PRODUCT_VARIANTS.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const topIndex = index;
+  const bottomIndex = (index + 3) % PRODUCT_VARIANTS.length;
+
+  const topVariant = PRODUCT_VARIANTS[topIndex];
+  const bottomVariant = PRODUCT_VARIANTS[bottomIndex];
+
+  function getMixName(topKey: string, bottomKey: string): string {
+    if (topKey === bottomKey) return PRODUCT_VARIANTS.find(v => v.key === topKey)?.name || '';
+    const canonical = [topKey, bottomKey].sort().join('|');
+    return (UNIQUE_MIX_NAMES as Record<string, string>)[canonical] || 'Cosmic Blend';
+  }
+
+  const mixName = getMixName(topVariant.key, bottomVariant.key);
+
   return (
     <section
       style={{
@@ -896,6 +951,10 @@ export function Reviews({ v }: { v: Variant }) {
         background: 'var(--bg-inset)',
         overflow: 'hidden',
         position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
       }}
     >
       <div style={{ padding: '0 56px', marginBottom: 56 }}>
@@ -906,11 +965,10 @@ export function Reviews({ v }: { v: Variant }) {
               fontSize: 11,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: vAccent(v),
-              transition: 'color 420ms var(--ease-out)',
+              color: 'var(--fg-3)',
             }}
           >
-            Reviews
+            Endless Possibilities
           </div>
           <h2
             style={{
@@ -920,76 +978,64 @@ export function Reviews({ v }: { v: Variant }) {
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
               margin: '10px 0 0',
-              maxWidth: 760,
               color: 'var(--fg)',
             }}
           >
-            {SITE_CONFIG.kickstarterBackers.toLocaleString()} reviews. 4.9 average.<br />Mostly about pets.
+            Mix and Match Any Orbit
           </h2>
         </div>
       </div>
 
-      {/* Marquee track */}
       <div
         style={{
           display: 'flex',
-          gap: 18,
-          width: 'max-content',
-          animation: 'ogMarquee 38s linear infinite',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 24,
         }}
       >
-        {[...reviews, ...reviews].map((r, i) => (
-          <div
-            key={i}
-            style={{
-              width: 360,
-              flexShrink: 0,
-              background: '#fff',
-              borderRadius: 20,
-              padding: 26,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 14,
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              color: 'var(--fg)',
-            }}
-          >
-            <div style={{ color: vAccent(v), letterSpacing: 2 }}>★★★★★</div>
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 17,
-                lineHeight: 1.5,
-                color: 'var(--fg)',
-                margin: 0,
-              }}
-            >
-              &ldquo;{r.quote}&rdquo;
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                marginTop: 4,
-              }}
-            >
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: r.color,
-                  boxShadow: 'inset 0 0 0 3px rgba(255,255,255,0.5)',
-                }}
-              />
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--fg)' }}>{r.name}</div>
-                <div style={{ fontSize: 12, color: 'var(--fg-3)' }}>{r.role}</div>
-              </div>
-            </div>
+        <div style={{ position: 'relative', width: 220, height: 220 }}>
+          {/* Top half */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: '50%',
+            background: topVariant.hex,
+            borderRadius: '110px 110px 0 0',
+            boxShadow: 'inset 0 0 0 24px rgba(255,255,255,0.28)',
+            transition: 'background 800ms var(--ease-out)',
+          }}/>
+          {/* Bottom half */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%',
+            background: bottomVariant.hex,
+            borderRadius: '0 0 110px 110px',
+            boxShadow: 'inset 0 0 0 24px rgba(255,255,255,0.28)',
+            transition: 'background 800ms var(--ease-out)',
+          }}/>
+          {/* Center hole */}
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 56, height: 56, borderRadius: '50%',
+            background: 'var(--bg-inset)',
+            boxShadow: 'inset 0 0 0 4px rgba(0,0,0,0.06)',
+            zIndex: 2,
+          }}/>
+          {/* Split line */}
+          <div style={{
+            position: 'absolute', top: '50%', left: '10%', right: '10%',
+            height: 2, background: 'rgba(255,255,255,0.6)',
+            transform: 'translateY(-50%)', zIndex: 3,
+          }}/>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
+            {mixName}
           </div>
-        ))}
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--fg-2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            Top: {topVariant.name} &nbsp;·&nbsp; Bottom: {bottomVariant.name}
+          </div>
+        </div>
       </div>
     </section>
   );

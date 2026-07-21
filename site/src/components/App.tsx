@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Hero from './Hero';
-import { AboutOrbit, OrbitInUse, HowItWorks, StemFit, Reviews, Kickstarter } from './Sections';
+import { AboutOrbit, OrbitInUse, HowItWorks, StemFit, MixAndMatchBanner, Kickstarter } from './Sections';
 import { PRODUCT_VARIANTS } from './data';
 import { useActiveVariant } from './ActiveVariantContext';
 
@@ -22,7 +22,7 @@ export default function App() {
       <OrbitInUse v={activeVariant} />
       <StemFit v={activeVariant} />
       <HowItWorks v={activeVariant} />
-      <Reviews v={activeVariant} />
+      <MixAndMatchBanner />
       <Kickstarter v={activeVariant} />
     </div>
   );

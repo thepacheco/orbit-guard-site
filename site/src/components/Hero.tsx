@@ -483,7 +483,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
           ))}
         </div>
 
-        <RatingRow v={v} />
+        {/* <RatingRow v={v} /> */}
       </div>
     </section>
   );

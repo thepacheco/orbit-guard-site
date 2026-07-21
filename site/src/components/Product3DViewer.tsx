@@ -40,13 +40,20 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const groupRef = useRef<THREE.Group>(null);
 
   useMemo(() => {
+    // Mix & Match (float) flips the whole assembly 180° so the shape reads
+    // right-side up. That flip also swaps which mesh is visually on top, so we
+    // swap the color assignment here to keep the picker's Top/Bottom labels
+    // matching what's actually shown. Non-float views keep colors as-is.
+    const topMeshColor = float ? bottomColor : topColor;
+    const bottomMeshColor = float ? topColor : bottomColor;
+
     const topMat = new THREE.MeshStandardMaterial({
-      color: topColor,
+      color: topMeshColor,
       roughness: 0.3,
       metalness: 0.1,
     });
     const bottomMat = new THREE.MeshStandardMaterial({
-      color: bottomColor,
+      color: bottomMeshColor,
       roughness: 0.3,
       metalness: 0.1,
     });
@@ -62,7 +69,7 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
         (child as THREE.Mesh).material = bottomMat;
       }
     });
-  }, [topMesh, bottomMesh, topColor, bottomColor]);
+  }, [topMesh, bottomMesh, topColor, bottomColor, float]);
 
   useFrame((state, delta) => {
     // "Cracking an egg" separation: twist in opposite directions + a gentle
@@ -105,8 +112,9 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
 
   return (
     // Mix & Match (float mode) loads the assembly upside down relative to
-    // every other viewer context — flip it 180° about X so the top piece
-    // reads as the top. Color/material assignment is untouched.
+    // every other viewer context — flip it 180° about X so the shape reads
+    // right-side up. (Colors are swapped in the material block above to keep
+    // the Top/Bottom picker labels matching the flipped view.)
     <group dispose={null} ref={groupRef} rotation={float ? [Math.PI, 0, 0] : [0, 0, 0]}>
       <group ref={topRef}>
         <primitive object={topMesh} />

@@ -593,7 +593,7 @@ export function StemFit({ v }: { v: Variant }) {
               maxWidth: 460,
             }}
           >
-            Chairs and wheels come in all shapes and sizes, so we made Orbit fully customizable. Split them in half to adjust for wheel height, base clearance, or different floor types like carpet and hardwood. Mix, match, and stack for premium, personalized protection.
+            Chairs and wheels come in all shapes and sizes, so we made Orbit fully customizable. Split them in half to adjust for wheel height, base clearance, or different floor types like carpet and hardwood.
           </p>
         </div>
 
@@ -952,14 +952,12 @@ export function MixAndMatchBanner() {
         transition: 'background 800ms var(--ease-out)',
         overflow: 'hidden',
         position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
       }}
     >
-      <div style={{ padding: '0 56px', marginBottom: 20 }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 56px' }}>
+        
+        {/* LEFT TEXT */}
+        <div style={{ flex: 1, textAlign: 'left' }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -980,38 +978,50 @@ export function MixAndMatchBanner() {
               lineHeight: 1.05,
               margin: '10px 0 0',
               color: 'var(--fg)',
+              maxWidth: 400,
             }}
           >
             Mix and Match Any Orbit
           </h2>
         </div>
-      </div>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 16,
-        }}
-      >
-        <div style={{ width: 340, height: 340, transform: 'translateY(10px)' }}>
-          <Product3DViewer
-            topColor={topVariant.hex}
-            bottomColor={bottomVariant.hex}
-            exploded={true}
-            float={true}
-            interactive={false}
-            cameraPosition={[-17.0, -265.4, -129.6]}
-          />
-        </div>
+        {/* RIGHT 3D & LABELS */}
+        <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          
+          <div style={{ width: 460, height: 380, position: 'relative' }}>
+            {/* Top Label Pointer */}
+            <div style={{ position: 'absolute', top: '35%', left: '-5%', display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: 'var(--fg-2)', fontWeight: 600 }}>Color</span>
+              <div style={{ width: 50, height: 1, background: 'var(--fg-3)' }} />
+              <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--fg-3)' }} />
+            </div>
 
-        <div style={{ zIndex: 10 }}>
-          <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
-            {mixName}
+            {/* Bottom Label Pointer */}
+            <div style={{ position: 'absolute', bottom: '35%', right: '-5%', display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
+              <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--fg-3)' }} />
+              <div style={{ width: 50, height: 1, background: 'var(--fg-3)' }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: 'var(--fg-2)', fontWeight: 600 }}>Color</span>
+            </div>
+
+            <Product3DViewer
+              topColor={topVariant.hex}
+              bottomColor={bottomVariant.hex}
+              exploded={false}
+              float={false}
+              spin={false}
+              autoRotate={false}
+              interactive={false}
+              cameraPosition={[0, 0, 150]}
+            />
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--fg-2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Top: {topVariant.name} &nbsp;·&nbsp; Bottom: {bottomVariant.name}
+
+          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -20 }}>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
+              {mixName}
+            </div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--fg-2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Top: {topVariant.name} &nbsp;·&nbsp; Bottom: {bottomVariant.name}
+            </div>
           </div>
         </div>
       </div>

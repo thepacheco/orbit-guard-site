@@ -947,8 +947,8 @@ export function MixAndMatchBanner() {
   return (
     <section
       style={{
-        padding: '120px 0',
-        background: `linear-gradient(135deg, ${topVariant.hex}25 0%, ${bottomVariant.hex}25 100%)`,
+        padding: '72px 0 64px',
+        background: `linear-gradient(135deg, ${topVariant.hex}18 0%, ${bottomVariant.hex}18 100%)`,
         transition: 'background 800ms var(--ease-out)',
         overflow: 'hidden',
         position: 'relative',
@@ -957,7 +957,7 @@ export function MixAndMatchBanner() {
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 56px' }}>
         
         {/* HEADING — left-aligned */}
-        <div style={{ textAlign: 'left', marginBottom: 32 }}>
+        <div style={{ textAlign: 'left', marginBottom: 16 }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -973,7 +973,7 @@ export function MixAndMatchBanner() {
             style={{
               fontFamily: 'var(--font-ui)',
               fontWeight: 700,
-              fontSize: 'clamp(36px, 4vw, 56px)',
+              fontSize: 'clamp(32px, 3.5vw, 48px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
               margin: '10px 0 0',
@@ -985,21 +985,88 @@ export function MixAndMatchBanner() {
           </h2>
         </div>
 
-        {/* CENTER: 3D model with color pointers */}
+        {/* CENTER: 3D model with connected pointer lines */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: 500, height: 400, position: 'relative' }}>
-            {/* Top color label — upper-left pointing in */}
-            <div style={{ position: 'absolute', top: '28%', left: '-8%', display: 'flex', alignItems: 'center', gap: 8, zIndex: 20 }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: topVariant.hex, fontWeight: 600, transition: 'color 800ms ease' }}>{topVariant.name}</span>
-              <div style={{ width: 40, height: 1, background: 'var(--fg-3)' }} />
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: topVariant.hex, transition: 'background 800ms ease' }} />
+          <div style={{ width: '100%', maxWidth: 700, height: 480, position: 'relative' }}>
+
+            {/* Top color pointer — connects to upper half */}
+            <div style={{
+              position: 'absolute',
+              top: '38%',
+              left: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0,
+              zIndex: 20,
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 13,
+                textTransform: 'uppercase',
+                color: 'var(--fg)',
+                fontWeight: 600,
+                background: `${topVariant.hex}30`,
+                padding: '4px 10px',
+                borderRadius: 6,
+                transition: 'background 800ms ease',
+                whiteSpace: 'nowrap',
+              }}>
+                {topVariant.name}
+              </span>
+              <div style={{
+                width: 80,
+                height: 2,
+                background: `linear-gradient(to right, ${topVariant.hex}, ${topVariant.hex}40)`,
+                transition: 'background 800ms ease',
+              }} />
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: topVariant.hex,
+                border: '2px solid white',
+                boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                transition: 'background 800ms ease',
+                flexShrink: 0,
+              }} />
             </div>
 
-            {/* Bottom color label — lower-right pointing in */}
-            <div style={{ position: 'absolute', bottom: '28%', right: '-8%', display: 'flex', alignItems: 'center', gap: 8, zIndex: 20 }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: bottomVariant.hex, transition: 'background 800ms ease' }} />
-              <div style={{ width: 40, height: 1, background: 'var(--fg-3)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: bottomVariant.hex, fontWeight: 600, transition: 'color 800ms ease' }}>{bottomVariant.name}</span>
+            {/* Bottom color pointer — connects to lower half */}
+            <div style={{
+              position: 'absolute',
+              bottom: '38%',
+              right: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0,
+              zIndex: 20,
+            }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: bottomVariant.hex,
+                border: '2px solid white',
+                boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                transition: 'background 800ms ease',
+                flexShrink: 0,
+              }} />
+              <div style={{
+                width: 80,
+                height: 2,
+                background: `linear-gradient(to left, ${bottomVariant.hex}, ${bottomVariant.hex}40)`,
+                transition: 'background 800ms ease',
+              }} />
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 13,
+                textTransform: 'uppercase',
+                color: 'var(--fg)',
+                fontWeight: 600,
+                background: `${bottomVariant.hex}30`,
+                padding: '4px 10px',
+                borderRadius: 6,
+                transition: 'background 800ms ease',
+                whiteSpace: 'nowrap',
+              }}>
+                {bottomVariant.name}
+              </span>
             </div>
 
             <Product3DViewer
@@ -1015,11 +1082,24 @@ export function MixAndMatchBanner() {
           </div>
 
           {/* Name below model */}
-          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -10 }}>
-            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
+          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -24 }}>
+            <div style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 28,
+              fontWeight: 700,
+              color: 'var(--fg)',
+              marginBottom: 6,
+              transition: 'color 800ms ease',
+            }}>
               {mixName}
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--fg-2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <div style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 13,
+              color: 'var(--fg-2)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}>
               Top: {topVariant.name} &nbsp;·&nbsp; Bottom: {bottomVariant.name}
             </div>
           </div>

@@ -738,13 +738,13 @@ function ShopPageContent() {
               )}
             </div>
           ) : mixMode ? (
-            <div style={{ width: '100%', height: '100%', transform: exploded ? 'translateY(140px) scale(0.9)' : 'translateY(140px) scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'translateY(150px) scale(0.9)' : 'translateY(150px) scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
               <Product3DViewer
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
                 float
-                cameraPosition={[-13.12, -205.19, -100.20]}
+                cameraPosition={[-19.39, -303.33, -148.12]}
               />
             </div>
           ) : (

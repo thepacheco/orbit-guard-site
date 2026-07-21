@@ -947,22 +947,22 @@ export function MixAndMatchBanner() {
   return (
     <section
       style={{
-        padding: '72px 0 64px',
-        background: `linear-gradient(135deg, ${topVariant.hex}18 0%, ${bottomVariant.hex}18 100%)`,
+        padding: '80px 0 72px',
+        background: `linear-gradient(135deg, ${topVariant.hex}20 0%, ${bottomVariant.hex}20 100%)`,
         transition: 'background 800ms var(--ease-out)',
         overflow: 'hidden',
         position: 'relative',
       }}
     >
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 56px' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 40px' }}>
         
         {/* HEADING — left-aligned */}
-        <div style={{ textAlign: 'left', marginBottom: 16 }}>
+        <div style={{ textAlign: 'left', marginBottom: 8 }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: 11,
-              letterSpacing: '0.12em',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: 'var(--fg-3)',
             }}
@@ -972,135 +972,157 @@ export function MixAndMatchBanner() {
           <h2
             style={{
               fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 'clamp(32px, 3.5vw, 48px)',
+              fontWeight: 800,
+              fontSize: 'clamp(34px, 4vw, 52px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
-              margin: '10px 0 0',
+              margin: '8px 0 0',
               color: 'var(--fg)',
-              maxWidth: 500,
+              maxWidth: 550,
             }}
           >
             Mix and Match Any Orbit
           </h2>
         </div>
 
-        {/* CENTER: 3D model with connected pointer lines */}
+        {/* CENTER: Extra Large 3D Model with Connected Pointer Callouts */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 700, height: 480, position: 'relative' }}>
+          <div style={{ width: '100%', maxWidth: 880, height: 560, position: 'relative' }}>
 
-            {/* Top color pointer — connects to upper half */}
+            {/* Top Color Callout — connects directly to UPPER half of Orbit */}
             <div style={{
               position: 'absolute',
-              top: '38%',
-              left: 0,
+              top: '36%',
+              left: '8%',
               display: 'flex',
               alignItems: 'center',
               gap: 0,
-              zIndex: 20,
+              zIndex: 30,
             }}>
-              <span style={{
+              <div style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: 13,
                 textTransform: 'uppercase',
                 color: 'var(--fg)',
-                fontWeight: 600,
-                background: `${topVariant.hex}30`,
-                padding: '4px 10px',
-                borderRadius: 6,
-                transition: 'background 800ms ease',
+                fontWeight: 700,
+                background: 'rgba(255, 255, 255, 0.92)',
+                backdropFilter: 'blur(8px)',
+                padding: '6px 14px',
+                borderRadius: 8,
+                boxShadow: '0 4px 14px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06)',
+                transition: 'all 800ms ease',
                 whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
               }}>
-                {topVariant.name}
-              </span>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: topVariant.hex, display: 'inline-block' }} />
+                <span>Top: {topVariant.name}</span>
+              </div>
               <div style={{
-                width: 80,
+                width: 90,
                 height: 2,
-                background: `linear-gradient(to right, ${topVariant.hex}, ${topVariant.hex}40)`,
+                background: `linear-gradient(to right, ${topVariant.hex}, ${topVariant.hex}80)`,
                 transition: 'background 800ms ease',
               }} />
               <div style={{
-                width: 8, height: 8, borderRadius: '50%',
+                width: 10, height: 10, borderRadius: '50%',
                 background: topVariant.hex,
-                border: '2px solid white',
-                boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                border: '2px solid #fff',
+                boxShadow: '0 0 8px rgba(0,0,0,0.25)',
                 transition: 'background 800ms ease',
                 flexShrink: 0,
               }} />
             </div>
 
-            {/* Bottom color pointer — connects to lower half */}
+            {/* Bottom Color Callout — connects directly to LOWER half of Orbit */}
             <div style={{
               position: 'absolute',
-              bottom: '38%',
-              right: 0,
+              bottom: '34%',
+              right: '8%',
               display: 'flex',
               alignItems: 'center',
               gap: 0,
-              zIndex: 20,
+              zIndex: 30,
             }}>
               <div style={{
-                width: 8, height: 8, borderRadius: '50%',
+                width: 10, height: 10, borderRadius: '50%',
                 background: bottomVariant.hex,
-                border: '2px solid white',
-                boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                border: '2px solid #fff',
+                boxShadow: '0 0 8px rgba(0,0,0,0.25)',
                 transition: 'background 800ms ease',
                 flexShrink: 0,
               }} />
               <div style={{
-                width: 80,
+                width: 90,
                 height: 2,
-                background: `linear-gradient(to left, ${bottomVariant.hex}, ${bottomVariant.hex}40)`,
+                background: `linear-gradient(to left, ${bottomVariant.hex}, ${bottomVariant.hex}80)`,
                 transition: 'background 800ms ease',
               }} />
-              <span style={{
+              <div style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: 13,
                 textTransform: 'uppercase',
                 color: 'var(--fg)',
-                fontWeight: 600,
-                background: `${bottomVariant.hex}30`,
-                padding: '4px 10px',
-                borderRadius: 6,
-                transition: 'background 800ms ease',
+                fontWeight: 700,
+                background: 'rgba(255, 255, 255, 0.92)',
+                backdropFilter: 'blur(8px)',
+                padding: '6px 14px',
+                borderRadius: 8,
+                boxShadow: '0 4px 14px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06)',
+                transition: 'all 800ms ease',
                 whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
               }}>
-                {bottomVariant.name}
-              </span>
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: bottomVariant.hex, display: 'inline-block' }} />
+                <span>Bottom: {bottomVariant.name}</span>
+              </div>
             </div>
 
             <Product3DViewer
               topColor={topVariant.hex}
               bottomColor={bottomVariant.hex}
               exploded={false}
-              float={false}
+              float={true}
               spin={false}
               autoRotate={false}
               interactive={false}
-              cameraPosition={[0.14, -268.28, 35.11]}
+              cameraPosition={[0.14, -180.0, 24.0]}
             />
           </div>
 
-          {/* Name below model */}
-          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -24 }}>
+          {/* Combination Title Banner below model */}
+          <div style={{
+            zIndex: 20,
+            textAlign: 'center',
+            marginTop: -32,
+            background: 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(12px)',
+            padding: '14px 32px',
+            borderRadius: 16,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
+          }}>
             <div style={{
               fontFamily: 'var(--font-ui)',
-              fontSize: 28,
-              fontWeight: 700,
+              fontSize: 26,
+              fontWeight: 800,
               color: 'var(--fg)',
-              marginBottom: 6,
+              marginBottom: 4,
+              letterSpacing: '-0.01em',
               transition: 'color 800ms ease',
             }}>
               {mixName}
             </div>
             <div style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: 13,
+              fontSize: 12,
               color: 'var(--fg-2)',
               textTransform: 'uppercase',
-              letterSpacing: '0.1em',
+              letterSpacing: '0.12em',
             }}>
-              Top: {topVariant.name} &nbsp;·&nbsp; Bottom: {bottomVariant.name}
+              {topVariant.name} + {bottomVariant.name}
             </div>
           </div>
         </div>

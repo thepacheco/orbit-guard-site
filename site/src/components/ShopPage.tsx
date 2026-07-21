@@ -738,7 +738,7 @@ function ShopPageContent() {
               )}
             </div>
           ) : mixMode ? (
-            <div style={{ width: '100%', height: '100%', transform: exploded ? 'translateY(75px) scale(0.9)' : 'translateY(75px) scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'translateY(120px) scale(0.9)' : 'translateY(120px) scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
               <Product3DViewer
                 topColor={previewTopVariant.hex}
                 bottomColor={previewBottomVariant.hex}

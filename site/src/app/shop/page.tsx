@@ -1,12 +1,33 @@
+import type { Metadata } from 'next';
 import ShopPage from '@/components/ShopPage';
-import Header from '@/components/Header';
-import { PRODUCT_VARIANTS } from '@/components/data';
+import StructuredData from '@/components/StructuredData';
+import { productSchema, breadcrumbSchema } from '@/config/structuredData';
+
+export const metadata: Metadata = {
+  title: 'Shop Orbit Guard — 12 Colors, Mix & Match',
+  description:
+    'Buy Orbit Guard caster guards in 12 colors. Mix and match tops and bottoms, fits 95% of office chairs, 60-day returns. Packs from $6.',
+  alternates: { canonical: '/shop' },
+  openGraph: {
+    title: 'Shop Orbit Guard — 12 Colors, Mix & Match',
+    description:
+      'Buy Orbit Guard caster guards in 12 colors. Mix and match tops and bottoms, fits 95% of office chairs, 60-day returns.',
+    url: '/shop',
+  },
+};
 
 export default function Page() {
-  const blueberryVariant = PRODUCT_VARIANTS.find(v => v.key === 'blueberry') ?? PRODUCT_VARIANTS[0];
   return (
     <>
-      
+      <StructuredData
+        data={[
+          productSchema,
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Shop', path: '/shop' },
+          ]),
+        ]}
+      />
       <ShopPage />
     </>
   );

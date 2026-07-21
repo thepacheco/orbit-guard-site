@@ -198,6 +198,10 @@ function ShopPalettePicker({
       <div className="og-show-on-mobile">
         <ColorDropdown value={v.key} onChange={setVariantKey} />
       </div>
+
+      <div style={{ fontSize: 11, fontFamily: 'var(--font-ui)', color: 'var(--fg-3)', opacity: 0.65, marginTop: 8 }}>
+        Actual color may vary slightly depending on your screen settings.
+      </div>
     </div>
   );
 }
@@ -337,7 +341,7 @@ function ProductDetails({ v }: { v: Variant }) {
     { label: 'Material', value: 'Soft-touch TPU, non-marking' },
     { label: 'Height', value: '2.5 cm each · stack to 5 cm' },
     { label: 'Compatibility', value: 'Fits 95% of office-chair casters' },
-    { label: 'Colors', value: '11 shades · mix tops & bottoms' },
+    { label: 'Colors', value: '12 shades · mix tops & bottoms' },
     { label: 'Care', value: 'Wipe clean · pet- and floor-safe' },
   ];
 
@@ -929,6 +933,10 @@ function ShopPageContent() {
                 </span>
                 <LucideIcons.ChevronRight size={18} strokeWidth={2} style={{ opacity: 0.5 }} />
               </button>
+
+              <div style={{ fontSize: 11, fontFamily: 'var(--font-ui)', color: 'var(--fg-3)', opacity: 0.65 }}>
+                Actual color may vary slightly depending on your screen settings.
+              </div>
 
               {/* Pricing note */}
               <div style={{ fontSize: 13, color: 'var(--fg-3)', fontFamily: 'var(--font-ui)' }}>

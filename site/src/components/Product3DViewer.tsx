@@ -104,7 +104,10 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   });
 
   return (
-    <group dispose={null} ref={groupRef}>
+    // Mix & Match (float mode) loads the assembly upside down relative to
+    // every other viewer context — flip it 180° about X so the top piece
+    // reads as the top. Color/material assignment is untouched.
+    <group dispose={null} ref={groupRef} rotation={float ? [Math.PI, 0, 0] : [0, 0, 0]}>
       <group ref={topRef}>
         <primitive object={topMesh} />
       </group>

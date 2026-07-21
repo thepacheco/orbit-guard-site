@@ -478,7 +478,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
           >
             What you get
           </div>
-          {v.features.slice(0, 4).map((f, i) => (
+          {v.features.slice(0, 5).map((f, i) => (
             <FeatureRow key={i} v={v} f={f} />
           ))}
         </div>

@@ -16,6 +16,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Droplets",   text: "Gray-floor pairing" },
@@ -36,6 +37,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Leaf",       text: "Plant-room friendly" },
@@ -45,7 +47,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "coral",  name: "Coral",    hex: "#FFB4A2",
+    key: "coral",  name: "Coral",    hex: "#FE6E5F",
     bg: "#FFEEE8", text: "#3A1A12",  ring: "#FF6B47",
     accent: "#5A74FF",
     headline: { line1: "Warm room?", lasso: "Coral", line2: "is yours." },
@@ -56,6 +58,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Sun",        text: "Wood-floor friendly" },
@@ -76,6 +79,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Moon",       text: "Reading-nook ready" },
@@ -85,7 +89,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "fawn",   name: "Fawn",     hex: "#E7BC91",
+    key: "fawn",   name: "Fawn",     hex: "#DCAB73",
     bg: "#FBF1E3", text: "#3A2614",  ring: "#9C6644",
     accent: "#06D6A0",
     headline: { line1: "Warm wood?", lasso: "Fawn", line2: "feels right." },
@@ -96,6 +100,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "TreePine",  text: "Hardwood blend" },
@@ -116,6 +121,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Flame",      text: "Statement piece" },
@@ -136,6 +142,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Sparkles",   text: "Colorful accent" },
@@ -145,7 +152,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "bear", name: "Bear", hex: "#9C6644",
+    key: "bear", name: "Bear", hex: "#935520",
     bg: "#F1E4D6", text: "#2A1608",  ring: "#7A4A2F",
     accent: "#06D6A0",
     headline: { line1: "Cozy as a", lasso: "Bear", line2: "in autumn." },
@@ -156,6 +163,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "BookOpen",       text: "Library-ready" },
@@ -165,7 +173,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "pomegranate", name: "Pomegranate", hex: "#950000",
+    key: "pomegranate", name: "Pomegranate", hex: "#660C21",
     bg: "#F0D9D9", text: "#2A0808",  ring: "#700000",
     accent: "#E7BC91",
     headline: { line1: "Rich and", lasso: "Pomegranate", line2: "luxe." },
@@ -176,6 +184,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Wine",       text: "Studio-luxe palette" },
@@ -185,7 +194,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "onyx",   name: "Onyx",     hex: "#212529",
+    key: "onyx",   name: "Onyx",     hex: "#0B0D10",
     bg: "#F0F2F5", text: "#1A1B1F",  ring: "#5A74FF",
     accent: "#FFB4A2",
     headline: { line1: "Sleek", lasso: "Onyx", line2: "black." },
@@ -196,6 +205,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "EyeOff",    text: "Stealth finish" },
@@ -203,6 +213,27 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Zap",        text: "Gamer-approved" },
     ],
     dark: true,
+  },
+  {
+    key: "lunar",  name: "Lunar",    hex: "#A1AAB2",
+    bg: "#EEF0F2", text: "#1A1D21",  ring: "#5C6773",
+    accent: "#FFB4A2",
+    headline: { line1: "Cool, calm,", lasso: "Lunar", line2: "gray." },
+    price: 24,
+    blurb: "A modern slate gray built for cool-toned offices — matches silver frames and monochrome desks without trying too hard.",
+    features: [
+      { icon: "CloudFog",    title: "Cool slate finish",      sub: "Pairs with silver & gray bases." },
+      { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
+      { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
+      { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
+    ],
+    floatChips: [
+      { icon: "CloudFog",   text: "Monochrome-ready" },
+      { icon: "ShieldCheck", text: "Protective soft shell" },
+      { icon: "VolumeX",   text: "Whisper-quiet" },
+    ],
+    dark: false,
   },
   {
     key: "polar",  name: "Polar",    hex: "#F4F4F0",
@@ -216,6 +247,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
       { icon: "Armchair",     title: "Fits 95% of chairs",    sub: "Stems from 7 to 11mm." },
       { icon: "PawPrint",    title: "Paw & cord safe",       sub: "Tested by three curious cats." },
       { icon: "RotateCcw",   title: "60-day returns",        sub: "Free, no questions asked." },
+      { icon: "Package",     title: "Durable plastic",       sub: "Injection-molded polypropylene." },
     ],
     floatChips: [
       { icon: "Snowflake",  text: "Studio-bright" },

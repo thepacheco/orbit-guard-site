@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const metadata = { title: 'Press & Brand Kit', description: 'Brand assets, color swatches, and quick facts about Orbit Guard for journalists.' };
+export const metadata = { title: 'Press & Brand Kit', description: 'Brand assets, color swatches, and quick facts about Orbit Guard for journalists.', alternates: { canonical: '/press' } };
 import Header from '@/components/Header';
 import { FooterCta } from '@/components/Sections';
 import { PRODUCT_VARIANTS } from '@/components/data';
@@ -513,7 +513,7 @@ export default function PressPage() {
                 fontStyle: 'italic',
               }}
             >
-              &ldquo;Orbit Guard makes caster guards for office chairs. Each Orbit fits to the chair wheel to protect kids, pets and cables. It is available in 11 colors.&rdquo;
+              &ldquo;Orbit Guard makes caster guards for office chairs. Each Orbit fits to the chair wheel to protect kids, pets and cables. It is available in 12 colors.&rdquo;
             </p>
           </blockquote>
         </div>

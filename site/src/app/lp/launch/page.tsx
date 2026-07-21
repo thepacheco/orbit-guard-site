@@ -349,7 +349,7 @@ function startConfettiWaterfall(paletteColors: string[]) {
                   margin: '0 0 16px',
                 }}
               >
-                One chair. 11 colors.
+                One chair. 12 colors.
               </h1>
               <div
                 style={{

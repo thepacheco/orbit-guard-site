@@ -223,7 +223,7 @@ export default function Product3DViewer({
   const camLog = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('camlog');
 
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10 }}>
+    <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10, touchAction: 'none' }}>
       <Canvas dpr={[1, 2]} frameloop="always" camera={{ position: cameraPosition, fov: 45 }}>
         <Suspense fallback={null}>
           {/* Local lighting (no remote HDR fetch) keeps load fast and reliable */}

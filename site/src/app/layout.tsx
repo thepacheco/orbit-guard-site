@@ -69,6 +69,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: '#5A74FF',
   colorScheme: 'light',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import GlobalLayoutClient from '../components/GlobalLayoutClient';

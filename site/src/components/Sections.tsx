@@ -954,10 +954,10 @@ export function MixAndMatchBanner() {
         position: 'relative',
       }}
     >
-      <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 56px' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 56px' }}>
         
-        {/* LEFT TEXT */}
-        <div style={{ flex: 1, textAlign: 'left' }}>
+        {/* HEADING — left-aligned */}
+        <div style={{ textAlign: 'left', marginBottom: 32 }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -978,29 +978,28 @@ export function MixAndMatchBanner() {
               lineHeight: 1.05,
               margin: '10px 0 0',
               color: 'var(--fg)',
-              maxWidth: 400,
+              maxWidth: 500,
             }}
           >
             Mix and Match Any Orbit
           </h2>
         </div>
 
-        {/* RIGHT 3D & LABELS */}
-        <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          
-          <div style={{ width: 460, height: 380, position: 'relative' }}>
-            {/* Top Label Pointer */}
-            <div style={{ position: 'absolute', top: '35%', left: '-5%', display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: 'var(--fg-2)', fontWeight: 600 }}>Color</span>
-              <div style={{ width: 50, height: 1, background: 'var(--fg-3)' }} />
-              <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--fg-3)' }} />
+        {/* CENTER: 3D model with color pointers */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ width: 500, height: 400, position: 'relative' }}>
+            {/* Top color label — upper-left pointing in */}
+            <div style={{ position: 'absolute', top: '28%', left: '-8%', display: 'flex', alignItems: 'center', gap: 8, zIndex: 20 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: topVariant.hex, fontWeight: 600, transition: 'color 800ms ease' }}>{topVariant.name}</span>
+              <div style={{ width: 40, height: 1, background: 'var(--fg-3)' }} />
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: topVariant.hex, transition: 'background 800ms ease' }} />
             </div>
 
-            {/* Bottom Label Pointer */}
-            <div style={{ position: 'absolute', bottom: '35%', right: '-5%', display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
-              <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--fg-3)' }} />
-              <div style={{ width: 50, height: 1, background: 'var(--fg-3)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: 'var(--fg-2)', fontWeight: 600 }}>Color</span>
+            {/* Bottom color label — lower-right pointing in */}
+            <div style={{ position: 'absolute', bottom: '28%', right: '-8%', display: 'flex', alignItems: 'center', gap: 8, zIndex: 20 }}>
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: bottomVariant.hex, transition: 'background 800ms ease' }} />
+              <div style={{ width: 40, height: 1, background: 'var(--fg-3)' }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, textTransform: 'uppercase', color: bottomVariant.hex, fontWeight: 600, transition: 'color 800ms ease' }}>{bottomVariant.name}</span>
             </div>
 
             <Product3DViewer
@@ -1011,11 +1010,12 @@ export function MixAndMatchBanner() {
               spin={false}
               autoRotate={false}
               interactive={false}
-              cameraPosition={[0, 0, 150]}
+              cameraPosition={[104.74, -96.92, 138.54]}
             />
           </div>
 
-          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -20 }}>
+          {/* Name below model */}
+          <div style={{ zIndex: 10, textAlign: 'center', marginTop: -10 }}>
             <div style={{ fontFamily: 'var(--font-ui)', fontSize: 24, fontWeight: 700, color: 'var(--fg)', marginBottom: 8, transition: 'color 800ms ease' }}>
               {mixName}
             </div>

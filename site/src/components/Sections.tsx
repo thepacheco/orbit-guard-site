@@ -1073,11 +1073,11 @@ export function MixAndMatchBanner() {
               topColor={topVariant.hex}
               bottomColor={bottomVariant.hex}
               exploded={false}
-              float={true}
+              float={false}
               spin={false}
               autoRotate={false}
               interactive={false}
-              cameraPosition={[0.14, -180.0, 24.0]}
+              cameraPosition={[0.14, -135.0, 18.0]}
             />
           </div>
 

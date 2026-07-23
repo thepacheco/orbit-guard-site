@@ -96,7 +96,12 @@ function PhotoSlider({ v, context, label }: { v: Variant; context: 'chair' | 'ro
           <img
             src={images[idx]}
             alt={`${label} — photo ${idx + 1}`}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              objectPosition: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'bottom' : 'center'
+            }}
           />
         ) : (
           <div style={{ textAlign: 'center', color: v.dark ? 'rgba(255,255,255,0.7)' : 'var(--fg-3)' }}>

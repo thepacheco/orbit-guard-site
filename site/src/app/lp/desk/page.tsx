@@ -86,13 +86,15 @@ export default function DeskLandingPage() {
             style={{ position: 'relative', width: '100%', height: 480, borderRadius: 24, overflow: 'hidden', cursor: 'ew-resize', boxShadow: '0 24px 48px rgba(0,0,0,0.08)', background: '#E5E7EB', touchAction: 'none' }}
           >
             {/* Before */}
-            <div style={{ position: 'absolute', inset: 0, background: '#D1D5DB', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 24, backgroundImage: 'repeating-linear-gradient(45deg, #cbd5e1 25%, transparent 25%, transparent 75%, #cbd5e1 75%, #cbd5e1), repeating-linear-gradient(45deg, #cbd5e1 25%, #D1D5DB 25%, #D1D5DB 75%, #cbd5e1 75%, #cbd5e1)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6B7280', background: '#fff', padding: '8px 16px', borderRadius: 999 }}>Standard Casters</div>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 24 }}>
+              <img src="/assets/lp_desk/Before.png" alt="Before" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+              <div style={{ position: 'relative', zIndex: 1, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6B7280', background: '#fff', padding: '8px 16px', borderRadius: 999 }}>Standard Casters</div>
             </div>
             
             {/* After */}
-            <div style={{ position: 'absolute', inset: 0, background: '#F4F4F0', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', padding: 24, clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: blue, background: '#fff', padding: '8px 16px', borderRadius: 999, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>Orbit Guard</div>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', padding: 24, clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}>
+              <img src="/assets/lp_desk/After.png" alt="After" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+              <div style={{ position: 'relative', zIndex: 1, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: blue, background: '#fff', padding: '8px 16px', borderRadius: 999, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>Orbit Guard</div>
             </div>
 
             {/* Slider Line */}

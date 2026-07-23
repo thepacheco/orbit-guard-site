@@ -100,11 +100,10 @@ export default function PetsLandingPage() {
             </a>
           </div>
 
-          {/* Right 3D Interactive Scene */}
-          <div style={{ position: 'relative', height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 60%)', borderRadius: '50%' }} />
-            <div style={{ width: '120%', height: '120%', position: 'absolute', zIndex: 10, pointerEvents: 'auto' }}>
-               <Product3DViewer topColor="#2A2F33" bottomColor="#2A2F33" exploded={false} />
+          {/* Right Photo */}
+          <div style={{ position: 'relative', height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.08)' }}>
+              <img src="/assets/lp_pets/LP_Pets1.png" alt="Orbit Guard for Pets" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             
             {/* Interactive "tail" SVG sweeping */}

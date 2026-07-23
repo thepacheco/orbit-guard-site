@@ -394,7 +394,7 @@ export function HowItWorks({ v }: { v: Variant }) {
                           src={s.image} 
                           alt={s.title} 
                           fill 
-                          style={{ objectFit: 'cover' }} 
+                          style={{ objectFit: 'cover', objectPosition: (s.n === '02' || s.n === '03') ? 'bottom' : 'center' }} 
                         />
                       )}
                     </div>

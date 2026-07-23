@@ -187,6 +187,13 @@ export default function GamerLandingPage() {
           </div>
 
         </section>
+
+        {/* Gaming Photo Banner */}
+        <section style={{ padding: '0 56px 100px', maxWidth: 1400, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ position: 'relative', width: '100%', height: 600, borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
+            <img src="/assets/lp_gamer/GamingPage.png" alt="Gaming Setup" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        </section>
       </div>
     </div>
   );

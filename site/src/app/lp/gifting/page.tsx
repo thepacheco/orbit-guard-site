@@ -38,43 +38,22 @@ export default function GiftingLandingPage() {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Hero — single full-screen section with floating orbits */}
         <section
           style={{
             padding: '120px 56px 80px',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 24,
-            minHeight: 'calc(100vh - var(--og-announce-h, 0px))', justifyContent: 'center',
+            display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', gap: 64,
+            maxWidth: 1300, margin: '0 auto',
+            minHeight: 'calc(100vh - var(--og-announce-h, 0px))',
             position: 'relative',
           }}
         >
-          {/* Slide-in keyframes (removed in favor of global ogZoomIn) */}
-
-          {/* Floating Orbit Left */}
-          <div className="og-lp-float-left" style={{
-            position: 'absolute', left: -300, top: '50%', transform: 'translateY(-50%)',
-            width: 600, height: 600, zIndex: 0, pointerEvents: 'none',
-          }}>
-            <div style={{ width: '100%', height: '100%', animation: 'ogZoomIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
-              <div style={{ width: '100%', height: '100%', animation: 'ogFloat1 18s ease-in-out infinite' }}>
-                <Product3DViewer topColor="#5A74FF" bottomColor="#5A74FF" exploded={false} autoRotate={false} interactive={false} />
-              </div>
-            </div>
+          {/* Left Photo */}
+          <div style={{ position: 'relative', width: '100%', height: 500, borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.08)' }}>
+            <img src="/assets/HomePage_OnChair_Photos/OnChair3.png" alt="Orbit on Chair" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
 
-          {/* Floating Orbit Right */}
-          <div className="og-lp-float-right" style={{
-            position: 'absolute', right: -300, top: '50%', transform: 'translateY(-50%)',
-            width: 600, height: 600, zIndex: 0, pointerEvents: 'none',
-          }}>
-            <div style={{ width: '100%', height: '100%', animation: 'ogZoomIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
-              <div style={{ width: '100%', height: '100%', animation: 'ogFloat2 20s ease-in-out infinite' }}>
-                <Product3DViewer topColor="#FF90FE" bottomColor="#FF90FE" exploded={false} autoRotate={false} interactive={false} />
-              </div>
-            </div>
-          </div>
-
-          {/* Center content */}
-          <div style={{ position: 'relative', zIndex: 10, maxWidth: 700 }}>
+          {/* Right Text */}
+          <div style={{ position: 'relative', zIndex: 10, maxWidth: 600, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.15em', color: blue, opacity: 0.9, marginBottom: 20 }}>
               A gift worth giving
             </div>
@@ -83,7 +62,7 @@ export default function GiftingLandingPage() {
               The gift they didn&apos;t know their <span style={{ color: '#99582a' }}>chair</span> needed.
             </h1>
 
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 20, lineHeight: 1.65, color: fg, opacity: 0.7, maxWidth: 500, margin: '0 auto 28px' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 20, lineHeight: 1.65, color: fg, opacity: 0.7, maxWidth: 500, margin: '0 0 28px 0' }}>
               Perfect for people with animals, with children, or anyone who works from home.
             </p>
 
@@ -97,21 +76,6 @@ export default function GiftingLandingPage() {
           </div>
         </section>
       </div>
-      <style>{`
-        @media (max-width: 768px) {
-          .og-lp-float-left, .og-lp-float-right {
-            width: 300px !important;
-            height: 300px !important;
-          }
-          .og-lp-float-left { left: -180px !important; }
-          .og-lp-float-right { right: -180px !important; }
-        }
-        @media (max-width: 480px) {
-          .og-lp-float-left, .og-lp-float-right {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

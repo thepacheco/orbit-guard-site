@@ -100,7 +100,8 @@ function PhotoSlider({ v, context, label }: { v: Variant; context: 'chair' | 'ro
               width: '100%', 
               height: '100%', 
               objectFit: 'cover',
-              objectPosition: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'bottom' : 'center'
+              objectPosition: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'bottom' : 'center',
+              transform: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'scale(1.35) translateY(-10%)' : 'none'
             }}
           />
         ) : (

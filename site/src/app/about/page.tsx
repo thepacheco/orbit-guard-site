@@ -148,8 +148,52 @@ export default function AboutPage() {
               }}
             >
               Every office chair has five wheels. Every wheel is a hazard. A tail, a charging cable, a bare foot at midnight
-              — all of them find the wheel eventually. We built Orbit to sit between the floor and the wheel, safely doing
-              nothing until it needs to do everything. Small, soft, and out of sight.
+              — all of them find the wheel eventually. When our founder's cat, Edison, had a close call with a rolling chair, 
+              we knew something had to change.
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 17,
+                lineHeight: 1.7,
+                color: 'var(--fg-2)',
+                margin: '0 0 18px',
+              }}
+            >
+              We spent months prototyping, testing, and refining. We built Orbit to sit between the floor and the wheel, safely doing
+              nothing until it needs to do everything. Small, soft, and completely out of sight. Our goal was never to invent a new chair—just to make the ones we already love safer for the people and pets we care about most.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Atlanta Workspace Section */}
+      <section
+        className="og-about-workspace"
+        style={{
+          padding: '0 56px 100px',
+          background: '#fff',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1180,
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 40,
+          }}
+        >
+          <div style={{ width: '100%', height: 600, borderRadius: 24, overflow: 'hidden', position: 'relative', boxShadow: '0 24px 64px rgba(0,0,0,0.1)' }}>
+            <img src="/assets/AtlantaOffice.png" alt="Orbit Guard Atlanta Workspace" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+          
+          <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 28, margin: '0 0 16px' }}>
+              Designed in Atlanta
+            </h3>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 18, lineHeight: 1.7, color: 'var(--fg-2)', margin: 0 }}>
+              Our workspace in Atlanta is where the magic happens. It's a collaborative hub where engineering meets empathy. We surround ourselves with plants, natural light, and open desks to foster the kind of creative problem-solving that led to Orbit Guard. Every unit is designed, tested, and shipped with care by our dedicated team right here in the US.
             </p>
           </div>
         </div>

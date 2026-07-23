@@ -705,12 +705,12 @@ function ShopPageContent() {
           )}
 
           {showPhotos ? (
-            <div style={{ width: '100%', maxWidth: 580, position: 'relative', zIndex: 5 }}>
+            <div style={{ width: '100%', maxWidth: (curPhoto === 4 || curPhoto === 5 || curPhoto === 6) ? 760 : 580, position: 'relative', zIndex: 5, transition: 'max-width 400ms var(--ease-out)' }}>
               <div
                 style={{
                   position: 'relative',
                   width: '100%',
-                  aspectRatio: '4 / 3',
+                  aspectRatio: (curPhoto === 4 || curPhoto === 5 || curPhoto === 6) ? '16 / 9' : '4 / 3',
                   borderRadius: 20,
                   overflow: 'hidden',
                   background: 'linear-gradient(135deg, #f3f5f7 0%, #e6ebf0 100%)',

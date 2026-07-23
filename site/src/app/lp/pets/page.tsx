@@ -19,6 +19,19 @@ export default function PetsLandingPage() {
   const borderCol = 'rgba(90,116,255,0.15)';
   const blobColor = '#4361EE';
 
+  const [photoIdx, setPhotoIdx] = React.useState(0);
+  const images = ['/assets/lp_pets/LP_Pets1.png', '/assets/lp_pets/LP_Pets2.png', '/assets/lp_pets/LP_Pets3.png'];
+  
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setPhotoIdx((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextPhoto = () => setPhotoIdx((prev) => (prev + 1) % images.length);
+  const prevPhoto = () => setPhotoIdx((prev) => (prev - 1 + images.length) % images.length);
+
   return (
     <div
       style={{
@@ -100,19 +113,22 @@ export default function PetsLandingPage() {
             </a>
           </div>
 
-          {/* Right Photo */}
+          {/* Right Photo Slider */}
           <div style={{ position: 'relative', height: 500, display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
             <div style={{ position: 'absolute', inset: 0, borderRadius: 24, overflow: 'hidden', boxShadow: '0 24px 48px rgba(0,0,0,0.08)' }}>
-              <img src="/assets/lp_pets/LP_Pets1.png" alt="Orbit Guard for Pets" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={images[photoIdx]} alt={`Orbit Guard for Pets ${photoIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             
-            {/* Interactive "tail" SVG sweeping */}
-            <svg style={{ position: 'absolute', bottom: -20, left: 20, width: 200, height: 100, zIndex: 20, pointerEvents: 'none' }}>
-              <path d="M 0 100 Q 80 80 150 40 Q 180 20 160 10 Q 140 0 130 30" fill="none" stroke={fg} strokeWidth="12" strokeLinecap="round" style={{ animation: 'ogFloat1 4s ease-in-out infinite' }} />
-            </svg>
+            {/* Arrows */}
+            <button onClick={prevPhoto} aria-label="Previous photo" style={{ position: 'absolute', left: -20, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'grid', placeItems: 'center', zIndex: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={fg} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button onClick={nextPhoto} aria-label="Next photo" style={{ position: 'absolute', right: -20, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'grid', placeItems: 'center', zIndex: 10 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={fg} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
             
-            {/* Fetures shifted to the right side */}
-            <div style={{ position: 'absolute', bottom: -40, zIndex: 30, display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
+            {/* Features shifted to the right side */}
+            <div style={{ position: 'absolute', bottom: -60, zIndex: 30, display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
               {[
                 { icon: '🐾', label: 'Paw-safe' },
                 { icon: '🔌', label: 'Cord protection' },

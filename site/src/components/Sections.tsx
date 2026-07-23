@@ -96,19 +96,7 @@ export function AboutOrbit({ v }: { v: Variant }) {
               style={{ objectFit: 'cover' }} 
             />
           </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 11,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: 'var(--fg-3)',
-              marginTop: 16,
-            }}
-          >
-            <span style={{ color: vAccent(v), transition: 'color 420ms var(--ease-out)' }}>¹⁄₆₄</span>{' '}
-            of the chair, all of the protection
-          </div>
+
         </div>
         <div>
           <h2

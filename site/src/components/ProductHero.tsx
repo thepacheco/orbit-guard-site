@@ -10,8 +10,16 @@ import type { Variant, FloatChip } from './types';
    Drop real image paths into these arrays (e.g. '/assets/photos/chair-1.jpg').
    Leave an array empty to show a labeled placeholder frame instead. */
 const USAGE_PHOTOS: Record<string, string[]> = {
-  chair: [], // e.g. ['/assets/photos/on-chair-1.jpg', '/assets/photos/on-chair-2.jpg']
-  room: [],  // e.g. ['/assets/photos/in-room-1.jpg']
+  chair: [
+    '/assets/HomePage_OnChair_Photos/OnChair1.png',
+    '/assets/HomePage_OnChair_Photos/OnChair2.png',
+    '/assets/HomePage_OnChair_Photos/OnChair3.png'
+  ],
+  room: [
+    '/assets/HomePage_InRoom_Photos/InRoom1.png',
+    '/assets/HomePage_InRoom_Photos/InRoom2.png',
+    '/assets/HomePage_InRoom_Photos/InRoom3.png'
+  ],
 };
 const PLACEHOLDER_COUNT = 3;
 

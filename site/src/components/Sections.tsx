@@ -87,26 +87,14 @@ export function AboutOrbit({ v }: { v: Variant }) {
               overflow: 'hidden',
               background: 'linear-gradient(135deg, #f3f5f7 0%, #e8edf1 100%)',
               border: '1px solid rgba(0,0,0,0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
             }}
           >
-            <span style={{ fontSize: 96, lineHeight: 1 }} role="img" aria-label="cat">🐱</span>
-            <span
-              style={{
-                position: 'absolute',
-                bottom: 14,
-                left: 16,
-                fontFamily: 'var(--font-mono)',
-                fontSize: 10,
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: 'var(--fg-3)',
-              }}
-            >
-              Product photo
-            </span>
+            <Image 
+              src="/assets/HomePagePhotos/Image1.png" 
+              alt="Orbit on a chair caster" 
+              fill 
+              style={{ objectFit: 'cover' }} 
+            />
           </div>
           <div
             style={{
@@ -245,28 +233,14 @@ export function OrbitInUse({ v }: { v: Variant }) {
             overflow: 'hidden',
             background: 'linear-gradient(135deg, #eef1f4 0%, #e2e8ee 100%)',
             border: '1px solid rgba(0,0,0,0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
           }}
         >
-          {/* Replace this placeholder, e.g.:
-              <img src="/assets/photos/orbit-lifestyle.jpg" alt="Orbit in use" style={{ width:'100%', height:'100%', objectFit:'cover' }} /> */}
-          <span style={{ fontSize: 96, lineHeight: 1 }} role="img" aria-label="cat">🐱</span>
-          <span
-            style={{
-              position: 'absolute',
-              bottom: 14,
-              left: 16,
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: 'var(--fg-3)',
-            }}
-          >
-            Lifestyle photo
-          </span>
+          <Image 
+            src="/assets/HomePagePhotos/DisappearintoSpace.png" 
+            alt="Orbit in use, disappearing into space" 
+            fill 
+            style={{ objectFit: 'cover' }} 
+          />
         </div>
       </div>
     </section>
@@ -281,11 +255,11 @@ export function HowItWorks({ v }: { v: Variant }) {
       n: '01', 
       title: 'Tip the chair', 
       body: 'Lift the chair slightly up so one of the wheels is no longer touching the ground.',
-      image: '/assets/placeholder-step1.jpg' 
+      image: '/assets/HomePage_Install/Step1.png' 
     },
-    { n: '02', title: 'Slide it on', body: 'Slide the OrbitGuard so the wheel fits inside your OrbitGuard.' },
-    { n: '03', title: 'Repeat', body: 'Place chair down and repeat for the other ones.' },
-    { n: '04', title: 'Roll on', body: 'Roll on. Done. Two minutes finish every time.' },
+    { n: '02', title: 'Slide it on', body: 'Slide the OrbitGuard so the wheel fits inside your OrbitGuard.', image: '/assets/HomePage_Install/Step2.png' },
+    { n: '03', title: 'Repeat', body: 'Place chair down and repeat for the other ones.', image: '/assets/HomePage_Install/Step3.png' },
+    { n: '04', title: 'Roll on', body: 'Roll on. Done. Two minutes finish every time.', image: '/assets/HomePage_Install/Step4.png' },
   ];
   return (
     <section
@@ -409,18 +383,20 @@ export function HowItWorks({ v }: { v: Variant }) {
                     zIndex: 50,
                   }}>
                     <div style={{
+                      position: 'relative',
                       width: '100%',
                       height: '100%',
-                      background: '#f0f0f0',
                       borderRadius: 8,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#999',
-                      fontSize: 12,
-                      fontFamily: 'var(--font-mono)'
+                      overflow: 'hidden',
                     }}>
-                      Image for Step {s.n}
+                      {s.image && (
+                        <Image 
+                          src={s.image} 
+                          alt={s.title} 
+                          fill 
+                          style={{ objectFit: 'cover' }} 
+                        />
+                      )}
                     </div>
                   </div>
                 )}

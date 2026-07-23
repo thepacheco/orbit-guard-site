@@ -50,13 +50,13 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
 
     const topMat = new THREE.MeshStandardMaterial({
       color: topMeshColor,
-      roughness: 0.3,
-      metalness: 0.1,
+      roughness: 0.62,
+      metalness: 0.0,
     });
     const bottomMat = new THREE.MeshStandardMaterial({
       color: bottomMeshColor,
-      roughness: 0.3,
-      metalness: 0.1,
+      roughness: 0.62,
+      metalness: 0.0,
     });
 
     topMesh.traverse((child) => {
@@ -230,13 +230,21 @@ export default function Product3DViewer({
 
   return (
     <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10, touchAction: 'none' }}>
-      <Canvas dpr={[1, 2]} frameloop="always" gl={{ preserveDrawingBuffer: true }} camera={{ position: cameraPosition, fov: 45 }}>
+      <Canvas
+        dpr={[1, 2]}
+        frameloop="always"
+        gl={{
+          preserveDrawingBuffer: true,
+          outputColorSpace: THREE.SRGBColorSpace,
+          toneMapping: THREE.NoToneMapping,
+        }}
+        camera={{ position: cameraPosition, fov: 45 }}
+      >
         <Suspense fallback={null}>
-          {/* Local lighting (no remote HDR fetch) keeps load fast and reliable */}
-          <ambientLight intensity={0.7} />
-          <hemisphereLight intensity={0.5} groundColor="#444" />
-          <directionalLight position={[5, 8, 6]} intensity={1.1} />
-          <directionalLight position={[-6, 3, -4]} intensity={0.5} />
+          {/* Neutral studio lighting without color casts */}
+          <ambientLight intensity={0.85} color="#ffffff" />
+          <directionalLight position={[5, 8, 6]} intensity={1.2} color="#ffffff" />
+          <directionalLight position={[-5, 3, -4]} intensity={0.6} color="#ffffff" />
           <Center>
             <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin && !camLog} spinSpeed={spinSpeed} float={float && !camLog} />
           </Center>

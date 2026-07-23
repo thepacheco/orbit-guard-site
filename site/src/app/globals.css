@@ -453,6 +453,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   .og-show-on-mobile { display: block; }
   .og-hide-on-mobile { display: none !important; }
   .og-mix-tap { display: flex; }
+  .og-center-on-mobile { 
+    text-align: center !important; 
+    align-items: center !important;
+  }
 }
 
 /* ── Cart popup: bottom sheet on mobile ── */

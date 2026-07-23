@@ -487,17 +487,34 @@ function ShopPageContent() {
   const [guardSlots, setGuardSlots] = useState<GuardSlot[]>([]);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Product viewer mode: interactive 3D model vs. real usage photos
+  const mixTopVariant = PRODUCT_VARIANTS.find(x => x.key === mixTopKey) || PRODUCT_VARIANTS[0];
+  const mixBottomVariant = PRODUCT_VARIANTS.find(x => x.key === mixBottomKey) || PRODUCT_VARIANTS[1];
+
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
-  const photoCount = SHOP_PHOTOS.length > 0 ? SHOP_PHOTOS.length : SHOP_PHOTO_PLACEHOLDERS;
+
+  const dynamicPhotos = mixMode 
+    ? [] 
+    : [
+        `/assets/start_product_photos/05_Product_Hero_Shot/ProductHeroShot_${v.name}.png`,
+        `/assets/start_product_photos/06_Product_Floating_Shot/ProductFloatingShot_${v.name}.png`,
+        `/assets/start_product_photos/07_Product_Twist_Shot/TwistProductShot_${v.name}.png`,
+        `/assets/start_product_photos/08_Product_Half_Floating_Shot/ProductFloatingHalfShot_${v.name}.png`,
+        `/assets/start_product_photos/09_Product_with_Chair/Product_CU_Chair/ProductCUChairShot_${v.name}.png`,
+        `/assets/start_product_photos/09_Product_with_Chair/Product_WS_Chair/ProductWideShot_${v.name}.png`,
+        `/assets/start_product_photos/Mix_and_Match.png`
+      ];
+
+  // When variant changes, reset photo index to 0
+  React.useEffect(() => {
+    setPhotoIdx(0);
+  }, [v.key]);
+
+  const photoCount = dynamicPhotos.length > 0 ? dynamicPhotos.length : SHOP_PHOTO_PLACEHOLDERS;
   const curPhoto = Math.min(photoIdx, photoCount - 1);
 
   const cart = useCart();
   const pack = PACK_SIZES[packIdx];
-
-  const mixTopVariant = PRODUCT_VARIANTS.find(x => x.key === mixTopKey) || PRODUCT_VARIANTS[0];
-  const mixBottomVariant = PRODUCT_VARIANTS.find(x => x.key === mixBottomKey) || PRODUCT_VARIANTS[1];
 
   // When packIdx changes in mix mode, rebuild guard slots
   React.useEffect(() => {
@@ -634,55 +651,57 @@ function ShopPageContent() {
           </svg>
 
           {/* 3D / Photos switch */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 20,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 20,
-              display: 'flex',
-              gap: 4,
-              padding: 4,
-              borderRadius: 999,
-              background: 'rgba(255,255,255,0.8)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            {[
-              { id: false, label: '3D model', icon: 'Box' },
-              { id: true, label: 'Photos', icon: 'Image' },
-            ].map((opt) => {
-              const active = showPhotos === opt.id;
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const Icon = (LucideIcons as any)[opt.icon];
-              return (
-                <button
-                  key={opt.label}
-                  onClick={() => setShowPhotos(opt.id)}
-                  style={{
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '8px 16px',
-                    borderRadius: 999,
-                    background: active ? vAccent(v) : 'transparent',
-                    color: active ? '#fff' : 'var(--fg)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 600,
-                    fontSize: 13,
-                    transition: 'all 160ms var(--ease-out)',
-                  }}
-                >
-                  {Icon && <Icon size={15} strokeWidth={1.75} />}
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
+          {!mixMode && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 20,
+                display: 'flex',
+                gap: 4,
+                padding: 4,
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.8)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              {[
+                { id: false, label: '3D model', icon: 'Box' },
+                { id: true, label: 'Photos', icon: 'Image' },
+              ].map((opt) => {
+                const active = showPhotos === opt.id;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const Icon = (LucideIcons as any)[opt.icon];
+                return (
+                  <button
+                    key={opt.label}
+                    onClick={() => setShowPhotos(opt.id)}
+                    style={{
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '8px 16px',
+                      borderRadius: 999,
+                      background: active ? vAccent(v) : 'transparent',
+                      color: active ? '#fff' : 'var(--fg)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 600,
+                      fontSize: 13,
+                      transition: 'all 160ms var(--ease-out)',
+                    }}
+                  >
+                    {Icon && <Icon size={15} strokeWidth={1.75} />}
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {showPhotos ? (
             <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 5 }}>
@@ -699,9 +718,9 @@ function ShopPageContent() {
                   placeItems: 'center',
                 }}
               >
-                {SHOP_PHOTOS.length > 0 ? (
+                {dynamicPhotos.length > 0 ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={SHOP_PHOTOS[curPhoto]} alt={`Orbit photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ textAlign: 'center', color: 'var(--fg-3)' }}>
                     <LucideIcons.Image size={48} strokeWidth={1.5} />

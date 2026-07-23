@@ -165,7 +165,7 @@ export function OrbitInUse({ v }: { v: Variant }) {
         }}
       >
         {/* LEFT: copy */}
-        <div>
+        <div className="og-center-on-mobile">
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -521,7 +521,7 @@ export function StemFit({ v }: { v: Variant }) {
         }}
       >
         {/* RIGHT (desktop): copy — placed second via order so the 3D model sits left */}
-        <div style={{ order: 2 }}>
+        <div style={{ order: 2 }} className="og-center-on-mobile">
           <div
             style={{
               fontFamily: 'var(--font-mono)',
@@ -567,7 +567,7 @@ export function StemFit({ v }: { v: Variant }) {
             <Product3DViewer topColor={v.hex} bottomColor={v.hex} exploded={exploded} cameraPosition={[104.74, -96.92, 138.54]} />
           </div>
           
-          <div style={{ position: 'absolute', bottom: -40, zIndex: 20 }}>
+          <div style={{ position: 'absolute', bottom: 0, zIndex: 20 }}>
             <button
               onClick={() => setExploded(!exploded)}
               style={{
@@ -926,7 +926,7 @@ export function MixAndMatchBanner() {
             style={{
               fontFamily: 'var(--font-ui)',
               fontWeight: 800,
-              fontSize: 'clamp(32px, 3.8vw, 48px)',
+              fontSize: 'clamp(24px, 5vw, 42px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
               margin: '0 auto',

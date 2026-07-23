@@ -530,9 +530,10 @@ function ShopPageContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pack.count, mixMode]);
 
-  // When mix mode turns on, initialise slots
+  // When mix mode turns on, initialise slots and hide photos
   React.useEffect(() => {
     if (mixMode) {
+      setShowPhotos(false);
       setGuardSlots(Array.from({ length: pack.count }, () => ({ topKey: mixTopKey, bottomKey: mixBottomKey })));
       setActiveSlot(0);
     }

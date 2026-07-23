@@ -704,7 +704,7 @@ function ShopPageContent() {
           )}
 
           {showPhotos ? (
-            <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 5 }}>
+            <div style={{ width: '100%', maxWidth: 580, position: 'relative', zIndex: 5 }}>
               <div
                 style={{
                   position: 'relative',
@@ -720,7 +720,7 @@ function ShopPageContent() {
               >
                 {dynamicPhotos.length > 0 ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(1.12) contrast(1.03)' }} />
                 ) : (
                   <div style={{ textAlign: 'center', color: 'var(--fg-3)' }}>
                     <LucideIcons.Image size={48} strokeWidth={1.5} />

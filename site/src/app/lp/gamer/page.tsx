@@ -32,9 +32,22 @@ export default function GamerLandingPage() {
 
   let glowColor1 = 'rgba(255,16,83,0.12)';
   let glowColor2 = 'rgba(0,240,255,0.08)';
-  if (edition.key === 'onyx') { glowColor1 = 'rgba(255,255,255,0.03)'; glowColor2 = 'rgba(255,255,255,0.01)'; }
-  else if (edition.key === 'polar') { glowColor1 = 'rgba(255,255,255,0.05)'; glowColor2 = 'rgba(255,255,255,0.02)'; }
-  else if (edition.key === 'nightfall') { glowColor1 = 'rgba(90,116,255,0.08)'; glowColor2 = 'rgba(90,116,255,0.03)'; }
+  let bannerGlow = 'rgba(255,16,83,0.4)';
+  if (edition.key === 'onyx') { 
+    glowColor1 = 'rgba(255,255,255,0.03)'; 
+    glowColor2 = 'rgba(255,255,255,0.01)'; 
+    bannerGlow = 'rgba(255,255,255,0.15)'; 
+  }
+  else if (edition.key === 'polar') { 
+    glowColor1 = 'rgba(255,255,255,0.05)'; 
+    glowColor2 = 'rgba(255,255,255,0.02)'; 
+    bannerGlow = 'rgba(255,255,255,0.4)'; 
+  }
+  else if (edition.key === 'nightfall') { 
+    glowColor1 = 'rgba(90,116,255,0.08)'; 
+    glowColor2 = 'rgba(90,116,255,0.03)'; 
+    bannerGlow = 'rgba(90,116,255,0.4)'; 
+  }
 
   return (
     <div
@@ -190,8 +203,8 @@ export default function GamerLandingPage() {
 
         {/* Gaming Photo Banner */}
         <section style={{ padding: '0 56px 100px', maxWidth: 1400, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{ position: 'relative', width: '100%', height: 600, borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}>
-            <img src="/assets/lp_gamer/GamingPage.png" alt="Gaming Setup" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'relative', width: '100%', height: 600, borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: `0 24px 80px ${bannerGlow}` }}>
+            <img src="/assets/lp_gamer/GamingPage.png" alt="Gaming Setup" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'bottom' }} />
           </div>
         </section>
       </div>

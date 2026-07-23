@@ -80,7 +80,7 @@ function PhotoSlider({ v, context, label }: { v: Variant; context: 'chair' | 'ro
         style={{
           position: 'relative',
           width: '100%',
-          aspectRatio: '4 / 3',
+          aspectRatio: '1 / 1',
           borderRadius: 20,
           overflow: 'hidden',
           background: v.dark
@@ -99,9 +99,7 @@ function PhotoSlider({ v, context, label }: { v: Variant; context: 'chair' | 'ro
             style={{ 
               width: '100%', 
               height: '100%', 
-              objectFit: 'cover',
-              objectPosition: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'bottom' : 'center',
-              transform: ((context === 'chair' && idx === 0) || (context === 'room' && (idx === 1 || idx === 2))) ? 'scale(1.35) translateY(-10%)' : 'none'
+              objectFit: 'cover'
             }}
           />
         ) : (

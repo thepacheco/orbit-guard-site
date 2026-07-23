@@ -405,7 +405,7 @@ export default function Hero({ variant, setVariantKey }: HeroProps) {
           flexDirection: 'column',
           gap: 18,
           position: 'relative',
-          zIndex: 2,
+          zIndex: 50,
           maxWidth: 400,
         }}
       >

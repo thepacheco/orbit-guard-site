@@ -939,10 +939,10 @@ export function MixAndMatchBanner() {
 
         {/* CENTER: Condensed 3D Model Showcase with Connected Callouts */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 740, height: 420, position: 'relative' }}>
+          <div className="og-mix-banner-3d" style={{ width: '100%', maxWidth: 740, height: 420, position: 'relative' }}>
 
             {/* Top Color Callout — UPPER half */}
-            <div style={{
+            <div className="og-mix-banner-callout" style={{
               position: 'absolute',
               top: '32%',
               left: '6%',
@@ -988,7 +988,7 @@ export function MixAndMatchBanner() {
             </div>
 
             {/* Bottom Color Callout — LOWER half */}
-            <div style={{
+            <div className="og-mix-banner-callout" style={{
               position: 'absolute',
               bottom: '30%',
               right: '6%',

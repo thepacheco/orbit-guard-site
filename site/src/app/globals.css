@@ -457,6 +457,12 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     text-align: center !important; 
     align-items: center !important;
   }
+  .og-mix-banner-3d {
+    height: 300px !important;
+  }
+  .og-mix-banner-callout {
+    transform: scale(0.85);
+  }
 }
 
 /* ── Cart popup: bottom sheet on mobile ── */

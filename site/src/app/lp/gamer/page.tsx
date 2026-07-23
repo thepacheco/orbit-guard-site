@@ -44,9 +44,9 @@ export default function GamerLandingPage() {
     bannerGlow = 'rgba(255,255,255,0.4)'; 
   }
   else if (edition.key === 'nightfall') { 
-    glowColor1 = 'rgba(90,116,255,0.08)'; 
-    glowColor2 = 'rgba(90,116,255,0.03)'; 
-    bannerGlow = 'rgba(90,116,255,0.4)'; 
+    glowColor1 = 'rgba(67, 97, 238, 0.08)'; 
+    glowColor2 = 'rgba(67, 97, 238, 0.03)'; 
+    bannerGlow = 'rgba(67, 97, 238, 0.5)'; 
   }
 
   return (

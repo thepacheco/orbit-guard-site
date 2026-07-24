@@ -198,10 +198,10 @@ export default function PlaygroundPage() {
                 <button onClick={() => applyPreset([104.74, -96.92, 138.54], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   3D View
                 </button>
-                <button onClick={() => applyPreset([0.14, -180.0, 24.0], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                <button onClick={() => applyPreset([175.0, -96.92, 0.0], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   Flat Profile
                 </button>
-                <button onClick={() => applyPreset([-17.0, -265.4, -129.6], true, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                <button onClick={() => applyPreset([157.11, -145.38, 207.81], true, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   Detached
                 </button>
               </div>

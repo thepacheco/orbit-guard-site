@@ -2,7 +2,7 @@
 
 import React, { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
-import { OrbitControls, TransformControls } from '@react-three/drei';
+import { OrbitControls, TransformControls, Center } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
@@ -164,13 +164,15 @@ function InteractiveModel({
           document.body.style.cursor = 'auto';
         }}
       >
-        <Model 
-          topColor={config.topColor}
-          bottomColor={config.bottomColor}
-          exploded={config.exploded}
-          spin={config.spin}
-          float={config.float}
-        />
+        <Center>
+          <Model 
+            topColor={config.topColor}
+            bottomColor={config.bottomColor}
+            exploded={config.exploded}
+            spin={config.spin}
+            float={config.float}
+          />
+        </Center>
         
         {/* Selection highlight ring */}
         {isActive && (

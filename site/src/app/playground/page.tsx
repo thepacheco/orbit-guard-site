@@ -64,6 +64,14 @@ export default function PlaygroundPage() {
     setFloatMode(float);
   };
 
+  const resetStudio = () => {
+    setTopIdx(0);
+    setBottomIdx(3);
+    setCustomTitle('');
+    setSpin(false);
+    applyPreset([104.74, -96.92, 138.54], false, false);
+  };
+
   // PNG Exporter
   const exportPNG = () => {
     if (!previewContainerRef.current) return;
@@ -203,6 +211,9 @@ export default function PlaygroundPage() {
                 </button>
                 <button onClick={() => applyPreset([157.11, -145.38, 207.81], true, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   Detached
+                </button>
+                <button onClick={resetStudio} style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600, marginLeft: 'auto' }}>
+                  Reset
                 </button>
               </div>
             </div>

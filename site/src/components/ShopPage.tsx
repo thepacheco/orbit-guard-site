@@ -720,8 +720,7 @@ function ShopPageContent() {
                 }}
               >
                 {dynamicPhotos.length > 0 ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(1.12) contrast(1.03)' }} />
+                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: curPhoto === 5 ? 'center bottom' : 'center center', filter: 'brightness(1.12) contrast(1.03)' }} />
                 ) : (
                   <div style={{ textAlign: 'center', color: 'var(--fg-3)' }}>
                     <LucideIcons.Image size={48} strokeWidth={1.5} />
@@ -735,14 +734,20 @@ function ShopPageContent() {
                     <button
                       aria-label="Previous photo"
                       onClick={() => setPhotoIdx((x) => (x - 1 + photoCount) % photoCount)}
-                      style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center' }}
+                      style={{ position: 'absolute', left: 16, bottom: 16, width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center', transition: 'transform 120ms ease', zIndex: 10 }}
+                      onMouseDown={e => e.currentTarget.style.transform = 'scale(0.92)'}
+                      onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                       <LucideIcons.ChevronLeft size={20} strokeWidth={2.25} />
                     </button>
                     <button
                       aria-label="Next photo"
                       onClick={() => setPhotoIdx((x) => (x + 1) % photoCount)}
-                      style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center' }}
+                      style={{ position: 'absolute', right: 16, bottom: 16, width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: 'var(--fg)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', display: 'grid', placeItems: 'center', transition: 'transform 120ms ease', zIndex: 10 }}
+                      onMouseDown={e => e.currentTarget.style.transform = 'scale(0.92)'}
+                      onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                       <LucideIcons.ChevronRight size={20} strokeWidth={2.25} />
                     </button>

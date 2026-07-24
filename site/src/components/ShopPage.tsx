@@ -710,7 +710,7 @@ function ShopPageContent() {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  aspectRatio: (curPhoto === 4 || curPhoto === 5 || curPhoto === 6) ? '16 / 9' : '4 / 3',
+                  aspectRatio: (curPhoto === 4 || curPhoto === 6) ? '16 / 9' : '4 / 3',
                   borderRadius: 20,
                   overflow: 'hidden',
                   background: 'linear-gradient(135deg, #f3f5f7 0%, #e6ebf0 100%)',

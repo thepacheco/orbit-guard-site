@@ -99,6 +99,19 @@ export function AboutOrbit({ v }: { v: Variant }) {
 
         </div>
         <div>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: vAccent(v),
+              marginBottom: 16,
+              transition: 'color 420ms var(--ease-out)',
+            }}
+          >
+            Small but mighty
+          </div>
           <h2
             style={{
               fontFamily: 'var(--font-ui)',

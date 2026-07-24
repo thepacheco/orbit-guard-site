@@ -87,6 +87,29 @@ export default function PressPage() {
               press@orbitguards.com
             </a>
           </p>
+
+          <div style={{ marginTop: 40 }}>
+            <a
+              href="/playground"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                background: '#111827',
+                color: '#fff',
+                textDecoration: 'none',
+                fontWeight: 700,
+                padding: '16px 32px',
+                borderRadius: 14,
+                fontSize: 16,
+                boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+              }}
+            >
+              Open 3D Asset Studio
+            </a>
+            <div style={{ fontSize: 14, color: '#6b7280', marginTop: 14, fontWeight: 500 }}>
+              Design custom combinations and export high-res transparent PNGs.
+            </div>
+          </div>
         </div>
       </section>
 

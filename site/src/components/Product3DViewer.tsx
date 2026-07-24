@@ -87,9 +87,10 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
     if (isFirst) firstFrame.current = false;
 
     if (topRef.current) {
-      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, targetY, k);
-      topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, targetTwist, k);
-      topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, targetTilt, k);
+      // topRef holds Snap_Top.obj (the physical BOTTOM cup). It should move DOWN.
+      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, -targetY, k);
+      topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, -targetTwist, k);
+      topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, -targetTilt, k);
     }
     // Scale the whole assembly down when detached so the separated halves stay
     // in frame. Done on the model group (not the camera) so it never fights
@@ -111,9 +112,10 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
       }
     }
     if (bottomRef.current) {
-      bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, -targetY, k);
-      bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, -targetTwist, k);
-      bottomRef.current.rotation.x = THREE.MathUtils.lerp(bottomRef.current.rotation.x, -targetTilt, k);
+      // bottomRef holds Snap_Bottom.obj (the physical TOP ring). It should move UP.
+      bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, targetY, k);
+      bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, targetTwist, k);
+      bottomRef.current.rotation.x = THREE.MathUtils.lerp(bottomRef.current.rotation.x, targetTilt, k);
     }
   });
 

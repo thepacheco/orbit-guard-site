@@ -41,12 +41,13 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const firstFrame = useRef(true);
 
   useMemo(() => {
-    // Mix & Match (float) flips the whole assembly 180° so the shape reads
-    // right-side up. That flip also swaps which mesh is visually on top, so we
-    // swap the color assignment here to keep the picker's Top/Bottom labels
-    // matching what's actually shown. Non-float views keep colors as-is.
-    const topMeshColor = float ? bottomColor : topColor;
-    const bottomMeshColor = float ? topColor : bottomColor;
+    // The OBJ names are inversely mapped to their physical positions:
+    // topMesh (Snap_Top.obj) is physically the BOTTOM piece (the cup).
+    // bottomMesh (Snap_Bottom.obj) is physically the TOP piece (the ring).
+    // When float=false (upright), topMesh is the visual bottom, so it gets bottomColor.
+    // When float=true (flipped), topMesh is the visual top, so it gets topColor.
+    const topMeshColor = float ? topColor : bottomColor;
+    const bottomMeshColor = float ? bottomColor : topColor;
 
     const topMat = new THREE.MeshStandardMaterial({
       color: topMeshColor,

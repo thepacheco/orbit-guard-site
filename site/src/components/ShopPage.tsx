@@ -757,20 +757,22 @@ function ShopPageContent() {
                 </div>
               )}
             </div>
-          ) : (
-            <div style={{
-              width: '100%',
-              height: '100%',
-              transform: mixMode
-                ? (exploded ? 'translateY(150px) scale(0.9)' : 'translateY(150px) scale(1)')
-                : (exploded ? 'scale(0.9)' : 'scale(1)'),
-              transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}>
+          ) : mixMode ? (
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'translateY(150px) scale(0.9)' : 'translateY(150px) scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
               <Product3DViewer
-                topColor={mixMode ? previewTopVariant.hex : v.hex}
-                bottomColor={mixMode ? previewBottomVariant.hex : v.hex}
+                topColor={previewTopVariant.hex}
+                bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
-                float={mixMode}
+                float
+                cameraPosition={[-17.0, -265.4, -129.6]}
+              />
+            </div>
+          ) : (
+            <div style={{ width: '100%', height: '100%', transform: exploded ? 'scale(0.9)' : 'scale(1)', transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              <Product3DViewer
+                topColor={v.hex}
+                bottomColor={v.hex}
+                exploded={exploded}
                 cameraPosition={[104.74, -96.92, 138.54]}
               />
             </div>

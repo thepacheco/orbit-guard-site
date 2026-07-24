@@ -2,7 +2,7 @@
 
 import React, { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
-import { OrbitControls, TransformControls, Center } from '@react-three/drei';
+import { OrbitControls, Center, PresentationControls } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
@@ -138,19 +138,7 @@ function InteractiveModel({
   const groupRef = useRef<THREE.Group>(null);
   
   return (
-    <TransformControls
-      position={config.position}
-      mode="translate"
-      showX={isActive} showY={false} showZ={isActive}
-      size={0.6}
-      onMouseUp={(e) => {
-        const target = (e as any)?.target;
-        if (target && target.worldPosition) {
-           const p = target.worldPosition;
-           onUpdatePosition(config.id, [p.x, p.y, p.z]);
-        }
-      }}
-    >
+    <group position={config.position}>
       <group 
         ref={groupRef}
         onClick={(e) => { 
@@ -177,12 +165,12 @@ function InteractiveModel({
         {/* Selection highlight ring */}
         {isActive && (
           <mesh position={[0, -0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[0.55, 0.6, 32]} />
-            <meshBasicMaterial color="#5A74FF" side={THREE.DoubleSide} transparent opacity={0.5} />
+            <ringGeometry args={[0.3, 0.32, 32]} />
+            <meshBasicMaterial color="#3b82f6" transparent opacity={0.5} />
           </mesh>
         )}
       </group>
-    </TransformControls>
+    </group>
   );
 }
 
@@ -210,9 +198,6 @@ export default function Playground3DViewer({
           <ambientLight intensity={0.85} color="#ffffff" />
           <directionalLight position={[5, 8, 6]} intensity={1.2} color="#ffffff" />
           <directionalLight position={[-5, 3, -4]} intensity={0.6} color="#ffffff" />
-          
-          {/* Subtle floor grid for grounding */}
-          <gridHelper args={[20, 20, '#e5e7eb', '#f3f4f6']} position={[0, -0.06, 0]} />
 
           {models.map(m => (
             <InteractiveModel

@@ -492,6 +492,7 @@ function ShopPageContent() {
 
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const dynamicPhotos = mixMode 
     ? [] 
@@ -505,10 +506,8 @@ function ShopPageContent() {
         `/assets/start_product_photos/Mix_and_Match.png`
       ];
 
-  // When variant changes, reset photo index to 0
-  React.useEffect(() => {
-    setPhotoIdx(0);
-  }, [v.key]);
+  // We removed the useEffect that resets photoIdx to 0 on variant change,
+  // so the user can easily compare the same photo angle across different colors!
 
   const photoCount = dynamicPhotos.length > 0 ? dynamicPhotos.length : SHOP_PHOTO_PLACEHOLDERS;
   const curPhoto = Math.min(photoIdx, photoCount - 1);
@@ -720,7 +719,7 @@ function ShopPageContent() {
                 }}
               >
                 {dynamicPhotos.length > 0 ? (
-                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: curPhoto === 5 ? 'center bottom' : 'center center', filter: 'brightness(1.12) contrast(1.03)' }} />
+                  <img src={dynamicPhotos[curPhoto]} alt={`Orbit ${v.name} photo ${curPhoto + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: curPhoto === 5 ? 'center bottom' : 'center center', filter: 'brightness(1.12) contrast(1.03)', cursor: 'zoom-in' }} onClick={() => setLightboxOpen(true)} />
                 ) : (
                   <div style={{ textAlign: 'center', color: 'var(--fg-3)' }}>
                     <LucideIcons.Image size={48} strokeWidth={1.5} />
@@ -1229,6 +1228,49 @@ function ShopPageContent() {
             >
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24
+        }}>
+          <button
+            onClick={() => setLightboxOpen(false)}
+            style={{
+              position: 'absolute', top: 24, right: 24, width: 44, height: 44, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+              color: '#fff', cursor: 'pointer', display: 'grid', placeItems: 'center', zIndex: 101,
+              transition: 'background 150ms ease'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+          >
+            <LucideIcons.X size={24} strokeWidth={2} />
+          </button>
+          
+          <div style={{ position: 'relative', width: '100%', maxWidth: 1200, maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={dynamicPhotos[curPhoto]} alt="Enlarged product photo" style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: 16 }} />
+            
+            {photoCount > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setPhotoIdx((x) => (x - 1 + photoCount) % photoCount); }}
+                  style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 56, height: 56, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: '#000', display: 'grid', placeItems: 'center', zIndex: 10 }}
+                >
+                  <LucideIcons.ChevronLeft size={32} strokeWidth={2} />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setPhotoIdx((x) => (x + 1) % photoCount); }}
+                  style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 56, height: 56, borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.92)', color: '#000', display: 'grid', placeItems: 'center', zIndex: 10 }}
+                >
+                  <LucideIcons.ChevronRight size={32} strokeWidth={2} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

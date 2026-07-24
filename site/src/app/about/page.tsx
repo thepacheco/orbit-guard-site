@@ -185,7 +185,7 @@ export default function AboutPage() {
           }}
         >
           <div style={{ width: '100%', height: 600, borderRadius: 24, overflow: 'hidden', position: 'relative', boxShadow: '0 24px 64px rgba(0,0,0,0.1)' }}>
-            <img src="/assets/AtlantaOffice.png" alt="Orbit Guard Atlanta Workspace" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="/assets/atlanta_office_empty.png" alt="Orbit Guard Atlanta Workspace" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
           
           <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
@@ -195,6 +195,93 @@ export default function AboutPage() {
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 18, lineHeight: 1.7, color: 'var(--fg-2)', margin: 0 }}>
               Our workspace in Atlanta is where the magic happens. It's a collaborative hub where engineering meets empathy. We surround ourselves with plants, natural light, and open desks to foster the kind of creative problem-solving that led to Orbit Guard. Every unit is designed, tested, and shipped with care by our dedicated team right here in the US.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Engineering section */}
+      <section
+        className="og-about-section"
+        style={{
+          padding: '100px 56px',
+          background: '#15171B',
+          color: '#fff',
+        }}
+      >
+        <div
+          className="og-about-origin-grid"
+          style={{
+            maxWidth: 1180,
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 80,
+            alignItems: 'center',
+          }}
+        >
+          {/* LEFT */}
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: '#05CE78',
+                marginBottom: 20,
+              }}
+            >
+              Precision Engineering
+            </div>
+            <h3
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 700,
+                fontSize: 'clamp(28px, 3.5vw, 42px)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+                margin: '0 0 24px',
+              }}
+            >
+              Advanced materials for everyday life.
+            </h3>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 17,
+                lineHeight: 1.7,
+                color: 'rgba(255,255,255,0.7)',
+                margin: '0 0 18px',
+              }}
+            >
+              Orbit Guard isn't just a bumper; it's a meticulously engineered shock absorber. We use a proprietary blend of impact-resistant TPU (Thermoplastic Polyurethane) that offers the perfect balance of rigidity and flexibility.
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 17,
+                lineHeight: 1.7,
+                color: 'rgba(255,255,255,0.7)',
+                margin: 0,
+              }}
+            >
+              This allows it to effortlessly snap onto 99% of standard caster wheels without the need for tools or adhesives, while remaining soft enough to bounce harmlessly off ankles, pets, and baseboards.
+            </p>
+          </div>
+          {/* RIGHT */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+             <div style={{ background: 'rgba(255,255,255,0.05)', padding: 32, borderRadius: 20 }}>
+               <h4 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 24, margin: '0 0 8px', color: '#05CE78' }}>100%</h4>
+               <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.6)' }}>Non-marking materials</div>
+             </div>
+             <div style={{ background: 'rgba(255,255,255,0.05)', padding: 32, borderRadius: 20 }}>
+               <h4 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 24, margin: '0 0 8px', color: '#05CE78' }}>99%</h4>
+               <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.6)' }}>Universal caster fit</div>
+             </div>
+             <div style={{ background: 'rgba(255,255,255,0.05)', padding: 32, borderRadius: 20, gridColumn: '1 / -1' }}>
+               <h4 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 24, margin: '0 0 8px', color: '#05CE78' }}>Zero</h4>
+               <div style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,0.6)' }}>Tools required for installation</div>
+             </div>
           </div>
         </div>
       </section>
@@ -304,6 +391,52 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Guarantee Section */}
+      <section
+        className="og-about-section"
+        style={{
+          padding: '80px 56px 120px',
+          background: '#fff',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 800,
+            margin: '0 auto',
+            textAlign: 'center',
+            background: '#F4F4F0',
+            padding: '64px 40px',
+            borderRadius: 24,
+            border: '1px solid rgba(0,0,0,0.04)',
+          }}
+        >
+          <div style={{ width: 48, height: 48, background: '#0A0A0A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: '#05CE78' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+          <h3
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontWeight: 700,
+              fontSize: 'clamp(24px, 2.5vw, 32px)',
+              letterSpacing: '-0.02em',
+              margin: '0 0 16px',
+            }}
+          >
+            The Orbit Fit Guarantee
+          </h3>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 18,
+              lineHeight: 1.6,
+              color: 'var(--fg-2)',
+              margin: 0,
+            }}
+          >
+            We designed Orbit Guard to be universally compatible with 99% of office chair casters. If they don't fit your chair perfectly, or if you aren't completely satisfied with how they look and perform, simply return them within 30 days for a full, no-questions-asked refund.
+          </p>
+        </div>
+      </section>
 
       {/* Team section */}
       <section

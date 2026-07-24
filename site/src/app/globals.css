@@ -249,6 +249,7 @@ body {
   .og-two-col > div {
     align-items: center !important;
     margin: 0 auto;
+    width: 100% !important;
   }
   /* Sections with inline 56px side padding that lack data-og-section */
   .og-pad-section {

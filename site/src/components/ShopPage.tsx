@@ -1234,10 +1234,13 @@ function ShopPageContent() {
 
       {/* Lightbox Modal */}
       {lightboxOpen && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24
-        }}>
+        <div 
+          onClick={() => setLightboxOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24
+          }}
+        >
           <button
             onClick={() => setLightboxOpen(false)}
             style={{
@@ -1252,7 +1255,10 @@ function ShopPageContent() {
             <LucideIcons.X size={24} strokeWidth={2} />
           </button>
           
-          <div style={{ position: 'relative', width: '100%', maxWidth: 1200, maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: 'relative', width: '100%', maxWidth: 1200, maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          >
             <img src={dynamicPhotos[curPhoto]} alt="Enlarged product photo" style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: 16 }} />
             
             {photoCount > 1 && (

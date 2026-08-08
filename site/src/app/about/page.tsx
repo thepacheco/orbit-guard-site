@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import { PRODUCT_VARIANTS } from '@/components/data';
 import * as LucideIcons from 'lucide-react';
-import StudioCarousel from '@/components/StudioCarousel';
+import RollingImageReel from '@/components/RollingImageReel';
 
 export const metadata = {
   title: 'About Us | Orbit Guard',
@@ -248,8 +248,8 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          {/* Interactive Auto-Carousel */}
-          <StudioCarousel />
+          {/* Smooth Rolling Image Reel */}
+          <RollingImageReel />
         </div>
       </section>
 

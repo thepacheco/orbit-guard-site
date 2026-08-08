@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { DM_Sans, ABeeZee } from 'next/font/google';
 import { Providers } from '../components/Providers';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import StructuredData from '../components/StructuredData';
 import { organizationSchema, websiteSchema } from '../config/structuredData';
 import { SITE_URL } from '../config/seo';
@@ -93,7 +94,7 @@ export default function RootLayout({
         {/* Site-wide structured data */}
         <StructuredData data={[organizationSchema, websiteSchema]} />
       </head>
-      <body><Providers><GlobalLayoutClient>{children}</GlobalLayoutClient></Providers><Analytics /></body>
+      <body><Providers><GlobalLayoutClient>{children}</GlobalLayoutClient></Providers><Analytics /><SpeedInsights /></body>
     </html>
   );
 }

@@ -6,7 +6,6 @@ import { OrbitControls, Center } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
-// Preload the meshes so they're cached before the viewer mounts
 useLoader.preload(OBJLoader, '/assets/models/Snap_Top/Snap_Top.obj');
 useLoader.preload(OBJLoader, '/assets/models/Snap_Bottom/Snap_Bottom.obj');
 
@@ -21,6 +20,7 @@ interface Product3DViewerProps {
   float?: boolean;
   interactive?: boolean;
   cameraPosition?: [number, number, number];
+  onCameraChange?: (pos: [number, number, number]) => void;
 }
 
 function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45, float = false }: Product3DViewerProps) {
@@ -35,17 +35,16 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const firstFrame = useRef(true);
 
   useMemo(() => {
-    // PHYSICAL MESH ARCHITECTURE & COLOR MAPPING:
-    // - Snap_Bottom.obj (bottomMesh) is physically the TOP ring -> assigned topColor
-    // - Snap_Top.obj (topMesh) is physically the BOTTOM cup -> assigned bottomColor
+    // PHYSICAL MESH MAPPING:
+    // Snap_Bottom.obj (bottomMesh) is physical TOP ring -> gets topColor
+    // Snap_Top.obj (topMesh) is physical BOTTOM cup -> gets bottomColor
     const topRingColor = topColor;
     const bottomCupColor = bottomColor;
 
-    // High-gloss TPU Plastic Material Specification
     const topRingMat = new THREE.MeshStandardMaterial({
       color: topRingColor,
-      roughness: 0.45,  // smooth polished TPU surface
-      metalness: 0.08,  // subtle dielectric shine
+      roughness: 0.45,
+      metalness: 0.08,
     });
     const bottomCupMat = new THREE.MeshStandardMaterial({
       color: bottomCupColor,
@@ -53,14 +52,12 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
       metalness: 0.08,
     });
 
-    // topMesh (Snap_Top.obj) is physical BOTTOM cup
     topMesh.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         (child as THREE.Mesh).material = bottomCupMat;
       }
     });
 
-    // bottomMesh (Snap_Bottom.obj) is physical TOP ring
     bottomMesh.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         (child as THREE.Mesh).material = topRingMat;
@@ -69,7 +66,6 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   }, [topMesh, bottomMesh, topColor, bottomColor]);
 
   useFrame((state, delta) => {
-    // Detach animation: top ring moves UP (+Y), bottom cup moves DOWN (-Y)
     const targetY = exploded ? 60 : 0;
     const targetTwist = exploded ? 0.4 : 0;
     const targetTilt = exploded ? 0.2 : 0;
@@ -77,14 +73,12 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
     const k = isFirst ? 1 : 10 * delta;
     if (isFirst) firstFrame.current = false;
 
-    // bottomRef holds Snap_Bottom.obj (physical TOP ring) -> moves UP (+Y)
     if (bottomRef.current) {
       bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, targetY, k);
       bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, targetTwist, k);
       bottomRef.current.rotation.x = THREE.MathUtils.lerp(bottomRef.current.rotation.x, targetTilt, k);
     }
 
-    // topRef holds Snap_Top.obj (physical BOTTOM cup) -> moves DOWN (-Y)
     if (topRef.current) {
       topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, -targetY, k);
       topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, -targetTwist, k);
@@ -125,12 +119,14 @@ function CameraRig({
   autoRotateSpeed,
   interactive,
   camLog,
+  onCameraChange,
 }: {
   position: [number, number, number];
   autoRotate: boolean;
   autoRotateSpeed: number;
   interactive: boolean;
   camLog: boolean;
+  onCameraChange?: (pos: [number, number, number]) => void;
 }) {
   const { camera } = useThree();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,14 +174,21 @@ function CameraRig({
       enablePan={false}
       enableZoom={interactive || camLog}
       enableRotate={interactive || camLog}
-      onEnd={camLog ? ((e: unknown) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const p = (e as any)?.target?.object?.position;
-        if (p) {
-          // eslint-disable-next-line no-console
-          console.log('cameraPosition={[' + p.x.toFixed(2) + ', ' + p.y.toFixed(2) + ', ' + p.z.toFixed(2) + ']}');
+      onChange={() => {
+        if (controls.current) {
+          const p = controls.current.object?.position;
+          if (p) {
+            const coords: [number, number, number] = [
+              Number(p.x.toFixed(2)),
+              Number(p.y.toFixed(2)),
+              Number(p.z.toFixed(2)),
+            ];
+            onCameraChange?.(coords);
+            // eslint-disable-next-line no-console
+            console.log('cameraPosition={[' + coords[0] + ', ' + coords[1] + ', ' + coords[2] + ']}');
+          }
         }
-      }) : undefined}
+      }}
     />
   );
 }
@@ -200,7 +203,8 @@ export default function Product3DViewer({
   spinSpeed = 0.45,
   float = false,
   interactive = true,
-  cameraPosition = [104.74, 96.92, 138.54] // Positive Y camera position for correct top-to-bottom orientation
+  cameraPosition = [104.74, 96.92, 138.54],
+  onCameraChange,
 }: Product3DViewerProps) {
   const camLog = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('camlog');
 
@@ -217,7 +221,6 @@ export default function Product3DViewer({
         camera={{ position: cameraPosition, fov: 45 }}
       >
         <Suspense fallback={null}>
-          {/* Enhanced Studio Lighting setup to highlight TPU plastic material finish */}
           <ambientLight intensity={0.75} color="#ffffff" />
           <directionalLight position={[12, 24, 18]} intensity={1.6} color="#ffffff" />
           <directionalLight position={[-12, 12, -12]} intensity={0.8} color="#e2ebff" />
@@ -233,6 +236,7 @@ export default function Product3DViewer({
             autoRotateSpeed={autoRotateSpeed}
             interactive={interactive}
             camLog={camLog}
+            onCameraChange={onCameraChange}
           />
         </Suspense>
       </Canvas>

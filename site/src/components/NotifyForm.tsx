@@ -2,33 +2,33 @@
 
 import React, { useState } from 'react';
 
-async function saveSignupToSheets(email: string) {
-  const url = process.env.NEXT_PUBLIC_SHEETS_URL;
-  if (!url) return;
-  try {
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'signup',
-        email,
-        source: 'homepage-notify',
-      }),
-    });
-  } catch {}
-}
-
 export default function NotifyForm() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('og_notify_email', email.trim());
+    if (!email.trim() || submitting) return;
+    setSubmitting(true);
+    setError(false);
+    try {
+      const res = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), source: 'homepage-notify' }),
+      });
+      if (!res.ok) throw new Error('Failed');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('og_notify_email', email.trim());
+      }
+      setSubmitted(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSubmitting(false);
     }
-    saveSignupToSheets(email.trim()).then(() => {});
-    setSubmitted(true);
   }
 
   if (submitted) {
@@ -91,8 +91,9 @@ export default function NotifyForm() {
         />
         <button
           type="submit"
+          disabled={submitting}
           style={{
-            background: '#fff',
+            background: submitting ? 'rgba(255,255,255,0.6)' : '#fff',
             color: 'var(--og-blue)',
             border: 'none',
             borderRadius: 999,
@@ -100,14 +101,29 @@ export default function NotifyForm() {
             fontFamily: 'var(--font-ui)',
             fontWeight: 700,
             fontSize: 14,
-            cursor: 'pointer',
+            cursor: submitting ? 'default' : 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
+            opacity: submitting ? 0.7 : 1,
+            transition: 'opacity 200ms',
           }}
         >
-          Notify me →
+          {submitting ? 'Sending...' : 'Notify me →'}
         </button>
       </form>
+      {error && (
+        <p
+          style={{
+            margin: 0,
+            fontSize: 13,
+            fontFamily: 'var(--font-ui)',
+            color: '#FF6B6B',
+            textAlign: 'center',
+          }}
+        >
+          Something went wrong. Please try again.
+        </p>
+      )}
       <p
         style={{
           margin: 0,

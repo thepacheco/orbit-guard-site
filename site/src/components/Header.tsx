@@ -75,14 +75,7 @@ function CartIconButton({
 }
 
 export default function Header({ dark, variant }: HeaderProps) {
-  const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setCartOpen(true);
-    window.addEventListener('og:open-cart', handler);
-    return () => window.removeEventListener('og:open-cart', handler);
-  }, []);
   const cardBg = 'rgba(255,255,255,0.65)';
   const cardBorder = 'rgba(255,255,255,0.7)';
   const ink = 'var(--fg)';
@@ -203,7 +196,7 @@ export default function Header({ dark, variant }: HeaderProps) {
             </a>
 
             {/* Shopping Bag Icon Button — Always Visible */}
-            <CartIconButton hoverBg="rgba(0,0,0,0.08)" onClick={() => setCartOpen(true)} />
+            <CartIconButton hoverBg="rgba(0,0,0,0.08)" onClick={() => window.dispatchEvent(new CustomEvent('og:open-cart'))} />
 
             {/* Mobile hamburger */}
             <button
@@ -306,7 +299,7 @@ export default function Header({ dark, variant }: HeaderProps) {
         </div>
       )}
 
-      <CartPopup open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartPopup />
 
       <style>{`
         .og-header-desktop {

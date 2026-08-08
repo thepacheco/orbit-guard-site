@@ -3,72 +3,102 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
-import { useCart } from './CartContext';
+import { useCart, getItemKey } from './CartContext';
 import type { CartItem } from './CartContext';
 import { PRODUCT_VARIANTS } from './data';
 
-interface CartPopupProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-async function saveToSheets(email: string, items: CartItem[], total: number) {
-  const url = process.env.NEXT_PUBLIC_SHEETS_URL;
-  if (!url) return;
-  try {
-    await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'preorder',
-        email,
-        items,
-        total,
-      }),
-    });
-  } catch {}
-}
-
-export default function CartPopup({ open, onClose }: CartPopupProps) {
+export default function CartPopup() {
   const cart = useCart();
   const router = useRouter();
   const [saveEmail, setSaveEmail] = useState('');
   const [loadEmail, setLoadEmail] = useState('');
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [loadMsg, setLoadMsg] = useState<string | null>(null);
-  const [minimized, setMinimized] = useState(false);
+  const [minimized, setMinimized] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadedEmail, setLoadedEmail] = useState<string | null>(null);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const prevItemsRef = React.useRef(cart.items);
+
+  // Detect unsaved changes after a cart has been loaded
+  React.useEffect(() => {
+    if (loadedEmail && prevItemsRef.current !== cart.items) {
+      setUnsavedChanges(true);
+    }
+    prevItemsRef.current = cart.items;
+  }, [cart.items, loadedEmail]);
+
+  React.useEffect(() => {
+    const handler = () => setMinimized(false);
+    window.addEventListener('og:open-cart', handler);
+    return () => window.removeEventListener('og:open-cart', handler);
+  }, []);
 
   async function handleSave() {
-    if (!saveEmail.trim()) return;
-    cart.saveCartByEmail(saveEmail.trim());
-    await saveToSheets(saveEmail.trim(), cart.items, cart.totalPrice);
-    setSavedMsg('Saved! We will email you at launch with your cart.');
-    setTimeout(() => setSavedMsg(null), 4000);
+    if (!saveEmail.trim() || isSaving) return;
+    setIsSaving(true);
+    try {
+      await cart.saveCartByEmail(saveEmail.trim());
+      setSavedMsg('Saved! We will email you at launch with your cart.');
+      setUnsavedChanges(false);
+      setLoadedEmail(saveEmail.trim());
+      setTimeout(() => setSavedMsg(null), 4000);
+    } catch {
+      setSavedMsg('Failed to save. Please try again.');
+      setTimeout(() => setSavedMsg(null), 3000);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   async function handleKickstarter() {
-    if (!saveEmail.trim()) return;
-    await saveToSheets(saveEmail.trim(), cart.items, cart.totalPrice);
-    setSavedMsg('Cart saved — opening Kickstarter...');
-    window.open('https://www.kickstarter.com', '_blank');
+    if (!saveEmail.trim() || isSaving) return;
+    setIsSaving(true);
+    try {
+      await cart.saveCartByEmail(saveEmail.trim());
+      setSavedMsg('Cart saved — opening Kickstarter...');
+      setUnsavedChanges(false);
+      window.open('https://www.kickstarter.com', '_blank');
+    } catch {
+      setSavedMsg('Failed to save. Please try again.');
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setSavedMsg(null), 4000);
+    }
   }
 
-  function handleLoad() {
-    if (!loadEmail.trim()) return;
-    const ok = cart.loadCartByEmail(loadEmail.trim());
-    setLoadMsg(ok ? 'Cart loaded!' : 'No cart found for that email.');
-    setTimeout(() => setLoadMsg(null), 3000);
+  async function handleLoad() {
+    if (!loadEmail.trim() || isLoading) return;
+    setIsLoading(true);
+    try {
+      const ok = await cart.loadCartByEmail(loadEmail.trim());
+      if (ok) {
+        setLoadMsg('Cart loaded!');
+        setSaveEmail(loadEmail.trim());
+        setLoadedEmail(loadEmail.trim());
+        setUnsavedChanges(false);
+      } else {
+        setLoadMsg('No cart found for that email.');
+      }
+    } catch {
+      setLoadMsg('Failed to load. Please try again.');
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => setLoadMsg(null), 3000);
+    }
   }
 
   return (
     <>
       {/* Backdrop (transparent, for closing when clicking outside) */}
       <div
-        onClick={onClose}
+        onClick={() => setMinimized(true)}
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 200,
-          display: open && !minimized ? 'block' : 'none',
+          display: !minimized ? 'block' : 'none',
         }}
       />
 
@@ -88,11 +118,11 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
           background: '#fff',
           borderRadius: minimized ? 32 : 20,
           border: '1px solid var(--border)',
-          boxShadow: '0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06)',
+          boxShadow: minimized ? '0 8px 32px rgba(0,0,0,0.1)' : '0 12px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06)',
           zIndex: 201,
-          opacity: open ? 1 : 0,
-          transform: open ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.96)',
-          pointerEvents: open ? 'auto' : 'none',
+          opacity: 1,
+          transform: 'translateY(0) scale(1)',
+          pointerEvents: 'auto',
           transition: 'all 320ms cubic-bezier(.16,.84,.32,1)',
           display: 'flex',
           flexDirection: 'column',
@@ -180,7 +210,7 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
             <div
               style={{
                 textAlign: 'center',
-                padding: '48px 24px',
+                padding: '32px 24px',
                 color: 'var(--fg-3)',
                 fontFamily: 'var(--font-body)',
                 fontSize: 15,
@@ -188,7 +218,7 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
             >
               <LucideIcons.ShoppingBag size={36} strokeWidth={1.4} style={{ marginBottom: 14, opacity: 0.35 }} />
               <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6 }}>Your cart is empty.</div>
-              <div>Add some Orbits!</div>
+              <div>Add some Orbits or load a saved cart below!</div>
             </div>
           ) : (
             <>
@@ -210,13 +240,9 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                     {/* Clickable area: color dot + info — navigates to shop with variant pre-selected */}
                     <div
                       onClick={() => {
-                        const topKey = item.mixTopKey || (item.mixTop ? PRODUCT_VARIANTS.find(x => x.hex === item.mixTop)?.key || item.mixTop : null);
-                        const bottomKey = item.mixBottomKey || (item.mixBottom ? PRODUCT_VARIANTS.find(x => x.hex === item.mixBottom)?.key || item.mixBottom : null);
-                        if (item.isMix && topKey && bottomKey) {
-                          router.push(`/shop?mixTop=${topKey}&mixBottom=${bottomKey}&pack=${item.packCount}`);
-                        } else {
-                          router.push(`/shop?variant=${item.variantKey}&pack=${item.packCount}`);
-                        }
+                        const key = getItemKey(item);
+                        router.push(`/shop?editKey=${encodeURIComponent(key)}`);
+                        setMinimized(true);
                       }}
                       style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, cursor: 'pointer' }}
                       title={`Edit ${item.variantName}`}
@@ -347,7 +373,7 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                   padding: '16px 18px',
                   background: 'var(--bg-inset)',
                   borderRadius: 14,
-                  border: '1px solid var(--border)',
+                  border: unsavedChanges ? '1px solid #F5A623' : '1px solid var(--border)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 10,
@@ -360,8 +386,16 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
                   color: 'var(--og-blue)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
                 }}>
                   Save your cart
+                  {unsavedChanges && (
+                    <span style={{ color: '#F5A623', fontSize: 10, fontWeight: 600, textTransform: 'none', letterSpacing: 0 }}>
+                      · unsaved changes
+                    </span>
+                  )}
                 </div>
                 <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.5 }}>
                   Enter your email — we will send you a reminder when Orbit launches, with your saved cart ready to go.
@@ -372,8 +406,8 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 8,
-                      background: '#E6F7EF',
-                      color: '#18A06F',
+                      background: savedMsg.startsWith('Failed') ? '#FFF0F0' : '#E6F7EF',
+                      color: savedMsg.startsWith('Failed') ? '#D94444' : '#18A06F',
                       borderRadius: 999,
                       padding: '8px 14px',
                       fontFamily: 'var(--font-ui)',
@@ -381,7 +415,11 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                       fontSize: 13,
                     }}
                   >
-                    <LucideIcons.CheckCircle size={14} strokeWidth={2} />
+                    {savedMsg.startsWith('Failed') ? (
+                      <LucideIcons.AlertCircle size={14} strokeWidth={2} />
+                    ) : (
+                      <LucideIcons.CheckCircle size={14} strokeWidth={2} />
+                    )}
                     {savedMsg}
                   </div>
                 ) : (
@@ -417,8 +455,9 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       <button
                         onClick={handleSave}
+                        disabled={isSaving}
                         style={{
-                          background: 'var(--og-blue)',
+                          background: isSaving ? '#8899FF' : 'var(--og-blue)',
                           color: '#fff',
                           border: 'none',
                           borderRadius: 999,
@@ -426,17 +465,20 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                           fontFamily: 'var(--font-ui)',
                           fontWeight: 700,
                           fontSize: 13,
-                          cursor: 'pointer',
+                          cursor: isSaving ? 'default' : 'pointer',
                           whiteSpace: 'nowrap',
                           width: '100%',
+                          opacity: isSaving ? 0.7 : 1,
+                          transition: 'opacity 200ms',
                         }}
                       >
-                        Save cart &amp; notify me
+                        {isSaving ? 'Saving...' : 'Save cart & notify me'}
                       </button>
                       <button
                         onClick={handleKickstarter}
+                        disabled={isSaving}
                         style={{
-                          background: '#05CE78',
+                          background: isSaving ? '#7AD9A8' : '#05CE78',
                           color: '#0A0A0A',
                           border: 'none',
                           borderRadius: 999,
@@ -444,9 +486,11 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                           fontFamily: 'var(--font-ui)',
                           fontWeight: 700,
                           fontSize: 13,
-                          cursor: 'pointer',
+                          cursor: isSaving ? 'default' : 'pointer',
                           whiteSpace: 'nowrap',
                           width: '100%',
+                          opacity: isSaving ? 0.7 : 1,
+                          transition: 'opacity 200ms',
                         }}
                       >
                         Back us on Kickstarter now
@@ -455,84 +499,90 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                   </>
                 )}
               </div>
-
-              {/* Load by email section */}
-              <div
-                style={{
-                  padding: '16px 18px',
-                  background: 'var(--bg-inset)',
-                  borderRadius: 14,
-                  border: '1px solid var(--border)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10,
-                }}
-              >
-                <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13, marginTop: 4 }}>
-                  Load cart by email
-                </div>
-                {loadMsg ? (
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: loadMsg.startsWith('Cart loaded') ? '#18A06F' : 'var(--fg-3)',
-                      fontFamily: 'var(--font-ui)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {loadMsg}
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 0,
-                      background: '#fff',
-                      borderRadius: 999,
-                      border: '1px solid var(--border)',
-                      padding: 3,
-                    }}
-                  >
-                    <input
-                      type="email"
-                      value={loadEmail}
-                      onChange={e => setLoadEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      style={{
-                        flex: 1,
-                        background: 'transparent',
-                        border: 'none',
-                        outline: 'none',
-                        padding: '7px 12px',
-                        fontFamily: 'var(--font-ui)',
-                        fontSize: 13,
-                        color: 'var(--fg)',
-                        minWidth: 0,
-                      }}
-                    />
-                    <button
-                      onClick={handleLoad}
-                      style={{
-                        background: '#fff',
-                        color: 'var(--fg)',
-                        border: '1px solid var(--border)',
-                        borderRadius: 999,
-                        padding: '7px 14px',
-                        fontFamily: 'var(--font-ui)',
-                        fontWeight: 700,
-                        fontSize: 13,
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}
-                    >
-                      Load
-                    </button>
-                  </div>
-                )}
-              </div>
             </>
           )}
+
+          {/* Load by email section — ALWAYS visible, even when cart is empty */}
+          <div
+            style={{
+              padding: '16px 18px',
+              background: 'var(--bg-inset)',
+              borderRadius: 14,
+              border: '1px solid var(--border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}
+          >
+            <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13, marginTop: 4 }}>
+              Load a saved cart
+            </div>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, color: 'var(--fg-3)', lineHeight: 1.4 }}>
+              Enter the email you used to save your cart.
+            </div>
+            {loadMsg ? (
+              <div
+                style={{
+                  fontSize: 13,
+                  color: loadMsg.startsWith('Cart loaded') ? '#18A06F' : loadMsg.startsWith('Failed') ? '#D94444' : 'var(--fg-3)',
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 600,
+                }}
+              >
+                {loadMsg}
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 0,
+                  background: '#fff',
+                  borderRadius: 999,
+                  border: '1px solid var(--border)',
+                  padding: 3,
+                }}
+              >
+                <input
+                  type="email"
+                  value={loadEmail}
+                  onChange={e => setLoadEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  style={{
+                    flex: 1,
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    padding: '7px 12px',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 13,
+                    color: 'var(--fg)',
+                    minWidth: 0,
+                  }}
+                />
+                <button
+                  onClick={handleLoad}
+                  disabled={isLoading}
+                  style={{
+                    background: '#fff',
+                    color: 'var(--fg)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 999,
+                    padding: '7px 14px',
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    cursor: isLoading ? 'default' : 'pointer',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                    opacity: isLoading ? 0.6 : 1,
+                    transition: 'opacity 200ms',
+                  }}
+                >
+                  {isLoading ? 'Loading...' : 'Load'}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         </>
         )}

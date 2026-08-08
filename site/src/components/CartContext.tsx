@@ -20,16 +20,26 @@ type CartCtx = {
   items: CartItem[]
   addItem: (item: Omit<CartItem, 'qty'>) => void
   updatePackItem: (item: Omit<CartItem, 'qty'>) => void
+  replaceItem: (oldKey: string, newItem: Omit<CartItem, 'qty'>) => void
   updateQty: (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => void
   removeItem: (variantKey: string, packCount: number, mixTop?: string, mixBottom?: string) => void
   totalItems: number
   totalPrice: number
-  saveCartByEmail: (email: string) => void
-  loadCartByEmail: (email: string) => boolean
+  saveCartByEmail: (email: string) => Promise<void>
+  loadCartByEmail: (email: string) => Promise<boolean>
   clearCart: () => void
 }
 
 const CartContext = createContext<CartCtx | null>(null)
+
+export function getItemKey(item: Omit<CartItem, 'qty'> | CartItem): string {
+  if (item.isMix) {
+    const top = item.mixTopKey || item.mixTop || '';
+    const bottom = item.mixBottomKey || item.mixBottom || '';
+    return `mix-${top}-${bottom}-${item.packCount}`;
+  }
+  return `${item.variantKey}-${item.packCount}`;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
@@ -55,44 +65,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isLoaded) return;
     if (items.length > 0) {
       localStorage.setItem('og_cart', JSON.stringify(items));
-      try {
-        fetch('/api/cart-event', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'cart_sync', items, total: totalPrice, timestamp: new Date().toISOString() }),
-        }).catch(() => {});
-      } catch {
-        // ignore offline errors
-      }
+
     } else {
       localStorage.removeItem('og_cart');
     }
   }, [items, totalPrice, isLoaded]);
 
-  function itemKey(item: Omit<CartItem, 'qty'> | CartItem): string {
-    if (item.isMix) {
-      const top = item.mixTopKey || item.mixTop || '';
-      const bottom = item.mixBottomKey || item.mixBottom || '';
-      return `mix-${top}-${bottom}-${item.packCount}`;
-    }
-    return `${item.variantKey}-${item.packCount}`;
-  }
-
   const addItem = (item: Omit<CartItem, 'qty'>) => {
     setItems(prev => {
-      const key = itemKey(item);
-      const existing = prev.find(x => itemKey(x) === key);
-      if (existing) return prev.map(x => itemKey(x) === key ? { ...x, qty: x.qty + 1 } : x);
+      const key = getItemKey(item);
+      const existing = prev.find(x => getItemKey(x) === key);
+      if (existing) return prev.map(x => getItemKey(x) === key ? { ...x, qty: x.qty + 1 } : x);
       return [...prev, { ...item, qty: 1 }];
     });
   };
 
   const updatePackItem = (item: Omit<CartItem, 'qty'>) => {
     setItems(prev => {
-      const targetKey = itemKey(item);
-      const exactExisting = prev.find(x => itemKey(x) === targetKey);
+      const targetKey = getItemKey(item);
+      const exactExisting = prev.find(x => getItemKey(x) === targetKey);
       if (exactExisting) {
-        return prev.map(x => itemKey(x) === targetKey ? { ...x, qty: x.qty + 1 } : x);
+        return prev.map(x => getItemKey(x) === targetKey ? { ...x, qty: x.qty + 1 } : x);
       }
       
       // If variant or mix combination already exists in cart, update its packCount & packPrice
@@ -115,6 +108,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const replaceItem = (oldKey: string, newItem: Omit<CartItem, 'qty'>) => {
+    setItems(prev => {
+      const existingIdx = prev.findIndex(x => getItemKey(x) === oldKey);
+      if (existingIdx === -1) return prev;
+      const existing = prev[existingIdx];
+      const newKey = getItemKey(newItem);
+      
+      // If the new item configuration already exists elsewhere in the cart, just add the quantity to that one and remove the old
+      const otherMatchIdx = prev.findIndex((x, idx) => idx !== existingIdx && getItemKey(x) === newKey);
+      if (otherMatchIdx >= 0) {
+        return prev.map((x, idx) => {
+          if (idx === otherMatchIdx) return { ...x, qty: x.qty + existing.qty };
+          return x;
+        }).filter((_, idx) => idx !== existingIdx);
+      }
+
+      // Otherwise just replace it in place
+      return prev.map((x, idx) => idx === existingIdx ? { ...newItem, qty: existing.qty } : x);
+    });
+  };
+
   const updateQty = (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => {
     setItems(prev => prev.map(x => {
       const match = x.isMix
@@ -132,25 +146,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const saveCartByEmail = (email: string) => {
+  const saveCartByEmail = async (email: string) => {
     localStorage.setItem(`og_cart_${email}`, JSON.stringify(items));
     try {
-      fetch('/api/cart-event', {
+      await fetch('/api/cart/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save_cart_email', email, items, total: totalPrice, timestamp: new Date().toISOString() }),
-      }).catch(() => {});
+        body: JSON.stringify({ email, items, total: totalPrice }),
+      });
     } catch {
       // ignore
     }
   };
 
-  const loadCartByEmail = (email: string): boolean => {
-    const saved = localStorage.getItem(`og_cart_${email}`);
-    if (!saved) return false;
+  const loadCartByEmail = async (email: string): Promise<boolean> => {
     try {
-      setItems(JSON.parse(saved));
-      return true;
+      const res = await fetch(`/api/cart/load?email=${encodeURIComponent(email)}`);
+      if (!res.ok) return false;
+      const data = await res.json();
+      if (data.items && data.items.length > 0) {
+        setItems(data.items);
+        return true;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -164,6 +182,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         items,
         addItem,
         updatePackItem,
+        replaceItem,
         updateQty,
         removeItem,
         totalItems,

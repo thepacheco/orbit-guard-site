@@ -41,17 +41,8 @@ export default function ContactPage() {
   const [subject, setSubject] = useState('General question');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        'og_contact_submission',
-        JSON.stringify({ name, email, subject, message, ts: Date.now() }),
-      );
-    }
-    setSubmitted(true);
-  }
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   return (
     <div style={{ minHeight: '100vh', background: '#fff', color: 'var(--fg)' }}>
@@ -228,22 +219,22 @@ export default function ContactPage() {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
+                  if (submitting) return;
+                  setSubmitting(true);
+                  setSubmitError(false);
                   try {
-                    await fetch('/api/contact', {
+                    const res = await fetch('/api/contact', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ name, email, subject, message }),
                     });
+                    if (!res.ok) throw new Error('Failed');
+                    setSubmitted(true);
                   } catch {
-                    // fallback to local storage
+                    setSubmitError(true);
+                  } finally {
+                    setSubmitting(false);
                   }
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem(
-                      'og_contact_submission',
-                      JSON.stringify({ name, email, subject, message, ts: Date.now() }),
-                    );
-                  }
-                  setSubmitted(true);
                 }}
                 style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
               >
@@ -316,10 +307,31 @@ export default function ContactPage() {
                   />
                 </div>
 
+                {submitError && (
+                  <div
+                    style={{
+                      padding: '12px 16px',
+                      background: '#FFF0F0',
+                      border: '1px solid #FFD0D0',
+                      borderRadius: 12,
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 14,
+                      color: '#D94444',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Something went wrong sending your message. Please try again, or email us directly at{' '}
+                    <a href="mailto:hello@orbitguards.com" style={{ color: '#5A74FF', textDecoration: 'underline' }}>
+                      hello@orbitguards.com
+                    </a>.
+                  </div>
+                )}
+
                 <button
                   type="submit"
+                  disabled={submitting}
                   style={{
-                    background: '#5A74FF',
+                    background: submitting ? '#8899FF' : '#5A74FF',
                     color: '#fff',
                     border: 'none',
                     borderRadius: 999,
@@ -327,16 +339,17 @@ export default function ContactPage() {
                     fontFamily: 'var(--font-ui)',
                     fontWeight: 700,
                     fontSize: 16,
-                    cursor: 'pointer',
+                    cursor: submitting ? 'default' : 'pointer',
                     alignSelf: 'flex-start',
                     boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
-                    transition: 'transform 140ms',
+                    transition: 'transform 140ms, opacity 200ms',
+                    opacity: submitting ? 0.7 : 1,
                   }}
-                  onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.97)'; }}
+                  onMouseDown={e => { if (!submitting) (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.97)'; }}
                   onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                 >
-                  Send message
+                  {submitting ? 'Sending...' : 'Send message'}
                 </button>
               </form>
             )}

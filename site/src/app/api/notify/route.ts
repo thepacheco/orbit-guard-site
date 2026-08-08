@@ -1,7 +1,12 @@
+import { neon } from '@neondatabase/serverless';
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
+    const sql = neon(process.env.DATABASE_URL!);
     const body = await req.json();
     const { email, source = 'launch_notify' } = body;
 
@@ -9,33 +14,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
     }
 
-    const payload = {
-      event: 'notify_signup',
-      email,
-      source,
-      timestamp: new Date().toISOString(),
-    };
+    // 1. Save to Database
+    await sql`
+      INSERT INTO newsletter (email, source, created_at)
+      VALUES (${email}, ${source}, CURRENT_TIMESTAMP)
+      ON CONFLICT (email) DO NOTHING
+    `;
 
-    // Forward to Google Sheets Webhook (e.g. Google Apps Script / Zapier) if configured
-    const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-    if (webhookUrl) {
-      try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      } catch (err) {
-        console.error('Failed to dispatch webhook to Google Sheets:', err);
-      }
+    // 2. Optional: Send Welcome Email via Resend
+    if (process.env.RESEND_API_KEY) {
+      await resend.emails.send({
+        from: 'OrbitGuard <onboarding@resend.dev>',
+        to: [email],
+        subject: 'Welcome to OrbitGuard!',
+        text: 'Thanks for signing up to receive updates. We will let you know as soon as we launch!',
+      });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Notification request saved and dispatched',
-      data: payload,
+      message: 'Signup successful',
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('API /api/notify error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

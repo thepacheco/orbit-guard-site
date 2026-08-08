@@ -9,7 +9,7 @@ import { PRODUCT_VARIANTS, PACK_SIZES } from './data';
 
 const Product3DViewer = dynamic(() => import('./Product3DViewer'), { ssr: false });
 import type { Variant } from './types';
-import { useCart } from './CartContext';
+import { useCart, getItemKey } from './CartContext';
 import { useActiveVariant } from './ActiveVariantContext';
 import ColorDropdown from './ColorDropdown';
 import ProductHeroSections from './ProductHeroSections';
@@ -670,33 +670,60 @@ export default function ShopPage() {
 function ShopPageContent() {
   const { activeVariant: v, setActiveVariant } = useActiveVariant();
   const searchParams = useSearchParams();
+  const cart = useCart();
+  const editKey = searchParams.get('editKey');
   
   React.useEffect(() => {
-    const variantParam = searchParams.get('variant') || searchParams.get('color');
-    if (variantParam) {
-      const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === variantParam);
-      if (newVariant) {
-        setActiveVariant(newVariant);
-        setMixMode(false);
+    let initializedFromEdit = false;
+    if (editKey && cart.items.length > 0) {
+      const item = cart.items.find(x => getItemKey(x) === editKey);
+      if (item) {
+        initializedFromEdit = true;
+        const foundIdx = PACK_SIZES.findIndex(p => p.count === item.packCount);
+        if (foundIdx >= 0) setPackIdx(foundIdx);
+        
+        if (item.isMix) {
+          setMixMode(true);
+          if (item.mixTopKey) setMixTopKey(item.mixTopKey);
+          if (item.mixBottomKey) setMixBottomKey(item.mixBottomKey);
+          if (item.guardSlots && item.guardSlots.length > 0) {
+            setGuardSlots(item.guardSlots);
+          }
+        } else {
+          setMixMode(false);
+          const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === item.variantKey);
+          if (newVariant) setActiveVariant(newVariant);
+        }
       }
     }
 
-    const mixTopParam = searchParams.get('mixTop');
-    const mixBottomParam = searchParams.get('mixBottom');
-    if (mixTopParam && mixBottomParam) {
-      setMixMode(true);
-      setMixTopKey(mixTopParam);
-      setMixBottomKey(mixBottomParam);
-    }
-    
-    const packParam = searchParams.get('pack');
-    if (packParam) {
-      const pCount = parseInt(packParam, 10);
-      const foundIdx = PACK_SIZES.findIndex(p => p.count === pCount);
-      if (foundIdx >= 0) setPackIdx(foundIdx);
+    if (!initializedFromEdit) {
+      const variantParam = searchParams.get('variant') || searchParams.get('color');
+      if (variantParam) {
+        const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === variantParam);
+        if (newVariant) {
+          setActiveVariant(newVariant);
+          setMixMode(false);
+        }
+      }
+
+      const mixTopParam = searchParams.get('mixTop');
+      const mixBottomParam = searchParams.get('mixBottom');
+      if (mixTopParam && mixBottomParam) {
+        setMixMode(true);
+        setMixTopKey(mixTopParam);
+        setMixBottomKey(mixBottomParam);
+      }
+      
+      const packParam = searchParams.get('pack');
+      if (packParam) {
+        const pCount = parseInt(packParam, 10);
+        const foundIdx = PACK_SIZES.findIndex(p => p.count === pCount);
+        if (foundIdx >= 0) setPackIdx(foundIdx);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, editKey]); // intentionally ignoring cart.items changes after mount
 
   const setVariantKey = (key: string) => {
     const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === key);
@@ -738,7 +765,6 @@ function ShopPageContent() {
   const photoCount = dynamicPhotos.length > 0 ? dynamicPhotos.length : SHOP_PHOTO_PLACEHOLDERS;
   const curPhoto = Math.min(photoIdx, photoCount - 1);
 
-  const cart = useCart();
   const pack = PACK_SIZES[packIdx];
 
   // When packIdx changes in mix mode, rebuild guard slots
@@ -759,7 +785,8 @@ function ShopPageContent() {
   React.useEffect(() => {
     if (mixMode) {
       setShowPhotos(false);
-      setGuardSlots(Array.from({ length: pack.count }, () => ({ topKey: mixTopKey, bottomKey: mixBottomKey })));
+      // Only genericize slots if we haven't already populated them from edit mode
+      setGuardSlots(prev => prev.length === pack.count ? prev : Array.from({ length: pack.count }, () => ({ topKey: mixTopKey, bottomKey: mixBottomKey })));
       setActiveSlot(0);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -786,20 +813,23 @@ function ShopPageContent() {
   }
 
   function addToCart() {
-    cart.updatePackItem({
+    const newItem = {
       variantKey: v.key,
       variantName: v.name,
       hex: v.hex,
       packCount: pack.count,
       packPrice: pack.price,
-    });
+    };
+    if (editKey) cart.replaceItem(editKey, newItem);
+    else cart.updatePackItem(newItem);
+    
     window.dispatchEvent(new CustomEvent('og:open-cart'));
   }
 
   function addMixToCart() {
     const topVariant = mixTopVariant;
     const bottomVariant = mixBottomVariant;
-    cart.updatePackItem({
+    const newItem = {
       variantKey: `mix-${mixTopKey}-${mixBottomKey}`,
       variantName: getMixName(mixTopKey, mixBottomKey),
       hex: `linear-gradient(to bottom, ${topVariant.hex} 50%, ${bottomVariant.hex} 50%)`,
@@ -811,7 +841,10 @@ function ShopPageContent() {
       mixTopKey: mixTopKey,
       mixBottomKey: mixBottomKey,
       guardSlots: guardSlots,
-    });
+    };
+    if (editKey) cart.replaceItem(editKey, newItem);
+    else cart.updatePackItem(newItem);
+
     window.dispatchEvent(new CustomEvent('og:open-cart'));
   }
 
@@ -1199,7 +1232,9 @@ function ShopPageContent() {
               {/* Add to cart */}
               {/* Add / Update cart button */}
               {(() => {
+                const isEditing = !!editKey;
                 const isMixInCart = cart.items.some(x => x.isMix && x.mixTop === mixTopVariant.hex && x.mixBottom === mixBottomVariant.hex);
+                const showUpdate = isEditing || isMixInCart;
                 return (
                   <button
                     onClick={addMixToCart}
@@ -1225,8 +1260,8 @@ function ShopPageContent() {
                     onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                   >
-                    {isMixInCart ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
-                    {isMixInCart ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
+                    {showUpdate ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
+                    {showUpdate ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
                   </button>
                 );
               })()}
@@ -1252,7 +1287,9 @@ function ShopPageContent() {
 
               {/* Add / Update cart button */}
               {(() => {
+                const isEditing = !!editKey;
                 const isVariantInCart = cart.items.some(x => !x.isMix && x.variantKey === v.key);
+                const showUpdate = isEditing || isVariantInCart;
                 return (
                   <button
                     onClick={addToCart}
@@ -1278,8 +1315,8 @@ function ShopPageContent() {
                     onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
                   >
-                    {isVariantInCart ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
-                    {isVariantInCart ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
+                    {showUpdate ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
+                    {showUpdate ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
                   </button>
                 );
               })()}

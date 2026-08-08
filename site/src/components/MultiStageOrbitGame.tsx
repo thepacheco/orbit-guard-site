@@ -759,7 +759,7 @@ export default function MultiStageOrbitGame() {
           }
         }
 
-        // === SPAWN OBSTACLES ===
+        // === SPAWN OBSTACLES & BOSS POWERUPS ===
         if (!s.boss.active && !s.boss.exploding && canvas.width - s.lastObstacleX > 200 + Math.random() * 160) {
           s.obstacleCount++;
           let type: Obstacle['type'];
@@ -784,6 +784,20 @@ export default function MultiStageOrbitGame() {
           const obsW = 34;
           const obsY = isPU || s.stage >= 2 ? 60 + Math.random() * 130 : groundY - obsH;
           s.obstacles.push({ id: Math.random().toString(), x: canvas.width + 40, y: obsY, width: obsW, height: obsH, type });
+          s.lastObstacleX = canvas.width + 40;
+        } else if (s.boss.active && !s.boss.exploding && canvas.width - s.lastObstacleX > 280 + Math.random() * 180) {
+          // Continuously spawn power-ups during Boss Fight!
+          const roll = Math.random();
+          let type: Obstacle['type'];
+          if (roll < 0.25) type = 'pw_weapon';
+          else if (roll < 0.42) type = 'pw_shield';
+          else if (roll < 0.58) type = 'pw_rapid';
+          else if (roll < 0.72) type = 'pw_blast';
+          else if (roll < 0.86) type = 'pw_explosive';
+          else type = 'pw_drones';
+
+          const obsY = 60 + Math.random() * 130;
+          s.obstacles.push({ id: Math.random().toString(), x: canvas.width + 40, y: obsY, width: 34, height: 28, type });
           s.lastObstacleX = canvas.width + 40;
         }
         s.lastObstacleX -= s.speed * dt;
@@ -1129,7 +1143,7 @@ export default function MultiStageOrbitGame() {
               MAGMA BOSS DEFEATED!
             </h3>
             <p style={{ fontSize: 15, color: '#94A3B8', margin: '0 0 20px', maxWidth: 420 }}>
-              Sensors clear. You have conquered all 3 stages and defended the Orbit core!
+              You defeated the magma boss and saved the Orbit core!
             </p>
             <button onClick={(e) => { e.stopPropagation(); handleActionInput(); }} style={{ background: '#05CE78', color: '#0F172A', border: 'none', padding: '14px 38px', borderRadius: 999, fontWeight: 800, fontSize: 15, cursor: 'pointer', boxShadow: '0 8px 28px rgba(5, 206, 120, 0.5)', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'all 200ms ease' }}>
               <LucideIcons.RotateCcw size={18} /> PLAY AGAIN

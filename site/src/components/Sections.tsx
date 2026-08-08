@@ -899,20 +899,16 @@ export function Kickstarter({ v }: { v: Variant }) {
 // ──────────────────────────────────────────────────────────────────
 export function MixAndMatchBanner() {
   const [index, setIndex] = React.useState(0);
-  const [manualSelection, setManualSelection] = React.useState<number | null>(null);
-
-  const activeIndex = manualSelection !== null ? manualSelection : index;
 
   React.useEffect(() => {
-    if (manualSelection !== null) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % PRODUCT_VARIANTS.length);
-    }, 3800);
+    }, 3500);
     return () => clearInterval(timer);
-  }, [manualSelection]);
+  }, []);
 
-  const topIndex = activeIndex;
-  const bottomIndex = (activeIndex + 3) % PRODUCT_VARIANTS.length;
+  const topIndex = index;
+  const bottomIndex = (index + 3) % PRODUCT_VARIANTS.length;
 
   const topVariant = PRODUCT_VARIANTS[topIndex];
   const bottomVariant = PRODUCT_VARIANTS[bottomIndex];
@@ -928,7 +924,7 @@ export function MixAndMatchBanner() {
   return (
     <section
       style={{
-        padding: '120px 40px 100px',
+        padding: '100px 40px',
         background: '#0F172A',
         color: '#FFFFFF',
         position: 'relative',
@@ -937,302 +933,158 @@ export function MixAndMatchBanner() {
         borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}
     >
-      {/* Background ambient radial glow */}
+      {/* Dynamic ambient color glow in background */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 800,
+          right: '25%',
+          transform: 'translate(50%, -50%)',
+          width: 700,
           height: 500,
-          background: `radial-gradient(ellipse at center, ${topVariant.hex}22 0%, ${bottomVariant.hex}15 50%, transparent 70%)`,
-          filter: 'blur(80px)',
+          background: `radial-gradient(ellipse at center, ${topVariant.hex}33 0%, ${bottomVariant.hex}20 50%, transparent 70%)`,
+          filter: 'blur(90px)',
           transition: 'background 1s ease',
           pointerEvents: 'none',
         }}
       />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 10 }}>
-
-        {/* Header Block — Designed like high-end UX software marketing */}
-        <div style={{ textAlign: 'center', maxWidth: 780, margin: '0 auto 48px' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'rgba(90, 116, 255, 0.18)',
-              border: '1px solid rgba(90, 116, 255, 0.3)',
-              color: '#A5B4FC',
-              fontSize: 12,
-              fontWeight: 700,
-              padding: '6px 18px',
-              borderRadius: 999,
-              textTransform: 'uppercase',
-              letterSpacing: '0.14em',
-              marginBottom: 20,
-              fontFamily: 'var(--font-mono, monospace)',
-            }}
-          >
-            <LucideIcons.Palette size={14} />
-            144 Signature Combinations
-          </div>
-
-          <h2
-            style={{
-              fontFamily: 'var(--font-ui, sans-serif)',
-              fontWeight: 900,
-              fontSize: 'clamp(36px, 4.5vw, 56px)',
-              letterSpacing: '-0.03em',
-              lineHeight: 1.08,
-              margin: '0 0 20px',
-              color: '#FFFFFF',
-            }}
-          >
-            Mix and match any Orbit.
-          </h2>
-
-          <p
-            style={{
-              fontSize: 18,
-              lineHeight: 1.6,
-              color: 'rgba(255, 255, 255, 0.75)',
-              margin: 0,
-            }}
-          >
-            Pair your favorite top ring and bottom cup colors to build a custom dual-tone setup tailored to your desk, chair base, and floor rug.
-          </p>
-        </div>
-
-        {/* 3D Showcase Stage */}
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 10 }}>
         <div
+          className="og-two-col"
           style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: 32,
-            padding: '48px 32px 40px',
-            position: 'relative',
-            backdropFilter: 'blur(16px)',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.3)',
-            display: 'flex',
-            flexDirection: 'column',
+            display: 'grid',
+            gridTemplateColumns: '1.2fr 1fr',
+            gap: 40,
             alignItems: 'center',
           }}
         >
-
-          {/* Interactive 3D Stage Container */}
-          <div style={{ width: '100%', maxWidth: 760, height: 440, position: 'relative' }}>
-
-            {/* Top Color Callout Badge */}
+          {/* LEFT: Massive Overlapping Typography */}
+          <div style={{ position: 'relative', zIndex: 20 }}>
             <div
               style={{
-                position: 'absolute',
-                top: '25%',
-                left: '4%',
-                zIndex: 30,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-              }}
-            >
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.85)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backdropFilter: 'blur(12px)',
-                  padding: '8px 16px',
-                  borderRadius: 12,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                  transition: 'all 600ms ease',
-                }}
-              >
-                <span style={{ width: 12, height: 12, borderRadius: '50%', background: topVariant.hex, boxShadow: '0 0 10px ' + topVariant.hex }} />
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)' }}>
-                    Top Ring
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, color: '#FFFFFF' }}>
-                    {topVariant.name}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Color Callout Badge */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '25%',
-                right: '4%',
-                zIndex: 30,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-              }}
-            >
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.85)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  backdropFilter: 'blur(12px)',
-                  padding: '8px 16px',
-                  borderRadius: 12,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                  transition: 'all 600ms ease',
-                }}
-              >
-                <span style={{ width: 12, height: 12, borderRadius: '50%', background: bottomVariant.hex, boxShadow: '0 0 10px ' + bottomVariant.hex }} />
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)' }}>
-                    Bottom Cup
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, color: '#FFFFFF' }}>
-                    {bottomVariant.name}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* High-Gloss 3D Model Viewer with Studio Lighting */}
-            <Product3DViewer
-              topColor={topVariant.hex}
-              bottomColor={bottomVariant.hex}
-              exploded={false}
-              float={false}
-              spin={true}
-              spinSpeed={0.35}
-              autoRotate={false}
-              interactive={true}
-              cameraPosition={[-1.3, -195.13, 71.33]}
-            />
-          </div>
-
-          {/* Combination Title Banner */}
-          <div
-            style={{
-              textAlign: 'center',
-              marginTop: -16,
-              marginBottom: 36,
-              zIndex: 20,
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 28,
-                fontWeight: 900,
-                color: '#FFFFFF',
-                letterSpacing: '-0.02em',
-                marginBottom: 4,
-                transition: 'color 600ms ease',
-              }}
-            >
-              {mixName}
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 12,
-                color: '#05CE78',
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                fontWeight: 700,
-              }}
-            >
-              {topVariant.name} Ring &nbsp;·&nbsp; {bottomVariant.name} Cup
-            </div>
-          </div>
-
-          {/* Palette Swatch Bar for Quick Live Switching */}
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'center',
-              background: 'rgba(0, 0, 0, 0.4)',
-              padding: '12px 20px',
-              borderRadius: 999,
-              border: '1px solid rgba(255,255,255,0.1)',
-              marginBottom: 32,
-            }}
-          >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 8 }}>
-              Try a palette:
-            </span>
-            {PRODUCT_VARIANTS.map((v, i) => {
-              const isSelected = activeIndex === i;
-              return (
-                <button
-                  key={v.key}
-                  onClick={() => setManualSelection(i)}
-                  title={v.name}
-                  style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: '50%',
-                    background: v.hex,
-                    border: isSelected ? '2px solid #05CE78' : '2px solid transparent',
-                    boxShadow: isSelected ? '0 0 12px ' + v.hex : 'none',
-                    cursor: 'pointer',
-                    transition: 'all 200ms ease',
-                    transform: isSelected ? 'scale(1.2)' : 'scale(1)',
-                  }}
-                />
-              );
-            })}
-          </div>
-
-          {/* Action CTAs */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <a
-              href={`/shop?mixTop=${topVariant.key}&mixBottom=${bottomVariant.key}`}
-              style={{
-                background: '#5A74FF',
-                color: '#FFFFFF',
-                padding: '16px 36px',
-                borderRadius: 999,
-                fontWeight: 800,
-                fontSize: 16,
-                fontFamily: 'var(--font-ui)',
-                textDecoration: 'none',
-                boxShadow: '0 10px 28px rgba(90, 116, 255, 0.35)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 10,
-                transition: 'transform 150ms ease',
-              }}
-            >
-              Build this combination &rarr;
-            </a>
-
-            <a
-              href="/playground"
-              style={{
-                background: 'transparent',
-                color: '#FFFFFF',
-                padding: '16px 32px',
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 15,
-                fontFamily: 'var(--font-ui)',
-                textDecoration: 'none',
-                border: '1px solid rgba(255,255,255,0.2)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
+                background: 'rgba(90, 116, 255, 0.18)',
+                border: '1px solid rgba(90, 116, 255, 0.3)',
+                color: '#A5B4FC',
+                fontSize: 12,
+                fontWeight: 700,
+                padding: '6px 16px',
+                borderRadius: 999,
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                marginBottom: 20,
+                fontFamily: 'var(--font-mono, monospace)',
               }}
             >
-              Open 3D Studio &rarr;
-            </a>
+              <LucideIcons.Sparkles size={13} />
+              144 Combinations
+            </div>
+
+            {/* Massive Overlapping Title */}
+            <h2
+              style={{
+                fontFamily: 'var(--font-ui, sans-serif)',
+                fontWeight: 900,
+                fontSize: 'clamp(48px, 6vw, 84px)',
+                letterSpacing: '-0.04em',
+                lineHeight: 0.95,
+                margin: '0 0 24px',
+                color: '#FFFFFF',
+                maxWidth: 600,
+                textShadow: '0 10px 30px rgba(0,0,0,0.4)',
+              }}
+            >
+              Mix &amp; <br />
+              <span style={{ color: topVariant.hex, transition: 'color 1s ease' }}>Match</span> <br />
+              <span style={{ opacity: 0.9 }}>Every Orbit.</span>
+            </h2>
+
+            <p
+              style={{
+                fontSize: 18,
+                lineHeight: 1.6,
+                color: 'rgba(255, 255, 255, 0.75)',
+                maxWidth: 480,
+                margin: '0 0 36px',
+              }}
+            >
+              Split stem rings and floor cups in 12 signature Pantone colors. Create a dual-tone guard that matches your exact chair, desk, and room setup.
+            </p>
+
+            {/* Live Color Pair Indicator & CTA */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+              <a
+                href={`/shop?mixTop=${topVariant.key}&mixBottom=${bottomVariant.key}`}
+                style={{
+                  background: '#5A74FF',
+                  color: '#FFFFFF',
+                  padding: '16px 36px',
+                  borderRadius: 999,
+                  fontWeight: 800,
+                  fontSize: 16,
+                  fontFamily: 'var(--font-ui)',
+                  textDecoration: 'none',
+                  boxShadow: '0 10px 28px rgba(90, 116, 255, 0.35)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  transition: 'transform 150ms ease',
+                }}
+              >
+                Explore Mix &amp; Match &rarr;
+              </a>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: topVariant.hex, border: '2px solid #0F172A', transition: 'background 1s ease', display: 'inline-block' }} />
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: bottomVariant.hex, border: '2px solid #0F172A', transition: 'background 1s ease', display: 'inline-block', marginLeft: -6 }} />
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 700 }}>
+                  {mixName} ({topVariant.name} + {bottomVariant.name})
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Floating 3D Model */}
+          <div
+            style={{
+              position: 'relative',
+              height: 480,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {/* Soft backdrop halo */}
+            <div
+              style={{
+                position: 'absolute',
+                width: 340,
+                height: 340,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                pointerEvents: 'none',
+              }}
+            />
+
+            <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
+              <Product3DViewer
+                topColor={topVariant.hex}
+                bottomColor={bottomVariant.hex}
+                exploded={false}
+                float={true}
+                spin={true}
+                spinSpeed={0.35}
+                autoRotate={false}
+                interactive={true}
+                cameraPosition={[-1.3, -195.13, 71.33]}
+              />
+            </div>
           </div>
 
         </div>

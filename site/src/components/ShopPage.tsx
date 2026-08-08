@@ -388,26 +388,20 @@ function ProductDetails({ v }: { v: Variant }) {
   );
 }
 
-// ── Editorial Product Hero Section (Image Composition Showcase) ───────────
+// ── Editorial Product Hero Section (Design Concept Showcase) ───────────
 function EditorialProductHero({ v }: { v: Variant }) {
   const [selectedKey, setSelectedKey] = useState(v.key);
   const activeVar = PRODUCT_VARIANTS.find(x => x.key === selectedKey) || v;
 
-  const heroPhotos = [
-    `/assets/start_product_photos/05_Product_Hero_Shot/ProductHeroShot_${activeVar.name}.png`,
-    `/assets/start_product_photos/06_Product_Floating_Shot/ProductFloatingShot_${activeVar.name}.png`,
-    `/assets/start_product_photos/09_Product_with_Chair/Product_CU_Chair/ProductCUChairShot_${activeVar.name}.png`,
-  ];
-
   return (
     <section
       style={{
-        background: '#0F172A',
-        color: '#FFFFFF',
+        background: '#F8FAFC',
+        color: '#0F172A',
         padding: '120px 48px',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(255,255,255,0.1)',
+        borderTop: '1px solid #E2E8F0',
       }}
     >
       {/* Background Radial Ambient Glow */}
@@ -419,7 +413,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
           transform: 'translate(50%, -50%)',
           width: 700,
           height: 500,
-          background: `radial-gradient(ellipse at center, ${activeVar.hex}44 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, ${activeVar.hex}22 0%, transparent 70%)`,
           filter: 'blur(90px)',
           transition: 'background 1s ease',
           pointerEvents: 'none',
@@ -429,15 +423,15 @@ function EditorialProductHero({ v }: { v: Variant }) {
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 10 }}>
 
         {/* Top Eyebrow Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40, borderBottom: '1px solid #E2E8F0', paddingBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#94A3B8' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#64748B', fontWeight: 700 }}>
               Design Concept Showcase
             </span>
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
             {activeVar.name}
           </div>
         </div>
@@ -466,10 +460,11 @@ function EditorialProductHero({ v }: { v: Variant }) {
                 fontSize: 10,
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.3)',
+                color: '#94A3B8',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                fontWeight: 700,
               }}
             >
               ATLANTA DESIGN STUDIO
@@ -498,8 +493,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                   letterSpacing: '-0.04em',
                   lineHeight: 0.92,
                   margin: '0 0 24px',
-                  color: '#FFFFFF',
-                  textShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                  color: '#0F172A',
                 }}
               >
                 ORBIT <br />
@@ -512,7 +506,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                 style={{
                   fontSize: 18,
                   lineHeight: 1.6,
-                  color: 'rgba(255, 255, 255, 0.75)',
+                  color: '#475569',
                   maxWidth: 480,
                   margin: '0 0 36px',
                 }}
@@ -522,7 +516,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
 
               {/* Swatch Selection */}
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)', marginBottom: 12 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748B', marginBottom: 12, fontWeight: 700 }}>
                   Select Signature Color:
                 </div>
 
@@ -547,7 +541,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                           borderRadius: '50%',
                           background: variant.hex,
                           border: isSelected ? '2px solid #05CE78' : '2px solid transparent',
-                          boxShadow: isSelected ? `0 0 16px ${variant.hex}` : '0 2px 6px rgba(0,0,0,0.3)',
+                          boxShadow: isSelected ? `0 0 16px ${variant.hex}` : '0 2px 6px rgba(0,0,0,0.12)',
                           cursor: 'pointer',
                           transition: 'all 200ms ease',
                           transform: isSelected ? 'scale(1.18)' : 'scale(1)',
@@ -560,7 +554,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
             </div>
           </div>
 
-          {/* RIGHT: High-Gloss 3D Stage with Studio Lighting */}
+          {/* RIGHT: High-Gloss Still 3D Stage */}
           <div
             style={{
               position: 'relative',
@@ -568,10 +562,11 @@ function EditorialProductHero({ v }: { v: Variant }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(255,255,255,0.02)',
+              background: '#FFFFFF',
               borderRadius: 32,
-              border: '1px solid rgba(255,255,255,0.08)',
+              border: '1px solid #E2E8F0',
               padding: 24,
+              boxShadow: '0 12px 36px rgba(0,0,0,0.04)',
             }}
           >
             <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
@@ -579,9 +574,9 @@ function EditorialProductHero({ v }: { v: Variant }) {
                 topColor={activeVar.hex}
                 bottomColor={activeVar.hex}
                 exploded={false}
-                float={true}
-                spin={true}
-                spinSpeed={0.35}
+                float={false}
+                spin={false}
+                spinSpeed={0}
                 autoRotate={false}
                 interactive={true}
                 cameraPosition={[97.41, -66.94, 171.29]}

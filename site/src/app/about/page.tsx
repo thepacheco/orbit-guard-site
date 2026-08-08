@@ -16,76 +16,145 @@ export default function AboutPage() {
     <div style={{ minHeight: '100vh', background: '#FFFFFF', color: '#111827', fontFamily: 'var(--font-body, sans-serif)' }}>
       <Header dark={false} variant={polarVariant} />
 
-      {/* ── 1. HERO SECTION: Dark Editorial Header ────────────────────── */}
+      {/* ── 1. HERO SECTION: Light Canvas Editorial Header ───────────────── */}
       <section
         style={{
-          background: '#0F172A',
-          color: '#FFFFFF',
+          background: '#F8FAFC',
+          color: '#0F172A',
           padding: '160px 40px 100px',
           position: 'relative',
           overflow: 'hidden',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderBottom: '1px solid #E2E8F0',
         }}
       >
-        {/* Ambient grid background */}
+        {/* Ambient radial background glow */}
         <div
           style={{
             position: 'absolute',
-            inset: 0,
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-            opacity: 0.3,
+            top: '30%',
+            right: '10%',
+            width: 600,
+            height: 400,
+            background: 'radial-gradient(ellipse at center, rgba(90, 116, 255, 0.12) 0%, transparent 70%)',
+            filter: 'blur(80px)',
             pointerEvents: 'none',
           }}
         />
 
         <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 10 }}>
-          <div style={{ maxWidth: 840 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: 'rgba(90, 116, 255, 0.2)',
-                color: '#818CF8',
-                fontSize: 12,
-                fontWeight: 700,
-                padding: '6px 16px',
-                borderRadius: 999,
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                marginBottom: 24,
-                fontFamily: 'var(--font-mono, monospace)',
-              }}
-            >
-              Our Story &amp; Purpose
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 64, alignItems: 'center' }}>
+            <div style={{ position: 'relative' }}>
+              {/* Vertical Architectural Accent Label */}
+              <div
+                style={{
+                  writingMode: 'vertical-lr',
+                  transform: 'rotate(180deg)',
+                  position: 'absolute',
+                  left: -36,
+                  top: 0,
+                  bottom: 0,
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 10,
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  color: '#94A3B8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                }}
+              >
+                OUR STORY · ATLANTA GA
+              </div>
+
+              <div style={{ paddingLeft: 16 }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    background: 'rgba(90, 116, 255, 0.1)',
+                    color: '#5A74FF',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: '6px 16px',
+                    borderRadius: 999,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.14em',
+                    marginBottom: 24,
+                    fontFamily: 'var(--font-mono, monospace)',
+                  }}
+                >
+                  Our Purpose &amp; Origin
+                </div>
+
+                <h1
+                  style={{
+                    fontFamily: 'var(--font-ui, sans-serif)',
+                    fontWeight: 900,
+                    fontSize: 'clamp(44px, 5.5vw, 76px)',
+                    letterSpacing: '-0.04em',
+                    lineHeight: 0.95,
+                    margin: '0 0 28px',
+                    color: '#0F172A',
+                  }}
+                >
+                  Rolling chair wheels shouldn&rsquo;t be a hazard.
+                </h1>
+
+                <p
+                  style={{
+                    fontSize: 'clamp(18px, 2vw, 22px)',
+                    lineHeight: 1.6,
+                    color: '#475569',
+                    margin: 0,
+                    maxWidth: 640,
+                  }}
+                >
+                  Every office chair has five casters. Every caster is a pinch point waiting for a cat tail, a charging cable, or a bare foot at midnight.
+                </p>
+              </div>
             </div>
 
-            <h1
+            {/* Right Hero Image Card Composition */}
+            <div
               style={{
-                fontFamily: 'var(--font-ui, sans-serif)',
-                fontWeight: 900,
-                fontSize: 'clamp(40px, 5.5vw, 68px)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.05,
-                margin: '0 0 28px',
-                color: '#FFFFFF',
+                borderRadius: 24,
+                overflow: 'hidden',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.06)',
+                border: '1px solid #E2E8F0',
+                background: '#FFFFFF',
+                aspectRatio: '4/3',
+                position: 'relative',
               }}
             >
-              We built Orbit Guard because rolling chair wheels shouldn&rsquo;t be a hazard.
-            </h1>
-
-            <p
-              style={{
-                fontSize: 'clamp(18px, 2vw, 22px)',
-                lineHeight: 1.6,
-                color: 'rgba(255, 255, 255, 0.8)',
-                margin: 0,
-                maxWidth: 720,
-              }}
-            >
-              Every office chair has five casters. Every caster is a pinch point waiting for a cat tail, a charging cable, or a bare foot at midnight.
-            </p>
+              <img
+                src="/assets/atlanta_office_empty.png"
+                alt="Orbit Atlanta Studio"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  background: 'rgba(255,255,255,0.92)',
+                  backdropFilter: 'blur(12px)',
+                  padding: '12px 20px',
+                  borderRadius: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                }}
+              >
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Atlanta Studio &amp; Engineering Lab
+                </span>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 8px #05CE78' }} />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -227,8 +296,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── 4. MATERIALS & SPECS: Dark Technical Section ────────────────── */}
-      <section style={{ padding: '120px 40px', background: '#0F172A', color: '#FFFFFF' }}>
+      {/* ── 4. MATERIALS & SPECS: Light Technical Section ────────────────── */}
+      <section style={{ padding: '120px 40px', background: '#FFFFFF', color: '#0F172A', borderTop: '1px solid #E2E8F0' }}>
         <div
           style={{
             maxWidth: 1200,
@@ -246,7 +315,7 @@ export default function AboutPage() {
                 fontSize: 12,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color: '#05CE78',
+                color: '#5A74FF',
                 fontWeight: 700,
                 marginBottom: 16,
               }}
@@ -261,44 +330,44 @@ export default function AboutPage() {
                 letterSpacing: '-0.025em',
                 lineHeight: 1.15,
                 margin: '0 0 20px',
-                color: '#FFFFFF',
+                color: '#0F172A',
               }}
             >
               High-impact TPU, non-marking polymer.
             </h2>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'rgba(255, 255, 255, 0.75)', margin: '0 0 20px' }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: '#475569', margin: '0 0 20px' }}>
               We custom-formulate our Thermoplastic Polyurethane (TPU) to hit the exact Shore hardness required: firm enough to displace heavy cables, yet soft enough to dampen sound and absorb violent foot stabs.
             </p>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: '#475569', margin: 0 }}>
               The split two-piece housing snaps tightly together around the wheel axle in under 5 seconds — no screws, no adhesives, and no chair disassembly required.
             </p>
           </div>
 
           {/* Metric Cards Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: 32, borderRadius: 20 }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: 32, borderRadius: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
               <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 36, color: '#05CE78', marginBottom: 8 }}>
                 100%
               </div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, color: '#475569', lineHeight: 1.5, fontWeight: 500 }}>
                 Non-marking, floor-safe TPU polymer.
               </div>
             </div>
 
-            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: 32, borderRadius: 20 }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: 32, borderRadius: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
               <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 36, color: '#5A74FF', marginBottom: 8 }}>
                 99%
               </div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, color: '#475569', lineHeight: 1.5, fontWeight: 500 }}>
                 Fits standard office chair casters.
               </div>
             </div>
 
-            <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', padding: 32, borderRadius: 20, gridColumn: '1 / -1' }}>
+            <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: 32, borderRadius: 20, gridColumn: '1 / -1', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
               <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 36, color: '#FFB4A2', marginBottom: 8 }}>
                 Zero
               </div>
-              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, color: '#475569', lineHeight: 1.5, fontWeight: 500 }}>
                 Tools, screws, or chair disassembly needed for snap installation.
               </div>
             </div>

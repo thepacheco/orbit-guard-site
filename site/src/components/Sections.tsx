@@ -925,12 +925,12 @@ export function MixAndMatchBanner() {
     <section
       style={{
         padding: '100px 40px',
-        background: '#0F172A',
-        color: '#FFFFFF',
+        background: '#F8FAFC',
+        color: '#0F172A',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(255,255,255,0.1)',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        borderTop: '1px solid #E2E8F0',
+        borderBottom: '1px solid #E2E8F0',
       }}
     >
       {/* Dynamic ambient color glow in background */}
@@ -942,7 +942,7 @@ export function MixAndMatchBanner() {
           transform: 'translate(50%, -50%)',
           width: 700,
           height: 500,
-          background: `radial-gradient(ellipse at center, ${topVariant.hex}33 0%, ${bottomVariant.hex}20 50%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, ${topVariant.hex}22 0%, ${bottomVariant.hex}18 50%, transparent 70%)`,
           filter: 'blur(90px)',
           transition: 'background 1s ease',
           pointerEvents: 'none',
@@ -961,28 +961,6 @@ export function MixAndMatchBanner() {
         >
           {/* LEFT: Massive Overlapping Typography */}
           <div style={{ position: 'relative', zIndex: 20 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: 'rgba(90, 116, 255, 0.18)',
-                border: '1px solid rgba(90, 116, 255, 0.3)',
-                color: '#A5B4FC',
-                fontSize: 12,
-                fontWeight: 700,
-                padding: '6px 16px',
-                borderRadius: 999,
-                textTransform: 'uppercase',
-                letterSpacing: '0.14em',
-                marginBottom: 20,
-                fontFamily: 'var(--font-mono, monospace)',
-              }}
-            >
-              <LucideIcons.Sparkles size={13} />
-              144 Combinations
-            </div>
-
             {/* Massive Overlapping Title */}
             <h2
               style={{
@@ -992,13 +970,11 @@ export function MixAndMatchBanner() {
                 letterSpacing: '-0.04em',
                 lineHeight: 0.95,
                 margin: '0 0 24px',
-                color: '#FFFFFF',
+                color: '#0F172A',
                 maxWidth: 600,
-                textShadow: '0 10px 30px rgba(0,0,0,0.4)',
               }}
             >
-              Mix &amp; <br />
-              <span style={{ color: topVariant.hex, transition: 'color 1s ease' }}>Match</span> <br />
+              <span style={{ color: topVariant.hex, transition: 'color 1s ease' }}>Mix</span> &amp; <span style={{ color: bottomVariant.hex, transition: 'color 1s ease' }}>Match</span> <br />
               <span style={{ opacity: 0.9 }}>Every Orbit.</span>
             </h2>
 
@@ -1006,7 +982,7 @@ export function MixAndMatchBanner() {
               style={{
                 fontSize: 18,
                 lineHeight: 1.6,
-                color: 'rgba(255, 255, 255, 0.75)',
+                color: 'rgba(15, 23, 42, 0.72)',
                 maxWidth: 480,
                 margin: '0 0 36px',
               }}
@@ -1027,7 +1003,7 @@ export function MixAndMatchBanner() {
                   fontSize: 16,
                   fontFamily: 'var(--font-ui)',
                   textDecoration: 'none',
-                  boxShadow: '0 10px 28px rgba(90, 116, 255, 0.35)',
+                  boxShadow: '0 10px 28px rgba(90, 116, 255, 0.28)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 10,
@@ -1039,10 +1015,10 @@ export function MixAndMatchBanner() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: topVariant.hex, border: '2px solid #0F172A', transition: 'background 1s ease', display: 'inline-block' }} />
-                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: bottomVariant.hex, border: '2px solid #0F172A', transition: 'background 1s ease', display: 'inline-block', marginLeft: -6 }} />
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: topVariant.hex, border: '2px solid #FFFFFF', transition: 'background 1s ease', display: 'inline-block', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: bottomVariant.hex, border: '2px solid #FFFFFF', transition: 'background 1s ease', display: 'inline-block', marginLeft: -6, boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 700 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: '#334155', fontWeight: 700 }}>
                   {mixName} ({topVariant.name} + {bottomVariant.name})
                 </div>
               </div>
@@ -1066,8 +1042,8 @@ export function MixAndMatchBanner() {
                 width: 340,
                 height: 340,
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(0,0,0,0.02)',
+                border: '1px solid rgba(0,0,0,0.05)',
                 pointerEvents: 'none',
               }}
             />

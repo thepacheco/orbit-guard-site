@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
 import { useCart } from './CartContext';
 import type { CartItem } from './CartContext';
+import { PRODUCT_VARIANTS } from './data';
 
 interface CartPopupProps {
   open: boolean;
@@ -209,8 +210,13 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                     {/* Clickable area: color dot + info — navigates to shop with variant pre-selected */}
                     <div
                       onClick={() => {
-                        router.push(`/shop?variant=${item.variantKey}&pack=${item.packCount}`);
-                        onClose();
+                        const topKey = item.mixTop ? PRODUCT_VARIANTS.find(x => x.hex === item.mixTop)?.key || item.mixTop : null;
+                        const bottomKey = item.mixBottom ? PRODUCT_VARIANTS.find(x => x.hex === item.mixBottom)?.key || item.mixBottom : null;
+                        if (item.isMix && topKey && bottomKey) {
+                          router.push(`/shop?mixTop=${topKey}&mixBottom=${bottomKey}&pack=${item.packCount}`);
+                        } else {
+                          router.push(`/shop?variant=${item.variantKey}&pack=${item.packCount}`);
+                        }
                       }}
                       style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, cursor: 'pointer' }}
                       title={`Edit ${item.variantName}`}

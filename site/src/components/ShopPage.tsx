@@ -457,17 +457,13 @@ function ShopPageContent() {
   const searchParams = useSearchParams();
   
   React.useEffect(() => {
-    const colorParam = searchParams.get('color');
-    if (colorParam) {
-      const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === colorParam);
-      if (newVariant) setActiveVariant(newVariant);
-    }
-    
-    const packParam = searchParams.get('pack');
-    if (packParam) {
-      const pCount = parseInt(packParam, 10);
-      const foundIdx = PACK_SIZES.findIndex(p => p.count === pCount);
-      if (foundIdx >= 0) setPackIdx(foundIdx);
+    const variantParam = searchParams.get('variant') || searchParams.get('color');
+    if (variantParam) {
+      const newVariant = PRODUCT_VARIANTS.find(variant => variant.key === variantParam);
+      if (newVariant) {
+        setActiveVariant(newVariant);
+        setMixMode(false);
+      }
     }
 
     const mixTopParam = searchParams.get('mixTop');
@@ -476,6 +472,13 @@ function ShopPageContent() {
       setMixMode(true);
       setMixTopKey(mixTopParam);
       setMixBottomKey(mixBottomParam);
+    }
+    
+    const packParam = searchParams.get('pack');
+    if (packParam) {
+      const pCount = parseInt(packParam, 10);
+      const foundIdx = PACK_SIZES.findIndex(p => p.count === pCount);
+      if (foundIdx >= 0) setPackIdx(foundIdx);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);

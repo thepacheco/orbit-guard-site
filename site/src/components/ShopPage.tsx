@@ -388,6 +388,207 @@ function ProductDetails({ v }: { v: Variant }) {
   );
 }
 
+// ── Editorial Product Hero Section (New Preview Section Below Configurator) ──
+function EditorialProductHero({ v }: { v: Variant }) {
+  const [selectedKey, setSelectedKey] = useState(v.key);
+  const activeVar = PRODUCT_VARIANTS.find(x => x.key === selectedKey) || v;
+
+  return (
+    <section
+      style={{
+        background: '#0F172A',
+        color: '#FFFFFF',
+        padding: '120px 48px',
+        position: 'relative',
+        overflow: 'hidden',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+      }}
+    >
+      {/* Background Radial Ambient Glow */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          right: '15%',
+          transform: 'translate(50%, -50%)',
+          width: 700,
+          height: 500,
+          background: `radial-gradient(ellipse at center, ${activeVar.hex}44 0%, transparent 70%)`,
+          filter: 'blur(90px)',
+          transition: 'background 1s ease',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 10 }}>
+
+        {/* Top Eyebrow Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#94A3B8' }}>
+              Design Concept Preview · Editorial Hero
+            </span>
+          </div>
+
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
+            {activeVar.name} · {activeVar.hex}
+          </div>
+        </div>
+
+        <div
+          className="og-two-col"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1.1fr 1fr',
+            gap: 64,
+            alignItems: 'center',
+          }}
+        >
+          {/* LEFT: Massive Vertical Architectural Layout */}
+          <div style={{ position: 'relative' }}>
+            {/* Vertical Accent Label */}
+            <div
+              style={{
+                writingMode: 'vertical-lr',
+                transform: 'rotate(180deg)',
+                position: 'absolute',
+                left: -36,
+                top: 0,
+                bottom: 0,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              MOLDED TPU · ATLANTA DESIGN STUDIO
+            </div>
+
+            <div style={{ paddingLeft: 16 }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 12,
+                  color: '#5A74FF',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.16em',
+                  fontWeight: 700,
+                  marginBottom: 16,
+                }}
+              >
+                Signature Palette Showcase
+              </div>
+
+              <h2
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontWeight: 900,
+                  fontSize: 'clamp(48px, 5.5vw, 84px)',
+                  letterSpacing: '-0.04em',
+                  lineHeight: 0.92,
+                  margin: '0 0 24px',
+                  color: '#FFFFFF',
+                  textShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                }}
+              >
+                ORBIT <br />
+                <span style={{ color: activeVar.hex, transition: 'color 800ms ease' }}>
+                  {activeVar.name}
+                </span>
+              </h2>
+
+              <p
+                style={{
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  maxWidth: 480,
+                  margin: '0 0 36px',
+                }}
+              >
+                {activeVar.blurb} Soft-touch molded TPU protects your floors, pets, and toes while gliding effortlessly over carpet, tile, and hardwood.
+              </p>
+
+              {/* Swatch Filmstrip */}
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)', marginBottom: 12 }}>
+                  Select Pantone Swatch:
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 8,
+                    flexWrap: 'wrap',
+                    maxWidth: 520,
+                  }}
+                >
+                  {PRODUCT_VARIANTS.map((variant) => {
+                    const isSelected = variant.key === selectedKey;
+                    return (
+                      <button
+                        key={variant.key}
+                        onClick={() => setSelectedKey(variant.key)}
+                        title={`${variant.name} (${variant.hex})`}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: variant.hex,
+                          border: isSelected ? '2px solid #05CE78' : '2px solid transparent',
+                          boxShadow: isSelected ? `0 0 16px ${variant.hex}` : '0 2px 6px rgba(0,0,0,0.3)',
+                          cursor: 'pointer',
+                          transition: 'all 200ms ease',
+                          transform: isSelected ? 'scale(1.18)' : 'scale(1)',
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: High-Gloss 3D Stage with Studio Lighting */}
+          <div
+            style={{
+              position: 'relative',
+              height: 480,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(255,255,255,0.02)',
+              borderRadius: 32,
+              border: '1px solid rgba(255,255,255,0.08)',
+              padding: 24,
+            }}
+          >
+            <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
+              <Product3DViewer
+                topColor={activeVar.hex}
+                bottomColor={activeVar.hex}
+                exploded={false}
+                float={true}
+                spin={true}
+                spinSpeed={0.35}
+                autoRotate={false}
+                interactive={true}
+                cameraPosition={[97.41, -66.94, 171.29]}
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── Simple Header ────────────────────────────────────────────────────
 function SimpleHeader() {
   return (
@@ -855,11 +1056,11 @@ function ShopPageContent() {
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#5A74FF', marginBottom: 8 }}>
-                  Orbit Guard Caster Guard
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', marginBottom: 8, fontWeight: 700 }}>
+                  Signature Pantone Collection
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
-                  <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 'clamp(32px, 3vw, 48px)', letterSpacing: '-0.025em', lineHeight: 1, margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
+                  <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 'clamp(44px, 4.5vw, 68px)', letterSpacing: '-0.035em', lineHeight: 0.95, margin: 0, color: 'var(--fg)' }}>
                     {mixMode ? getMixName(previewTopVariant.key, previewBottomVariant.key) : v.name}
                   </h1>
                   {mixMode && (
@@ -1138,6 +1339,9 @@ function ShopPageContent() {
 
       {/* Product details & specs — full width, below the configurator */}
       <ProductDetails v={v} />
+
+      {/* New Editorial Product Hero Section */}
+      <EditorialProductHero v={v} />
 
       {/* Extended Product Hero Sections */}
       <ProductHeroSections />

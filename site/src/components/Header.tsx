@@ -19,7 +19,6 @@ interface HeaderProps {
 
 function CartIconButton({
   hoverBg,
-  badgeBorder,
   onClick,
 }: {
   hoverBg?: string;
@@ -34,11 +33,12 @@ function CartIconButton({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onClick}
+      aria-label="Shopping Cart"
       style={{
         width: 42,
         height: 42,
         borderRadius: '50%',
-        background: hover ? hoverBg : 'transparent',
+        background: hover ? hoverBg : 'rgba(0,0,0,0.05)',
         border: 'none',
         color: 'inherit',
         cursor: 'pointer',
@@ -48,10 +48,23 @@ function CartIconButton({
         transition: 'background 140ms var(--ease-out)',
       }}
     >
-      <LucideIcons.ShoppingBag size={20} strokeWidth={1.6} />
+      <LucideIcons.ShoppingBag size={20} strokeWidth={1.8} />
       {totalItems > 0 && (
         <span
           style={{
+            position: 'absolute',
+            top: 2,
+            right: 2,
+            width: 18,
+            height: 18,
+            borderRadius: '50%',
+            background: '#5A74FF',
+            color: '#fff',
+            fontSize: 10,
+            fontWeight: 800,
+            display: 'grid',
+            placeItems: 'center',
+            fontFamily: 'var(--font-ui)',
           }}
         >
           {totalItems}
@@ -188,6 +201,9 @@ export default function Header({ dark, variant }: HeaderProps) {
             >
               Explore
             </a>
+
+            {/* Shopping Bag Icon Button — Always Visible */}
+            <CartIconButton hoverBg="rgba(0,0,0,0.08)" onClick={() => setCartOpen(true)} />
 
             {/* Mobile hamburger */}
             <button

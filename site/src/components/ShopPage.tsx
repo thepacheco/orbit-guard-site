@@ -388,10 +388,16 @@ function ProductDetails({ v }: { v: Variant }) {
   );
 }
 
-// ── Editorial Product Hero Section (New Preview Section Below Configurator) ──
+// ── Editorial Product Hero Section (Image Composition Showcase) ───────────
 function EditorialProductHero({ v }: { v: Variant }) {
   const [selectedKey, setSelectedKey] = useState(v.key);
   const activeVar = PRODUCT_VARIANTS.find(x => x.key === selectedKey) || v;
+
+  const heroPhotos = [
+    `/assets/start_product_photos/05_Product_Hero_Shot/ProductHeroShot_${activeVar.name}.png`,
+    `/assets/start_product_photos/06_Product_Floating_Shot/ProductFloatingShot_${activeVar.name}.png`,
+    `/assets/start_product_photos/09_Product_with_Chair/Product_CU_Chair/ProductCUChairShot_${activeVar.name}.png`,
+  ];
 
   return (
     <section
@@ -427,12 +433,12 @@ function EditorialProductHero({ v }: { v: Variant }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#94A3B8' }}>
-              Design Concept Preview · Editorial Hero
+              Design Concept Showcase
             </span>
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
-            {activeVar.name} · {activeVar.hex}
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700 }}>
+            {activeVar.name}
           </div>
         </div>
 
@@ -440,12 +446,12 @@ function EditorialProductHero({ v }: { v: Variant }) {
           className="og-two-col"
           style={{
             display: 'grid',
-            gridTemplateColumns: '1.1fr 1fr',
+            gridTemplateColumns: '1fr 1.1fr',
             gap: 64,
             alignItems: 'center',
           }}
         >
-          {/* LEFT: Massive Vertical Architectural Layout */}
+          {/* LEFT: Architectural Editorial Layout */}
           <div style={{ position: 'relative' }}>
             {/* Vertical Accent Label */}
             <div
@@ -466,7 +472,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                 justifyContent: 'center',
               }}
             >
-              MOLDED TPU · ATLANTA DESIGN STUDIO
+              ATLANTA DESIGN STUDIO
             </div>
 
             <div style={{ paddingLeft: 16 }}>
@@ -511,13 +517,13 @@ function EditorialProductHero({ v }: { v: Variant }) {
                   margin: '0 0 36px',
                 }}
               >
-                {activeVar.blurb} Soft-touch molded TPU protects your floors, pets, and toes while gliding effortlessly over carpet, tile, and hardwood.
+                {activeVar.blurb} Soft-touch construction protects your floors, pets, and toes while gliding effortlessly over carpet, tile, and hardwood.
               </p>
 
-              {/* Swatch Filmstrip */}
+              {/* Swatch Selection */}
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)', marginBottom: 12 }}>
-                  Select Pantone Swatch:
+                  Select Signature Color:
                 </div>
 
                 <div
@@ -525,7 +531,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                     display: 'flex',
                     gap: 8,
                     flexWrap: 'wrap',
-                    maxWidth: 520,
+                    maxWidth: 480,
                   }}
                 >
                   {PRODUCT_VARIANTS.map((variant) => {
@@ -534,7 +540,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                       <button
                         key={variant.key}
                         onClick={() => setSelectedKey(variant.key)}
-                        title={`${variant.name} (${variant.hex})`}
+                        title={variant.name}
                         style={{
                           width: 32,
                           height: 32,
@@ -554,31 +560,67 @@ function EditorialProductHero({ v }: { v: Variant }) {
             </div>
           </div>
 
-          {/* RIGHT: High-Gloss 3D Stage with Studio Lighting */}
+          {/* RIGHT: Multi-Image Hero Photo Gallery Grid */}
           <div
             style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 16,
               position: 'relative',
-              height: 480,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'rgba(255,255,255,0.02)',
-              borderRadius: 32,
-              border: '1px solid rgba(255,255,255,0.08)',
-              padding: 24,
             }}
           >
-            <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
-              <Product3DViewer
-                topColor={activeVar.hex}
-                bottomColor={activeVar.hex}
-                exploded={false}
-                float={true}
-                spin={true}
-                spinSpeed={0.35}
-                autoRotate={false}
-                interactive={true}
-                cameraPosition={[97.41, -66.94, 171.29]}
+            {/* Primary Hero Photo — spans full left height */}
+            <div
+              style={{
+                gridRow: 'span 2',
+                borderRadius: 24,
+                overflow: 'hidden',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
+                aspectRatio: '3/4',
+              }}
+            >
+              <img
+                src={heroPhotos[0]}
+                alt={`Orbit ${activeVar.name} Hero`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
+              />
+            </div>
+
+            {/* Secondary Angle Detail Photo */}
+            <div
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
+                aspectRatio: '4/3',
+              }}
+            >
+              <img
+                src={heroPhotos[1]}
+                alt={`Orbit ${activeVar.name} Angle`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
+              />
+            </div>
+
+            {/* Tertiary Chair Lifestyle Photo */}
+            <div
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
+                aspectRatio: '4/3',
+              }}
+            >
+              <img
+                src={heroPhotos[2]}
+                alt={`Orbit ${activeVar.name} Chair Lifestyle`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
               />
             </div>
           </div>

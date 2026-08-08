@@ -34,7 +34,6 @@ export default function ProductHeroSections() {
                 marginBottom: 16,
               }}
             >
-              <LucideIcons.Sparkles size={14} />
               Product Overview
             </div>
             <h2
@@ -93,7 +92,7 @@ export default function ProductHeroSections() {
                 }}
               >
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, marginBottom: 8 }}>
-                  Demonstration 01
+                  Pet &amp; Cable Safety
                 </div>
                 <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 24, color: '#fff', margin: '0 0 8px' }}>
                   Paw &amp; Cable Shielding
@@ -131,7 +130,7 @@ export default function ProductHeroSections() {
                 }}
               >
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#5A74FF', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, marginBottom: 8 }}>
-                  Demonstration 02
+                  Noise Reduction
                 </div>
                 <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 24, color: '#fff', margin: '0 0 8px' }}>
                   Whisper-Quiet Smooth Roll
@@ -430,6 +429,48 @@ export default function ProductHeroSections() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HERO 6: Image Placeholder Section */}
+      <section style={{ padding: '80px 40px', background: '#F9FAFB', borderTop: '1px solid #E5E7EB' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div
+            style={{
+              background: '#E5E7EB',
+              borderRadius: 24,
+              height: 420,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px dashed #D1D5DB',
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Image Placeholder
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* HERO 7: Image Placeholder Section */}
+      <section style={{ padding: '80px 40px', background: '#FFFFFF', borderTop: '1px solid #E5E7EB' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div
+            style={{
+              background: '#E5E7EB',
+              borderRadius: 24,
+              height: 420,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px dashed #D1D5DB',
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Image Placeholder
+            </span>
           </div>
         </div>
       </section>

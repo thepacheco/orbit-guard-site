@@ -418,6 +418,72 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Studio Collage with Interactive Blip Pins */}
+      <section
+        style={{
+          padding: '80px 56px 100px',
+          background: '#fff',
+        }}
+      >
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', marginBottom: 12, fontWeight: 700 }}>
+              Where we build
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 'clamp(28px, 3vw, 40px)', margin: 0, letterSpacing: '-0.02em' }}>
+              Made in Atlanta
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr',
+              gridTemplateRows: '1fr 1fr',
+              gap: 16,
+              height: 480,
+            }}
+          >
+            {/* Main photo — spans 2 rows, has interactive blips */}
+            <div style={{ gridRow: '1 / 3', position: 'relative', borderRadius: 20, overflow: 'hidden', boxShadow: '0 12px 36px rgba(0,0,0,0.06)' }}>
+              <img src="/assets/atlanta_office_empty.png" alt="Atlanta Studio" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
+              {/* Blip: Designed in Atlanta */}
+              <div style={{ position: 'absolute', top: '32%', left: '38%', cursor: 'pointer' }}>
+                <span style={{ position: 'relative', display: 'flex', width: 22, height: 22 }}>
+                  <span style={{ animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite', position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', background: '#5A74FF', opacity: 0.75 }} />
+                  <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: 22, width: 22, background: '#5A74FF', border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                </span>
+                <div style={{ position: 'absolute', bottom: '130%', left: '50%', transform: 'translateX(-50%)', background: '#111827', color: '#fff', padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', pointerEvents: 'none' }}>
+                  Designed in Atlanta
+                </div>
+              </div>
+
+              {/* Blip: Precision Engineering */}
+              <div style={{ position: 'absolute', top: '62%', left: '65%', cursor: 'pointer' }}>
+                <span style={{ position: 'relative', display: 'flex', width: 22, height: 22 }}>
+                  <span style={{ animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite 0.5s', position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', background: '#05CE78', opacity: 0.75 }} />
+                  <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: 22, width: 22, background: '#05CE78', border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                </span>
+                <div style={{ position: 'absolute', bottom: '130%', left: '50%', transform: 'translateX(-50%)', background: '#111827', color: '#fff', padding: '7px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', pointerEvents: 'none' }}>
+                  Precision Engineering
+                </div>
+              </div>
+            </div>
+
+            {/* Secondary photo — top right */}
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+              <img src="/assets/HomePage_OnChair_Photos/OnChair1.png" alt="Production" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+
+            {/* Tertiary photo — bottom right */}
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.04)' }}>
+              <img src="/assets/lp_pets/LP_Pets1.png" alt="Edison the cat" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Team section — Interactive Playing Cards */}
       <section
         className="og-about-section"
@@ -452,21 +518,21 @@ export default function AboutPage() {
             {[
               {
                 name: 'Edison',
-                role: 'Chief Inspiration & Safety Officer 🐾',
+                role: 'Chief Inspiration & Safety Officer',
                 bio: 'The curious chonky cat whose near-miss with a office chair wheel sparked the creation of Orbit Guard.',
                 img: '/assets/lp_pets/LP_Pets1.png',
                 tag: 'Founding Inspiration',
               },
               {
                 name: 'Pacheco',
-                role: 'Founder & Lead Engineer 🛠️',
+                role: 'Founder & Lead Engineer',
                 bio: 'Designed and prototyped 40+ iterations of TPU guards to achieve tool-free 99% universal caster fit.',
                 img: '/assets/HomePage_OnChair_Photos/OnChair1.png',
                 tag: 'Atlanta, GA',
               },
               {
                 name: 'Orbit Team',
-                role: 'Design & Fulfillment 📦',
+                role: 'Design & Fulfillment',
                 bio: 'Ensures every set of Orbits is molded, quality tested, and shipped directly to your door with care.',
                 img: '/assets/HomePage_OnChair_Photos/OnChair3.png',
                 tag: 'Atlanta Studio',

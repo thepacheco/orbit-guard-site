@@ -7,75 +7,78 @@ export default function NotFound() {
       display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-ui)',
     }}>
-      {/* Top accent strip */}
-      <div style={{ height: 6, background: 'var(--og-blue)', width: '100%' }} />
 
       <div style={{
         flex: 1, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         padding: '60px 40px', textAlign: 'center',
+        position: 'relative',
       }}>
-        {/* Large orbit ring illustration */}
-        <div style={{ position: 'relative', width: 140, height: 140, marginBottom: 40 }}>
-          <div style={{
-            width: 140, height: 140, borderRadius: '50%',
-            border: '10px solid #E2E7FF',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <div style={{
-              width: 60, height: 60, borderRadius: '50%',
-              background: 'var(--og-blue)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#fff' }} />
-            </div>
-          </div>
-        </div>
 
+        {/* Subtle massive 404 in the background */}
         <div style={{
-          fontWeight: 800, fontSize: 'clamp(80px, 15vw, 120px)',
-          lineHeight: 1, color: 'var(--og-blue)', letterSpacing: '-0.04em',
-          marginBottom: 16,
+          position: 'absolute',
+          fontSize: 'clamp(200px, 28vw, 360px)',
+          fontWeight: 900,
+          color: '#F3F4F6',
+          letterSpacing: '-0.06em',
+          lineHeight: 1,
+          userSelect: 'none',
+          pointerEvents: 'none',
+          zIndex: 0,
         }}>404</div>
 
+        {/* Product image as centerpiece */}
+        <div style={{ position: 'relative', zIndex: 1, marginBottom: 32 }}>
+          <img
+            src="/assets/start_product_photos/08_Product_Half_Floating_Shot/ProductFloatingHalfShot_Blueberry.png"
+            alt="Orbit Guard"
+            style={{
+              width: 200,
+              height: 200,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))',
+            }}
+          />
+        </div>
+
         <h1 style={{
-          fontWeight: 700, fontSize: 'clamp(22px, 4vw, 32px)',
-          letterSpacing: '-0.02em', margin: '0 0 12px', color: 'var(--fg)',
+          position: 'relative', zIndex: 1,
+          fontWeight: 800, fontSize: 'clamp(24px, 4vw, 36px)',
+          letterSpacing: '-0.02em', margin: '0 0 12px', color: '#111827',
         }}>This page rolled away.</h1>
 
         <p style={{
-          fontSize: 17, color: 'var(--fg-2)', lineHeight: 1.65,
-          maxWidth: 400, margin: '0 0 10px',
+          position: 'relative', zIndex: 1,
+          fontSize: 17, color: '#6B7280', lineHeight: 1.65,
+          maxWidth: 400, margin: '0 0 8px',
         }}>
           The page you are looking for is not here.
         </p>
         <p style={{
-          fontSize: 15, color: 'var(--fg-3)', margin: '0 0 40px',
+          position: 'relative', zIndex: 1,
+          fontSize: 14, color: '#9CA3AF', margin: '0 0 40px',
         }}>
           (Your chair wheels are still safe though.)
         </p>
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/" style={{
-            background: 'var(--og-blue)', color: '#fff', textDecoration: 'none',
-            padding: '14px 32px', borderRadius: 999, fontWeight: 700, fontSize: 15,
-            boxShadow: 'var(--shadow-blue)',
-          }}>Back home</Link>
+            background: '#111827', color: '#fff', textDecoration: 'none',
+            padding: '14px 36px', borderRadius: 999, fontWeight: 700, fontSize: 15,
+            boxShadow: '0 8px 24px rgba(17,24,39,0.12)',
+          }}>Go Home</Link>
           <Link href="/shop" style={{
-            background: 'transparent', color: 'var(--fg)', textDecoration: 'none',
-            padding: '14px 32px', borderRadius: 999, fontWeight: 700, fontSize: 15,
-            boxShadow: 'inset 0 0 0 1.5px var(--border-strong)',
+            background: 'transparent', color: '#111827', textDecoration: 'none',
+            padding: '14px 36px', borderRadius: 999, fontWeight: 700, fontSize: 15,
+            border: '1.5px solid #E5E7EB',
           }}>Shop Orbits</Link>
-          <Link href="/faq" style={{
-            background: 'transparent', color: 'var(--fg-2)', textDecoration: 'none',
-            padding: '14px 32px', borderRadius: 999, fontWeight: 600, fontSize: 14,
-          }}>See FAQ</Link>
         </div>
       </div>
 
       <div style={{
-        borderTop: '1px solid var(--border)', padding: '20px 40px',
-        textAlign: 'center', fontSize: 13, color: 'var(--fg-3)',
+        borderTop: '1px solid #E5E7EB', padding: '20px 40px',
+        textAlign: 'center', fontSize: 13, color: '#9CA3AF',
       }}>
         &copy; 2026 OrbitGuard, Inc. &middot; Atlanta, GA
       </div>

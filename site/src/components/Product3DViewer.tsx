@@ -41,13 +41,11 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const firstFrame = useRef(true);
 
   useMemo(() => {
-    // The OBJ names are inversely mapped to their physical positions:
-    // topMesh (Snap_Top.obj) is physically the BOTTOM piece (the cup).
-    // bottomMesh (Snap_Bottom.obj) is physically the TOP piece (the ring).
-    // Color mapping tuned for camera perspective so topColor always affects
-    // the visual top portion on screen and bottomColor affects the visual bottom.
-    const topMeshColor = float ? bottomColor : topColor;
-    const bottomMeshColor = float ? topColor : bottomColor;
+    // Direct unconditional assignment — topColor always controls the mesh
+    // that renders as the visual top on screen, bottomColor the visual bottom.
+    // No float-dependent swap; the camera angle keeps the visual order stable.
+    const topMeshColor = topColor;
+    const bottomMeshColor = bottomColor;
 
     const topMat = new THREE.MeshStandardMaterial({
       color: topMeshColor,

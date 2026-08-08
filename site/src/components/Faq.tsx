@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Plus, X, ChevronRight } from 'lucide-react';
 import { CATEGORIZED_FAQ } from '../config/faqData';
 
@@ -13,125 +14,106 @@ export default function Faq() {
   const currentCategoryData = CATEGORIZED_FAQ.find(c => c.category === activeCategory);
 
   return (
-    <div className="og-faq-card" style={{
-      background: 'rgba(255, 255, 255, 0.8)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      borderRadius: 24,
-      padding: '60px 40px',
-      boxShadow: '0 24px 80px rgba(0, 0, 0, 0.05)',
-      maxWidth: 1000,
-      width: '100%',
-      margin: '0 auto',
-      position: 'relative',
-      zIndex: 10,
-    }}>
-      
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 48 }}>
-        <h2 style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 'clamp(32px, 4vw, 42px)',
-          fontWeight: 700,
-          color: '#123136',
-          margin: '0 0 16px',
-          letterSpacing: '-0.02em',
-        }}>
-          Frequently Asked Questions
-        </h2>
-        <p style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 16,
-          color: '#5B767A',
-          maxWidth: 600,
-          margin: '0 auto',
-          lineHeight: 1.6,
-        }}>
-          Everything about fit, install, and getting started — in one place. Find the answers you need to make the most out of your Orbit Guard.
-        </p>
-      </div>
+    <div style={{ maxWidth: 1100, width: '100%', margin: '0 auto' }}>
 
-      {/* Grid Layout */}
-      <div className="og-faq-grid" style={{
-        display: 'grid',
-        gridTemplateColumns: '260px 1fr',
-        gap: 40,
-        alignItems: 'start',
-      }}>
-        
-        {/* Left: Categories */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {CATEGORIZED_FAQ.map((cat) => {
-            const isActive = activeCategory === cat.category;
-            return (
-              <button
-                key={cat.category}
-                onClick={() => {
-                  setActiveCategory(cat.category);
-                  setOpenIndex(0); // Reset accordion state when changing category
-                }}
-                style={{
-                  background: isActive ? '#fff' : 'rgba(255, 255, 255, 0.4)',
-                  border: 'none',
-                  padding: '20px 24px',
-                  borderRadius: 12,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  boxShadow: isActive ? '0 4px 16px rgba(0,0,0,0.03)' : 'none',
-                  transition: 'all 0.2s',
-                  color: isActive ? '#123136' : '#8A9BA0',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: 15,
-                }}
-              >
-                <span>{cat.category}</span>
-                <ChevronRight size={18} opacity={isActive ? 1 : 0.5} />
-              </button>
-            );
-          })}
-          <div style={{ marginTop: 24 }}>
-            <a href="mailto:hello@orbitguards.com" style={{
+      {/* Two-column split: large title left, accordions right */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '320px 1fr',
+          gap: 64,
+          alignItems: 'start',
+        }}
+      >
+
+        {/* Left Column: Title + Category Tabs + Contact CTA */}
+        <div style={{ position: 'sticky', top: 140 }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 'clamp(56px, 6vw, 80px)',
+              fontWeight: 900,
+              color: '#111827',
+              letterSpacing: '-0.04em',
+              lineHeight: 0.95,
+              margin: '0 0 40px',
+            }}
+          >
+            FAQs
+          </h2>
+
+          {/* Category Tabs */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 32 }}>
+            {CATEGORIZED_FAQ.map((cat) => {
+              const isActive = activeCategory === cat.category;
+              return (
+                <button
+                  key={cat.category}
+                  onClick={() => {
+                    setActiveCategory(cat.category);
+                    setOpenIndex(0);
+                  }}
+                  style={{
+                    background: isActive ? '#F3F4F6' : 'transparent',
+                    border: 'none',
+                    padding: '14px 18px',
+                    borderRadius: 10,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease',
+                    color: isActive ? '#111827' : '#6B7280',
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: 15,
+                    fontFamily: 'var(--font-body)',
+                  }}
+                >
+                  <span>{cat.category}</span>
+                  <ChevronRight size={16} opacity={isActive ? 1 : 0.4} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Contact CTA — links to /contact */}
+          <Link
+            href="/contact"
+            style={{
               display: 'block',
-              background: '#5A74FF',
+              background: '#111827',
               color: '#fff',
               padding: '16px 24px',
               borderRadius: 12,
               textAlign: 'center',
               textDecoration: 'none',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: 15,
-              boxShadow: '0 8px 24px rgba(90, 116, 255, 0.25)',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}>
-              Contact Us
-            </a>
-          </div>
+              fontFamily: 'var(--font-ui)',
+              transition: 'transform 0.15s ease',
+            }}
+          >
+            Contact Us
+          </Link>
         </div>
 
-        {/* Right: Accordions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Right Column: Accordion Items */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {currentCategoryData?.items.map((item, idx) => {
             const isOpen = openIndex === idx;
             return (
               <div
                 key={idx}
                 style={{
-                  background: isOpen ? '#fff' : 'rgba(240, 246, 250, 0.6)',
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isOpen ? '0 12px 32px rgba(0,0,0,0.04)' : 'none',
-                  border: isOpen ? '1px solid rgba(0,0,0,0.02)' : '1px solid transparent',
+                  borderBottom: '1px solid #E5E7EB',
                 }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
                   style={{
                     width: '100%',
-                    padding: '24px',
+                    padding: '24px 0',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -139,19 +121,28 @@ export default function Faq() {
                     border: 'none',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    color: '#123136',
-                    fontWeight: isOpen ? 600 : 500,
+                    color: '#111827',
+                    fontWeight: isOpen ? 700 : 500,
                     fontSize: 16,
+                    fontFamily: 'var(--font-body)',
+                    lineHeight: 1.4,
                   }}
                 >
-                  <span style={{ paddingRight: 24 }}>{item.q}</span>
-                  <div style={{
-                    color: '#123136',
-                    display: 'grid',
-                    placeItems: 'center',
-                    transition: 'transform 0.3s ease',
-                  }}>
-                    {isOpen ? <X size={20} /> : <Plus size={20} />}
+                  <span style={{ paddingRight: 24, flex: 1 }}>{item.q}</span>
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      background: isOpen ? '#111827' : '#F3F4F6',
+                      color: isOpen ? '#fff' : '#6B7280',
+                      display: 'grid',
+                      placeItems: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {isOpen ? <X size={14} /> : <Plus size={14} />}
                   </div>
                 </button>
                 <div
@@ -162,13 +153,17 @@ export default function Faq() {
                   }}
                 >
                   <div style={{ overflow: 'hidden' }}>
-                    <p style={{
-                      margin: 0,
-                      padding: '0 24px 24px',
-                      color: '#5B767A',
-                      lineHeight: 1.6,
-                      fontSize: 15,
-                    }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        padding: '0 0 24px',
+                        color: '#6B7280',
+                        lineHeight: 1.65,
+                        fontSize: 15,
+                        fontFamily: 'var(--font-body)',
+                        maxWidth: 580,
+                      }}
+                    >
                       {item.a}
                     </p>
                   </div>

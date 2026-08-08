@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
 import { useCart } from './CartContext';
 import type { CartItem } from './CartContext';
@@ -28,6 +29,7 @@ async function saveToSheets(email: string, items: CartItem[], total: number) {
 
 export default function CartPopup({ open, onClose }: CartPopupProps) {
   const cart = useCart();
+  const router = useRouter();
   const [saveEmail, setSaveEmail] = useState('');
   const [loadEmail, setLoadEmail] = useState('');
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
@@ -204,6 +206,15 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                       border: '1px solid var(--border)',
                     }}
                   >
+                    {/* Clickable area: color dot + info — navigates to shop with variant pre-selected */}
+                    <div
+                      onClick={() => {
+                        router.push(`/shop?variant=${item.variantKey}&pack=${item.packCount}`);
+                        onClose();
+                      }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, cursor: 'pointer' }}
+                      title={`Edit ${item.variantName}`}
+                    >
                     {/* Color dot */}
                     {item.isMix ? (
                       <div
@@ -240,6 +251,7 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                       <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>
                         {item.packCount}-pack · ${item.packPrice} each
                       </div>
+                    </div>
                     </div>
                     {/* Qty controls */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

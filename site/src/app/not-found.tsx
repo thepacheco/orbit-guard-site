@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import * as LucideIcons from 'lucide-react';
-import IntegratedSpaceGame from '@/components/IntegratedSpaceGame';
+import MultiStageOrbitGame from '@/components/MultiStageOrbitGame';
 
 export default function NotFound() {
   return (
@@ -62,7 +62,7 @@ export default function NotFound() {
         }}
       >
         {/* Enlarged 84px Architectural 404 Emblem Stage */}
-        <div style={{ position: 'relative', width: 320, height: 320, marginBottom: 36, display: 'grid', placeItems: 'center' }}>
+        <div style={{ position: 'relative', width: 320, height: 320, marginBottom: 20, display: 'grid', placeItems: 'center' }}>
           {/* Outer Rotating Dash Rings */}
           <svg
             viewBox="0 0 320 320"
@@ -122,23 +122,21 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Streamlined Headline Only */}
-        <h1
-          style={{
-            fontWeight: 900,
-            fontSize: 'clamp(40px, 6vw, 72px)',
-            letterSpacing: '-0.04em',
-            lineHeight: 1,
-            margin: '0 0 36px',
-            color: '#FFFFFF',
-          }}
-        >
-          This page rolled away
-        </h1>
+        {/* Smiley-Curved SVG Headline Path */}
+        <div style={{ width: '100%', maxWidth: 640, marginBottom: 24 }}>
+          <svg viewBox="0 0 600 120" style={{ width: '100%', height: 'auto', overflow: 'visible' }}>
+            <path id="smileCurve" d="M 20,40 Q 300,130 580,40" fill="none" />
+            <text fill="#FFFFFF" fontSize="48" fontWeight="900" fontFamily="var(--font-ui, sans-serif)" letterSpacing="-0.035em">
+              <textPath href="#smileCurve" startOffset="50%" textAnchor="middle">
+                This page rolled away
+              </textPath>
+            </text>
+          </svg>
+        </div>
 
-        {/* Background Integrated Space Runner Game Canvas */}
+        {/* 3-Stage Interactive Arcade Game */}
         <div style={{ width: '100%', marginBottom: 40 }}>
-          <IntegratedSpaceGame />
+          <MultiStageOrbitGame />
         </div>
 
         {/* Action Buttons */}

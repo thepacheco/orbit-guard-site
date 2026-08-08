@@ -210,8 +210,8 @@ export default function CartPopup({ open, onClose }: CartPopupProps) {
                     {/* Clickable area: color dot + info — navigates to shop with variant pre-selected */}
                     <div
                       onClick={() => {
-                        const topKey = item.mixTop ? PRODUCT_VARIANTS.find(x => x.hex === item.mixTop)?.key || item.mixTop : null;
-                        const bottomKey = item.mixBottom ? PRODUCT_VARIANTS.find(x => x.hex === item.mixBottom)?.key || item.mixBottom : null;
+                        const topKey = item.mixTopKey || (item.mixTop ? PRODUCT_VARIANTS.find(x => x.hex === item.mixTop)?.key || item.mixTop : null);
+                        const bottomKey = item.mixBottomKey || (item.mixBottom ? PRODUCT_VARIANTS.find(x => x.hex === item.mixBottom)?.key || item.mixBottom : null);
                         if (item.isMix && topKey && bottomKey) {
                           router.push(`/shop?mixTop=${topKey}&mixBottom=${bottomKey}&pack=${item.packCount}`);
                         } else {

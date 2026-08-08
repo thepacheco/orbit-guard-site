@@ -11,6 +11,9 @@ export type CartItem = {
   isMix?: boolean
   mixTop?: string
   mixBottom?: string
+  mixTopKey?: string
+  mixBottomKey?: string
+  guardSlots?: { topKey: string; bottomKey: string }[]
 }
 
 type CartCtx = {
@@ -29,13 +32,27 @@ type CartCtx = {
 const CartContext = createContext<CartCtx | null>(null)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('og_cart');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return [];
+  });
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   const totalItems = items.reduce((s, x) => s + x.qty, 0);
   const totalPrice = items.reduce((s, x) => s + x.qty * x.packPrice, 0);
 
-  // Dispatch cart activity event to API endpoint
+  // Sync items to localStorage whenever state mutates
   useEffect(() => {
+    if (!isLoaded) return;
     if (items.length > 0) {
       localStorage.setItem('og_cart', JSON.stringify(items));
       try {
@@ -50,16 +67,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } else {
       localStorage.removeItem('og_cart');
     }
-  }, [items, totalPrice]);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('og_cart');
-    if (saved) try { setItems(JSON.parse(saved)); } catch { /* ignore */ }
-  }, []);
+  }, [items, totalPrice, isLoaded]);
 
   function itemKey(item: Omit<CartItem, 'qty'> | CartItem): string {
-    if (item.isMix) return `mix-${item.mixTop}-${item.mixBottom}-${item.packCount}`;
+    if (item.isMix) {
+      const top = item.mixTopKey || item.mixTop || '';
+      const bottom = item.mixBottomKey || item.mixBottom || '';
+      return `mix-${top}-${bottom}-${item.packCount}`;
+    }
     return `${item.variantKey}-${item.packCount}`;
   }
 
@@ -82,12 +97,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       
       // If variant or mix combination already exists in cart, update its packCount & packPrice
       const matchIndex = prev.findIndex(x => {
-        if (item.isMix) return x.isMix && x.mixTop === item.mixTop && x.mixBottom === item.mixBottom;
+        if (item.isMix) {
+          const itemTop = item.mixTopKey || item.mixTop;
+          const itemBottom = item.mixBottomKey || item.mixBottom;
+          const xTop = x.mixTopKey || x.mixTop;
+          const xBottom = x.mixBottomKey || x.mixBottom;
+          return x.isMix && xTop === itemTop && xBottom === itemBottom;
+        }
         return !x.isMix && x.variantKey === item.variantKey;
       });
 
       if (matchIndex >= 0) {
-        return prev.map((x, idx) => idx === matchIndex ? { ...x, packCount: item.packCount, packPrice: item.packPrice } : x);
+        return prev.map((x, idx) => idx === matchIndex ? { ...x, ...item } : x);
       }
 
       return [...prev, { ...item, qty: 1 }];
@@ -95,19 +116,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateQty = (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => {
-    const key = mixTop && mixBottom
-      ? `mix-${mixTop}-${mixBottom}-${packCount}`
-      : `${variantKey}-${packCount}`;
-    setItems(prev => prev.map(x => itemKey(x) === key
-      ? { ...x, qty: Math.max(0, x.qty + delta) }
-      : x
-    ).filter(x => x.qty > 0));
+    setItems(prev => prev.map(x => {
+      const match = x.isMix
+        ? ((x.mixTopKey && x.mixTopKey === mixTop) || x.mixTop === mixTop) && ((x.mixBottomKey && x.mixBottomKey === mixBottom) || x.mixBottom === mixBottom) && x.packCount === packCount
+        : x.variantKey === variantKey && x.packCount === packCount && !x.isMix;
+      return match ? { ...x, qty: Math.max(0, x.qty + delta) } : x;
+    }).filter(x => x.qty > 0));
   };
 
   const removeItem = (variantKey: string, packCount: number, mixTop?: string, mixBottom?: string) => {
     if (mixTop && mixBottom) {
-      const key = `mix-${mixTop}-${mixBottom}-${packCount}`;
-      setItems(prev => prev.filter(x => itemKey(x) !== key));
+      setItems(prev => prev.filter(x => !(x.isMix && ((x.mixTopKey && x.mixTopKey === mixTop) || x.mixTop === mixTop) && ((x.mixBottomKey && x.mixBottomKey === mixBottom) || x.mixBottom === mixBottom) && x.packCount === packCount)));
     } else {
       setItems(prev => prev.filter(x => !(x.variantKey === variantKey && x.packCount === packCount && !x.isMix)));
     }

@@ -201,7 +201,7 @@ function ShopPalettePicker({
       </div>
 
       <div style={{ fontSize: 11, fontFamily: 'var(--font-ui)', color: 'var(--fg-3)', opacity: 0.65, marginTop: 8 }}>
-        Actual color may vary slightly depending on your screen settings.
+        Actual color may vary as we get closer to production.
       </div>
     </div>
   );
@@ -800,6 +800,9 @@ function ShopPageContent() {
       isMix: true,
       mixTop: topVariant.hex,
       mixBottom: bottomVariant.hex,
+      mixTopKey: mixTopKey,
+      mixBottomKey: mixBottomKey,
+      guardSlots: guardSlots,
     });
     window.dispatchEvent(new CustomEvent('og:open-cart'));
   }
@@ -1177,7 +1180,7 @@ function ShopPageContent() {
               </button>
 
               <div style={{ fontSize: 11, fontFamily: 'var(--font-ui)', color: 'var(--fg-3)', opacity: 0.65 }}>
-                Actual color may vary slightly depending on your screen settings.
+                Actual color may vary as we get closer to production.
               </div>
 
               {/* Pricing note */}

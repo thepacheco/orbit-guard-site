@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import * as LucideIcons from 'lucide-react';
+import OrbitRunnerGame from '@/components/OrbitRunnerGame';
 
 export default function NotFound() {
   return (
@@ -23,8 +24,8 @@ export default function NotFound() {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 800,
-          height: 600,
+          width: 900,
+          height: 700,
           background: 'radial-gradient(ellipse at center, rgba(90, 116, 255, 0.15) 0%, transparent 70%)',
           filter: 'blur(100px)',
           pointerEvents: 'none',
@@ -39,130 +40,15 @@ export default function NotFound() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 24px',
+          padding: '48px 24px',
           textAlign: 'center',
           position: 'relative',
           zIndex: 10,
-          maxWidth: 800,
+          maxWidth: 900,
+          width: '100%',
           margin: '0 auto',
         }}
       >
-        {/* Animated Digital Orbital Ring Graphic */}
-        <div style={{ position: 'relative', width: 280, height: 280, marginBottom: 40, display: 'grid', placeItems: 'center' }}>
-          
-          {/* Outer Rotating Dash Ring */}
-          <svg
-            viewBox="0 0 280 280"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              animation: 'ogSpin 24s linear infinite',
-            }}
-          >
-            <circle
-              cx="140"
-              cy="140"
-              r="130"
-              fill="none"
-              stroke="rgba(90, 116, 255, 0.35)"
-              strokeWidth="2"
-              strokeDasharray="6 12"
-            />
-            <circle
-              cx="140"
-              cy="140"
-              r="110"
-              fill="none"
-              stroke="rgba(5, 206, 120, 0.4)"
-              strokeWidth="1.5"
-              strokeDasharray="14 20"
-            />
-          </svg>
-
-          {/* Counter-Rotating Inner Ring */}
-          <svg
-            viewBox="0 0 280 280"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              animation: 'ogSpin 16s linear infinite reverse',
-            }}
-          >
-            <circle
-              cx="140"
-              cy="140"
-              r="85"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.2)"
-              strokeWidth="1.5"
-              strokeDasharray="4 8"
-            />
-          </svg>
-
-          {/* Central Pulsing Core Badge */}
-          <div
-            style={{
-              position: 'relative',
-              width: 130,
-              height: 130,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              boxShadow: '0 0 40px rgba(90, 116, 255, 0.25)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'var(--font-mono, monospace)',
-                fontWeight: 900,
-                fontSize: 42,
-                letterSpacing: '-0.04em',
-                color: '#FFFFFF',
-                lineHeight: 1,
-              }}
-            >
-              404
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 10,
-                color: '#05CE78',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                marginTop: 6,
-                fontWeight: 700,
-              }}
-            >
-              OUT OF ORBIT
-            </div>
-          </div>
-
-          {/* Binary Orbit Dots */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '12%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              color: '#5A74FF',
-              letterSpacing: '0.2em',
-            }}
-          >
-            0101 · 404 · 1010
-          </div>
-        </div>
-
         {/* Eyebrow Label */}
         <div
           style={{
@@ -172,38 +58,43 @@ export default function NotFound() {
             letterSpacing: '0.16em',
             color: '#5A74FF',
             fontWeight: 700,
-            marginBottom: 16,
+            marginBottom: 12,
           }}
         >
           System Error · 404
         </div>
 
-        {/* Massive Headline */}
+        {/* Headline */}
         <h1
           style={{
             fontWeight: 900,
-            fontSize: 'clamp(36px, 5vw, 60px)',
+            fontSize: 'clamp(32px, 4.5vw, 56px)',
             letterSpacing: '-0.035em',
             lineHeight: 1,
-            margin: '0 0 16px',
+            margin: '0 0 12px',
             color: '#FFFFFF',
           }}
         >
           This Page Rolled Away
         </h1>
 
-        {/* Paragraph Description */}
+        {/* Subhead */}
         <p
           style={{
-            fontSize: 18,
+            fontSize: 16,
             color: 'rgba(255, 255, 255, 0.75)',
-            lineHeight: 1.6,
-            maxWidth: 480,
-            margin: '0 0 36px',
+            lineHeight: 1.5,
+            maxWidth: 520,
+            margin: '0 0 28px',
           }}
         >
-          The resource or URL you requested is out of alignment with our system. Let&rsquo;s get you back on track.
+          The requested URL is out of orbit. While we recalibrate, play a quick round of <strong style={{ color: '#05CE78' }}>Orbit Runner</strong> below!
         </p>
+
+        {/* 404 Mini-Game Canvas */}
+        <div style={{ width: '100%', marginBottom: 36 }}>
+          <OrbitRunnerGame />
+        </div>
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>

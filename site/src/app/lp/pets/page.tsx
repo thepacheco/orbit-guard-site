@@ -86,7 +86,7 @@ export default function PetsLandingPage() {
                 letterSpacing: '-0.03em', lineHeight: 1.05, margin: 0,
               }}
             >
-              Your chair won&apos;t hurt them anymore.
+              Your <span style={{ color: '#950000' }}>chair</span> won&apos;t hurt them anymore.
             </h1>
             <p
               style={{

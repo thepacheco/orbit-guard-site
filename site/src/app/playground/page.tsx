@@ -69,6 +69,8 @@ export default function PlaygroundPage() {
     setBottomIdx(3);
     setCustomTitle('');
     setSpin(false);
+    setExploded(false);
+    setFloatMode(false);
     applyPreset([104.74, -96.92, 138.54], false, false);
   };
 
@@ -206,11 +208,18 @@ export default function PlaygroundPage() {
                 <button onClick={() => applyPreset([104.74, -96.92, 138.54], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   3D View
                 </button>
-                <button onClick={() => applyPreset([175.0, -96.92, 0.0], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-                  Flat Profile
-                </button>
-                <button onClick={() => applyPreset([157.11, -145.38, 207.81], true, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-                  Detached
+                <button
+                  onClick={() => {
+                    const nextExploded = !exploded;
+                    setExploded(nextExploded);
+                    if (nextExploded) {
+                      setCamPosArray([157.11, -145.38, 207.81]);
+                      setCamPosStr('[157.11, -145.38, 207.81]');
+                    }
+                  }}
+                  style={{ padding: '12px 16px', background: exploded ? '#e0e7ff' : '#fff', border: exploded ? '1px solid #6366f1' : '1px solid #e5e7eb', color: exploded ? '#4338ca' : '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                >
+                  {exploded ? 'Reattached' : 'Detached'}
                 </button>
                 <button onClick={resetStudio} style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600, marginLeft: 'auto' }}>
                   Reset

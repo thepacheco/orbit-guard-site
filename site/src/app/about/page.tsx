@@ -287,6 +287,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values section */}
+      {/* Values section — Expanded Dribbble-style 3D interactive cards */}
       <section
         className="og-about-section"
         style={{
@@ -314,6 +315,7 @@ export default function AboutPage() {
                 letterSpacing: '0.14em',
                 color: '#5A74FF',
                 marginBottom: 16,
+                fontWeight: 700,
               }}
             >
               How we work
@@ -336,109 +338,87 @@ export default function AboutPage() {
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 24,
+              gap: 28,
             }}
           >
             {[
               {
+                number: '01',
                 title: 'Simple by design',
-                body: 'One part. Five seconds per wheel. No tools, no instructions needed.',
+                body: 'One part. Five seconds per wheel. Zero tools, zero instructions needed.',
+                accent: '#5A74FF',
+                icon: '⚡',
               },
               {
+                number: '02',
                 title: 'Made for real homes',
-                body: 'Not labs or showrooms. Homes with pets, cables, bare feet, and hardwood floors.',
+                body: 'Not sterile showrooms. Homes with pets, charging cables, bare feet, and hardwood floors.',
+                accent: '#06D6A0',
+                icon: '🏡',
               },
               {
+                number: '03',
                 title: 'Made for daily use',
-                body: 'Used on carpet or hardwood and is durable to take the tough hits.',
+                body: 'Tested on rug and hardwood. Engineered to absorb impact and take continuous tough hits.',
+                accent: '#FFB4A2',
+                icon: '🛡️',
               },
             ].map(card => (
               <div
                 key={card.title}
                 style={{
                   background: '#fff',
-                  borderRadius: 20,
-                  padding: '36px 32px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                  borderRadius: 24,
+                  padding: '40px 32px',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02)',
+                  border: '1px solid rgba(0,0,0,0.04)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'transform 200ms ease, boxShadow 200ms ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
               >
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontWeight: 700,
-                    fontSize: 20,
-                    letterSpacing: '-0.01em',
-                    margin: '0 0 12px',
-                    color: 'var(--fg)',
-                  }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 16,
-                    lineHeight: 1.65,
-                    color: 'var(--fg-2)',
-                    margin: 0,
-                  }}
-                >
-                  {card.body}
-                </p>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                    <span style={{ fontSize: 32 }}>{card.icon}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 800, color: card.accent, background: `${card.accent}15`, padding: '4px 10px', borderRadius: 99 }}>
+                      {card.number}
+                    </span>
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 800,
+                      fontSize: 22,
+                      letterSpacing: '-0.02em',
+                      margin: '0 0 14px',
+                      color: 'var(--fg)',
+                    }}
+                  >
+                    {card.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 16,
+                      lineHeight: 1.65,
+                      color: 'var(--fg-2)',
+                      margin: 0,
+                    }}
+                  >
+                    {card.body}
+                  </p>
+                </div>
+                <div style={{ height: 4, background: card.accent, borderRadius: 2, marginTop: 32, opacity: 0.8 }} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Guarantee Section */}
-      <section
-        className="og-about-section"
-        style={{
-          padding: '80px 56px 120px',
-          background: '#fff',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 800,
-            margin: '0 auto',
-            textAlign: 'center',
-            background: '#F4F4F0',
-            padding: '64px 40px',
-            borderRadius: 24,
-            border: '1px solid rgba(0,0,0,0.04)',
-          }}
-        >
-          <div style={{ width: 48, height: 48, background: '#0A0A0A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: '#05CE78' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-          </div>
-          <h3
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 'clamp(24px, 2.5vw, 32px)',
-              letterSpacing: '-0.02em',
-              margin: '0 0 16px',
-            }}
-          >
-            The Orbit Fit Guarantee
-          </h3>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 18,
-              lineHeight: 1.6,
-              color: 'var(--fg-2)',
-              margin: 0,
-            }}
-          >
-            We designed Orbit Guard to be universally compatible with 99% of office chair casters. If they don't fit your chair perfectly, or if you aren't completely satisfied with how they look and perform, simply return them within 30 days for a full, no-questions-asked refund.
-          </p>
-        </div>
-      </section>
-
-      {/* Team section */}
+      {/* Team section — Interactive Playing Cards */}
       <section
         className="og-about-section"
         style={{
@@ -447,37 +427,96 @@ export default function AboutPage() {
           textAlign: 'center',
         }}
       >
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', marginBottom: 12, fontWeight: 700 }}>
+            Who we are
+          </div>
           <h2
             style={{
               fontFamily: 'var(--font-ui)',
-              fontWeight: 700,
-              fontSize: 'clamp(28px, 3vw, 42px)',
+              fontWeight: 800,
+              fontSize: 'clamp(32px, 3.5vw, 48px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.1,
-              margin: '0 0 20px',
+              margin: '0 0 16px',
             }}
           >
             A small team in Atlanta.
           </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 17,
-              lineHeight: 1.65,
-              color: 'var(--fg-2)',
-              margin: '0 0 24px',
-            }}
-          >
-            We don&apos;t have a big team photo...yet but we have an amazing product. And a photo of Edison who inspired Orbit.
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 18, color: 'var(--fg-2)', maxWidth: 560, margin: '0 auto 56px' }}>
+            We build Orbit Guard right here in Atlanta. Meet the team (and the cat) behind the invention.
           </p>
+
+          {/* Playing Cards Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+            {[
+              {
+                name: 'Edison',
+                role: 'Chief Inspiration & Safety Officer 🐾',
+                bio: 'The curious chonky cat whose near-miss with a office chair wheel sparked the creation of Orbit Guard.',
+                img: '/assets/lp_pets/LP_Pets1.png',
+                tag: 'Founding Inspiration',
+              },
+              {
+                name: 'Pacheco',
+                role: 'Founder & Lead Engineer 🛠️',
+                bio: 'Designed and prototyped 40+ iterations of TPU guards to achieve tool-free 99% universal caster fit.',
+                img: '/assets/HomePage_OnChair_Photos/OnChair1.png',
+                tag: 'Atlanta, GA',
+              },
+              {
+                name: 'Orbit Team',
+                role: 'Design & Fulfillment 📦',
+                bio: 'Ensures every set of Orbits is molded, quality tested, and shipped directly to your door with care.',
+                img: '/assets/HomePage_OnChair_Photos/OnChair3.png',
+                tag: 'Atlanta Studio',
+              },
+            ].map(member => (
+              <div
+                key={member.name}
+                style={{
+                  background: '#15171B',
+                  color: '#fff',
+                  borderRadius: 24,
+                  overflow: 'hidden',
+                  padding: 24,
+                  textAlign: 'left',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  boxShadow: '0 16px 40px rgba(0,0,0,0.12)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  position: 'relative',
+                }}
+              >
+                <div style={{ position: 'relative', height: 220, borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+                  <img src={member.img} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <span style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', color: '#05CE78', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 99, fontFamily: 'var(--font-mono)' }}>
+                    {member.tag}
+                  </span>
+                </div>
+                <div>
+                  <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 24, margin: '0 0 4px', color: '#fff' }}>
+                    {member.name}
+                  </h3>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#5A74FF', fontWeight: 700, marginBottom: 12 }}>
+                    {member.role}
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+                    {member.bio}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <p
             style={{
               fontFamily: 'var(--font-body)',
               fontSize: 17,
               lineHeight: 1.65,
               color: 'var(--fg-2)',
-              margin: 0,
+              marginTop: 56,
             }}
           >
             Want to talk? Reach us at{' '}

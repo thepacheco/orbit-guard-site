@@ -15,15 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ['/contact', 'monthly', 0.5],
     ['/press', 'monthly', 0.4],
     ['/lp/launch', 'weekly', 0.7],
-    ['/lp/meet-orbit', 'monthly', 0.6],
-    ['/lp/orbit-intro', 'monthly', 0.6],
     ['/lp/office', 'monthly', 0.5],
     ['/lp/desk', 'monthly', 0.5],
     ['/lp/gamer', 'monthly', 0.5],
     ['/lp/pets', 'monthly', 0.5],
     ['/lp/gifting', 'monthly', 0.5],
     ['/lp/back-to-school', 'monthly', 0.5],
-    ['/lp/meeting-orbit', 'monthly', 0.4],
   ];
 
   return routes.map(([path, changeFrequency, priority]) => ({

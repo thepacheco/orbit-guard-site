@@ -22,7 +22,8 @@ const PALETTE = [
   { hex: '#9C6644', name: 'Bear' },
   { hex: '#950000', name: 'Pomegranate' },
   { hex: '#212529', name: 'Onyx' },
-  { hex: '#F4F4F0', name: 'Polar' },
+  { hex: '#ADB5BD', name: 'Lunar' },
+  { hex: '#FFFFFF', name: 'Polar' },
 ];
 
 function LaunchPaletteDropdown({ value, onChange }: { value: string; onChange: (hex: string) => void }) {

@@ -12,6 +12,7 @@ import type { Variant } from './types';
 import { useCart } from './CartContext';
 import { useActiveVariant } from './ActiveVariantContext';
 import ColorDropdown from './ColorDropdown';
+import ProductHeroSections from './ProductHeroSections';
 
 // Real usage/product photos for the shop viewer. Add image paths here, e.g.
 // '/assets/photos/product-1.jpg'. Empty → labeled placeholder frames.
@@ -1116,6 +1117,9 @@ function ShopPageContent() {
 
       {/* Product details & specs — full width, below the configurator */}
       <ProductDetails v={v} />
+
+      {/* Extended Product Hero Sections */}
+      <ProductHeroSections />
 
       {/* Mix & Match per-guard editor — mobile bottom sheet */}
       {mixMode && sheetOpen && (

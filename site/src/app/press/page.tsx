@@ -18,7 +18,6 @@ const QUICK_FACTS = [
   { fact: 'Headquarters', detail: 'Atlanta, Georgia' },
   { fact: 'Product', detail: 'Chair caster guards (Orbit Guards)' },
   { fact: 'Sizes', detail: 'Full Orbit Guard is 5cm - Half Orbit Guard is 2.5cm' },
-  { fact: 'Colors', detail: 'Blueberry, Clover, Coral, Lavender, Fawn, Rooster, Flamingo, Bear, Pomegranate, Onyx, Polar' },
   { fact: 'Compatibility', detail: '95% of office chairs' },
 ];
 

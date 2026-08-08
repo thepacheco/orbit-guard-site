@@ -225,7 +225,28 @@ export default function ContactPage() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    await fetch('/api/contact', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ name, email, subject, message }),
+                    });
+                  } catch {
+                    // fallback to local storage
+                  }
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem(
+                      'og_contact_submission',
+                      JSON.stringify({ name, email, subject, message, ts: Date.now() }),
+                    );
+                  }
+                  setSubmitted(true);
+                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
+              >
                 <div>
                   <label style={labelStyle}>Name</label>
                   <input
@@ -319,6 +340,72 @@ export default function ContactPage() {
                 </button>
               </form>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Office Collage with Interactive Beeping Hotspots / Blips */}
+      <section style={{ padding: '40px 56px 100px', background: '#fafafa' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 36 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', marginBottom: 8, fontWeight: 700 }}>
+              Workspace Studio
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 32, margin: 0, letterSpacing: '-0.02em' }}>
+              Where Orbit comes to life
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr 1fr',
+              gap: 20,
+              height: 420,
+            }}
+          >
+            {/* Photo 1: Main Office with Interactive Blip tooltips */}
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', boxShadow: '0 12px 36px rgba(0,0,0,0.08)' }}>
+              <img src="/assets/atlanta_office_empty.png" alt="Atlanta Studio" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              
+              {/* Blip 1: Designed in Atlanta */}
+              <div className="group" style={{ position: 'absolute', top: '35%', left: '40%', cursor: 'pointer' }}>
+                <span style={{ position: 'relative', display: 'flex', width: 24, height: 24 }}>
+                  <span style={{ animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite', position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', background: '#5A74FF', opacity: 0.75 }} />
+                  <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: 24, width: 24, background: '#5A74FF', border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                </span>
+                <div style={{ position: 'absolute', bottom: '120%', left: '50%', transform: 'translateX(-50%)', background: '#111827', color: '#fff', padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', pointerEvents: 'none' }}>
+                  Designed in Atlanta
+                </div>
+              </div>
+
+              {/* Blip 2: Precision Engineering */}
+              <div className="group" style={{ position: 'absolute', top: '65%', left: '68%', cursor: 'pointer' }}>
+                <span style={{ position: 'relative', display: 'flex', width: 24, height: 24 }}>
+                  <span style={{ animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite 0.5s', position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', background: '#05CE78', opacity: 0.75 }} />
+                  <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: 24, width: 24, background: '#05CE78', border: '3px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                </span>
+                <div style={{ position: 'absolute', bottom: '120%', left: '50%', transform: 'translateX(-50%)', background: '#111827', color: '#fff', padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', pointerEvents: 'none' }}>
+                  Precision Engineering
+                </div>
+              </div>
+            </div>
+
+            {/* Photo 2: Secondary Collage Frame */}
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 36px rgba(0,0,0,0.06)' }}>
+              <img src="/assets/HomePage_OnChair_Photos/OnChair1.png" alt="Prototyping Bay" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, color: '#374151' }}>
+                Testing Bay
+              </div>
+            </div>
+
+            {/* Photo 3: Tertiary Collage Frame */}
+            <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 36px rgba(0,0,0,0.06)' }}>
+              <img src="/assets/HomePage_OnChair_Photos/OnChair2.png" alt="Material Lab" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ position: 'absolute', bottom: 16, left: 16, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, color: '#374151' }}>
+                Material Lab
+              </div>
+            </div>
           </div>
         </div>
       </section>

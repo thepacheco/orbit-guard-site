@@ -50,7 +50,7 @@ export default function BackToSchoolLandingPage() {
             </div>
 
             <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 'clamp(40px, 4vw, 72px)', letterSpacing: '-0.03em', lineHeight: 1.05, margin: 0, color: fg, animation: 'ogFadeUp 0.8s ease-out' }}>
-              Orbit matches any dorm room aesthetic.
+              <span style={{ color: '#FFB4A2' }}>Orbit</span> matches any dorm room aesthetic.
             </h1>
 
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 20, lineHeight: 1.65, color: fg, opacity: 0.7, margin: 0 }}>

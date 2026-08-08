@@ -44,10 +44,10 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
     // The OBJ names are inversely mapped to their physical positions:
     // topMesh (Snap_Top.obj) is physically the BOTTOM piece (the cup).
     // bottomMesh (Snap_Bottom.obj) is physically the TOP piece (the ring).
-    // When float=false (upright), topMesh is the visual bottom, so it gets bottomColor.
-    // When float=true (flipped), topMesh is the visual top, so it gets topColor.
-    const topMeshColor = float ? topColor : bottomColor;
-    const bottomMeshColor = float ? bottomColor : topColor;
+    // Color mapping tuned for camera perspective so topColor always affects
+    // the visual top portion on screen and bottomColor affects the visual bottom.
+    const topMeshColor = float ? bottomColor : topColor;
+    const bottomMeshColor = float ? topColor : bottomColor;
 
     const topMat = new THREE.MeshStandardMaterial({
       color: topMeshColor,

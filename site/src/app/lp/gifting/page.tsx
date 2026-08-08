@@ -71,7 +71,7 @@ export default function GiftingLandingPage() {
             </a>
 
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: fg, opacity: 0.5, letterSpacing: '0.06em', marginTop: 20 }}>
-              60-day free returns &middot; Free shipping on orders over $30
+              60-day free returns
             </div>
           </div>
         </section>

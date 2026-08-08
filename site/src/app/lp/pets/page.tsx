@@ -17,7 +17,7 @@ export default function PetsLandingPage() {
   const blue = '#5A74FF';
   const cardBg = 'rgba(255,255,255,0.7)';
   const borderCol = 'rgba(90,116,255,0.15)';
-  const blobColor = '#4361EE';
+  const blobColor = blueberryVariant.hex;
 
   const [photoIdx, setPhotoIdx] = React.useState(0);
   const images = ['/assets/lp_pets/LP_Pets1.png', '/assets/lp_pets/LP_Pets2.png', '/assets/lp_pets/LP_Pets3.png'];

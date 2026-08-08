@@ -11,20 +11,7 @@ const Product3DViewer = dynamic(() => import('../../../components/Product3DViewe
 
 const onyxVariant = PRODUCT_VARIANTS.find((v: Variant) => v.key === 'onyx')!;
 
-const PALETTE = [
-  { hex: '#4361EE', name: 'Blueberry' },
-  { hex: '#06D6A0', name: 'Clover' },
-  { hex: '#FFB4A2', name: 'Coral' },
-  { hex: '#A292FF', name: 'Lavender' },
-  { hex: '#E7BC91', name: 'Fawn' },
-  { hex: '#FF3131', name: 'Rooster' },
-  { hex: '#FF90FE', name: 'Flamingo' },
-  { hex: '#9C6644', name: 'Bear' },
-  { hex: '#950000', name: 'Pomegranate' },
-  { hex: '#212529', name: 'Onyx' },
-  { hex: '#ADB5BD', name: 'Lunar' },
-  { hex: '#FFFFFF', name: 'Polar' },
-];
+const PALETTE = PRODUCT_VARIANTS.map(v => ({ hex: v.hex, name: v.name }));
 
 function LaunchPaletteDropdown({ value, onChange }: { value: string; onChange: (hex: string) => void }) {
   const [open, setOpen] = useState(false);

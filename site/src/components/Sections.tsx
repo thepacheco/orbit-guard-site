@@ -899,24 +899,28 @@ export function Kickstarter({ v }: { v: Variant }) {
 // ──────────────────────────────────────────────────────────────────
 export function MixAndMatchBanner() {
   const [index, setIndex] = React.useState(0);
+  const [manualSelection, setManualSelection] = React.useState<number | null>(null);
+
+  const activeIndex = manualSelection !== null ? manualSelection : index;
 
   React.useEffect(() => {
+    if (manualSelection !== null) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % PRODUCT_VARIANTS.length);
-    }, 3500);
+    }, 3800);
     return () => clearInterval(timer);
-  }, []);
+  }, [manualSelection]);
 
-  const topIndex = index;
-  const bottomIndex = (index + 3) % PRODUCT_VARIANTS.length;
+  const topIndex = activeIndex;
+  const bottomIndex = (activeIndex + 3) % PRODUCT_VARIANTS.length;
 
   const topVariant = PRODUCT_VARIANTS[topIndex];
   const bottomVariant = PRODUCT_VARIANTS[bottomIndex];
 
   function getMixName(topKey: string, bottomKey: string): string {
-    if (topKey === bottomKey) return PRODUCT_VARIANTS.find(v => v.key === topKey)?.name || '';
+    if (topKey === bottomKey) return PRODUCT_VARIANTS.find(v => v.key === topKey)?.name || 'Pure Edition';
     const canonical = [topKey, bottomKey].sort().join('|');
-    return (UNIQUE_MIX_NAMES as Record<string, string>)[canonical] || 'Cosmic Blend';
+    return (UNIQUE_MIX_NAMES as Record<string, string>)[canonical] || 'Custom Fusion';
   }
 
   const mixName = getMixName(topVariant.key, bottomVariant.key);
@@ -924,172 +928,313 @@ export function MixAndMatchBanner() {
   return (
     <section
       style={{
-        padding: '64px 0 52px',
-        background: `linear-gradient(135deg, ${topVariant.hex}18 0%, ${bottomVariant.hex}18 100%)`,
-        transition: 'background 800ms var(--ease-out)',
-        overflow: 'hidden',
+        padding: '120px 40px 100px',
+        background: '#0F172A',
+        color: '#FFFFFF',
         position: 'relative',
+        overflow: 'hidden',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}
     >
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 40px' }}>
-        
-        {/* HEADING — Centered */}
-        <div style={{ textAlign: 'center', marginBottom: 12 }}>
-          <h2
+      {/* Background ambient radial glow */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 800,
+          height: 500,
+          background: `radial-gradient(ellipse at center, ${topVariant.hex}22 0%, ${bottomVariant.hex}15 50%, transparent 70%)`,
+          filter: 'blur(80px)',
+          transition: 'background 1s ease',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 10 }}>
+
+        {/* Header Block — Designed like high-end UX software marketing */}
+        <div style={{ textAlign: 'center', maxWidth: 780, margin: '0 auto 48px' }}>
+          <div
             style={{
-              fontFamily: 'var(--font-ui)',
-              fontWeight: 800,
-              fontSize: 'clamp(24px, 5vw, 42px)',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.05,
-              margin: '0 auto',
-              color: 'var(--fg)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: 'rgba(90, 116, 255, 0.18)',
+              border: '1px solid rgba(90, 116, 255, 0.3)',
+              color: '#A5B4FC',
+              fontSize: 12,
+              fontWeight: 700,
+              padding: '6px 18px',
+              borderRadius: 999,
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              marginBottom: 20,
+              fontFamily: 'var(--font-mono, monospace)',
             }}
           >
-            Mix and Match Any Orbit
+            <LucideIcons.Palette size={14} />
+            144 Signature Combinations
+          </div>
+
+          <h2
+            style={{
+              fontFamily: 'var(--font-ui, sans-serif)',
+              fontWeight: 900,
+              fontSize: 'clamp(36px, 4.5vw, 56px)',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.08,
+              margin: '0 0 20px',
+              color: '#FFFFFF',
+            }}
+          >
+            Mix and match any Orbit.
           </h2>
+
+          <p
+            style={{
+              fontSize: 18,
+              lineHeight: 1.6,
+              color: 'rgba(255, 255, 255, 0.75)',
+              margin: 0,
+            }}
+          >
+            Pair your favorite top ring and bottom cup colors to build a custom dual-tone setup tailored to your desk, chair base, and floor rug.
+          </p>
         </div>
 
-        {/* CENTER: Condensed 3D Model Showcase with Connected Callouts */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div className="og-mix-banner-3d" style={{ width: '100%', maxWidth: 740, height: 420, position: 'relative' }}>
+        {/* 3D Showcase Stage */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: 32,
+            padding: '48px 32px 40px',
+            position: 'relative',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 24px 64px rgba(0,0,0,0.3)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
 
-            {/* Top Color Callout — UPPER half */}
-            <div className="og-mix-banner-callout" style={{
-              position: 'absolute',
-              top: '32%',
-              left: '6%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0,
-              zIndex: 30,
-            }}>
-              <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 13,
-                textTransform: 'uppercase',
-                color: 'var(--fg)',
-                fontWeight: 700,
-                background: 'rgba(255, 255, 255, 0.94)',
-                backdropFilter: 'blur(8px)',
-                padding: '6px 14px',
-                borderRadius: 8,
-                boxShadow: '0 4px 14px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06)',
-                transition: 'all 800ms ease',
-                whiteSpace: 'nowrap',
+          {/* Interactive 3D Stage Container */}
+          <div style={{ width: '100%', maxWidth: 760, height: 440, position: 'relative' }}>
+
+            {/* Top Color Callout Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '25%',
+                left: '4%',
+                zIndex: 30,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
-              }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: topVariant.hex, display: 'inline-block' }} />
-                <span>Top: {topVariant.name}</span>
-              </div>
-              <div style={{
-                width: 70,
-                height: 2,
-                background: `linear-gradient(to right, ${topVariant.hex}, ${topVariant.hex}80)`,
-                transition: 'background 800ms ease',
-              }} />
-              <div style={{
-                width: 10, height: 10, borderRadius: '50%',
-                background: topVariant.hex,
-                border: '2px solid #fff',
-                boxShadow: '0 0 8px rgba(0,0,0,0.25)',
-                transition: 'background 800ms ease',
-                flexShrink: 0,
-              }} />
-            </div>
-
-            {/* Bottom Color Callout — LOWER half */}
-            <div className="og-mix-banner-callout" style={{
-              position: 'absolute',
-              bottom: '30%',
-              right: '6%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0,
-              zIndex: 30,
-            }}>
-              <div style={{
-                width: 10, height: 10, borderRadius: '50%',
-                background: bottomVariant.hex,
-                border: '2px solid #fff',
-                boxShadow: '0 0 8px rgba(0,0,0,0.25)',
-                transition: 'background 800ms ease',
-                flexShrink: 0,
-              }} />
-              <div style={{
-                width: 70,
-                height: 2,
-                background: `linear-gradient(to left, ${bottomVariant.hex}, ${bottomVariant.hex}80)`,
-                transition: 'background 800ms ease',
-              }} />
-              <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 13,
-                textTransform: 'uppercase',
-                color: 'var(--fg)',
-                fontWeight: 700,
-                background: 'rgba(255, 255, 255, 0.94)',
-                backdropFilter: 'blur(8px)',
-                padding: '6px 14px',
-                borderRadius: 8,
-                boxShadow: '0 4px 14px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.06)',
-                transition: 'all 800ms ease',
-                whiteSpace: 'nowrap',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: bottomVariant.hex, display: 'inline-block' }} />
-                <span>Bottom: {bottomVariant.name}</span>
+                gap: 12,
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(12px)',
+                  padding: '8px 16px',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                  transition: 'all 600ms ease',
+                }}
+              >
+                <span style={{ width: 12, height: 12, borderRadius: '50%', background: topVariant.hex, boxShadow: '0 0 10px ' + topVariant.hex }} />
+                <div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)' }}>
+                    Top Ring
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, color: '#FFFFFF' }}>
+                    {topVariant.name}
+                  </div>
+                </div>
               </div>
             </div>
 
+            {/* Bottom Color Callout Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '25%',
+                right: '4%',
+                zIndex: 30,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(12px)',
+                  padding: '8px 16px',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                  transition: 'all 600ms ease',
+                }}
+              >
+                <span style={{ width: 12, height: 12, borderRadius: '50%', background: bottomVariant.hex, boxShadow: '0 0 10px ' + bottomVariant.hex }} />
+                <div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.5)' }}>
+                    Bottom Cup
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, color: '#FFFFFF' }}>
+                    {bottomVariant.name}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* High-Gloss 3D Model Viewer with Studio Lighting */}
             <Product3DViewer
               topColor={topVariant.hex}
               bottomColor={bottomVariant.hex}
               exploded={false}
               float={false}
-              spin={false}
+              spin={true}
+              spinSpeed={0.35}
               autoRotate={false}
-              interactive={false}
-              cameraPosition={[0.14, -135.0, 18.0]}
+              interactive={true}
+              cameraPosition={[104.74, 96.92, 138.54]}
             />
           </div>
 
-          {/* Combination Title Banner below model */}
-          <div style={{
-            zIndex: 20,
-            textAlign: 'center',
-            marginTop: -28,
-            background: 'rgba(255,255,255,0.88)',
-            backdropFilter: 'blur(12px)',
-            padding: '12px 28px',
-            borderRadius: 14,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
-          }}>
-            <div style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 24,
-              fontWeight: 800,
-              color: 'var(--fg)',
-              marginBottom: 2,
-              letterSpacing: '-0.01em',
-              transition: 'color 800ms ease',
-            }}>
+          {/* Combination Title Banner */}
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: -16,
+              marginBottom: 36,
+              zIndex: 20,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 28,
+                fontWeight: 900,
+                color: '#FFFFFF',
+                letterSpacing: '-0.02em',
+                marginBottom: 4,
+                transition: 'color 600ms ease',
+              }}
+            >
               {mixName}
             </div>
-            <div style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 12,
-              color: 'var(--fg-2)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-            }}>
-              {topVariant.name} + {bottomVariant.name}
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12,
+                color: '#05CE78',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                fontWeight: 700,
+              }}
+            >
+              {topVariant.name} Ring &nbsp;·&nbsp; {bottomVariant.name} Cup
             </div>
           </div>
+
+          {/* Palette Swatch Bar for Quick Live Switching */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 8,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              background: 'rgba(0, 0, 0, 0.4)',
+              padding: '12px 20px',
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.1)',
+              marginBottom: 32,
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 8 }}>
+              Try a palette:
+            </span>
+            {PRODUCT_VARIANTS.map((v, i) => {
+              const isSelected = activeIndex === i;
+              return (
+                <button
+                  key={v.key}
+                  onClick={() => setManualSelection(i)}
+                  title={v.name}
+                  style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: '50%',
+                    background: v.hex,
+                    border: isSelected ? '2px solid #05CE78' : '2px solid transparent',
+                    boxShadow: isSelected ? '0 0 12px ' + v.hex : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 200ms ease',
+                    transform: isSelected ? 'scale(1.2)' : 'scale(1)',
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Action CTAs */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <a
+              href={`/shop?mixTop=${topVariant.key}&mixBottom=${bottomVariant.key}`}
+              style={{
+                background: '#5A74FF',
+                color: '#FFFFFF',
+                padding: '16px 36px',
+                borderRadius: 999,
+                fontWeight: 800,
+                fontSize: 16,
+                fontFamily: 'var(--font-ui)',
+                textDecoration: 'none',
+                boxShadow: '0 10px 28px rgba(90, 116, 255, 0.35)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'transform 150ms ease',
+              }}
+            >
+              Build this combination &rarr;
+            </a>
+
+            <a
+              href="/playground"
+              style={{
+                background: 'transparent',
+                color: '#FFFFFF',
+                padding: '16px 32px',
+                borderRadius: 999,
+                fontWeight: 700,
+                fontSize: 15,
+                fontFamily: 'var(--font-ui)',
+                textDecoration: 'none',
+                border: '1px solid rgba(255,255,255,0.2)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              Open 3D Studio &rarr;
+            </a>
+          </div>
+
         </div>
       </div>
     </section>

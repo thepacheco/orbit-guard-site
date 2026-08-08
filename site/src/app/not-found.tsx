@@ -8,7 +8,7 @@ export default function NotFound() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#0F172A',
+        background: '#0B1120',
         color: '#FFFFFF',
         display: 'flex',
         flexDirection: 'column',
@@ -17,17 +17,29 @@ export default function NotFound() {
         overflow: 'hidden',
       }}
     >
-      {/* Background Radial Ambient Glow */}
+      {/* Deep Space Background Sun & Flare Glow */}
       <div
         style={{
           position: 'absolute',
-          top: '50%',
+          top: '20%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 900,
-          height: 700,
-          background: 'radial-gradient(ellipse at center, rgba(90, 116, 255, 0.15) 0%, transparent 70%)',
-          filter: 'blur(100px)',
+          width: 950,
+          height: 650,
+          background: 'radial-gradient(ellipse at center, rgba(255, 180, 160, 0.22) 0%, rgba(90, 116, 255, 0.18) 45%, transparent 75%)',
+          filter: 'blur(110px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Twinkling Star Field Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 1px, transparent 1px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.6) 1.5px, transparent 1.5px), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.5) 1px, transparent 1px), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.7) 1.2px, transparent 1.2px)',
+          backgroundSize: '240px 240px',
+          opacity: 0.6,
           pointerEvents: 'none',
         }}
       />
@@ -49,27 +61,73 @@ export default function NotFound() {
           margin: '0 auto',
         }}
       >
-        {/* Eyebrow Label */}
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 12,
-            textTransform: 'uppercase',
-            letterSpacing: '0.16em',
-            color: '#5A74FF',
-            fontWeight: 700,
-            marginBottom: 12,
-          }}
-        >
-          System Error · 404
+        {/* Larger Architectural 404 Orbital Stage */}
+        <div style={{ position: 'relative', width: 220, height: 220, marginBottom: 32, display: 'grid', placeItems: 'center' }}>
+          {/* Rotating Dash Rings */}
+          <svg
+            viewBox="0 0 220 220"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              animation: 'ogSpin 24s linear infinite',
+            }}
+          >
+            <circle cx="110" cy="110" r="100" fill="none" stroke="rgba(90, 116, 255, 0.4)" strokeWidth="2" strokeDasharray="8 14" />
+            <circle cx="110" cy="110" r="82" fill="none" stroke="rgba(5, 206, 120, 0.5)" strokeWidth="1.5" strokeDasharray="14 18" />
+          </svg>
+
+          {/* Central High-Impact 404 Core */}
+          <div
+            style={{
+              position: 'relative',
+              width: 140,
+              height: 140,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1.5px solid rgba(255, 255, 255, 0.18)',
+              boxShadow: '0 0 48px rgba(90, 116, 255, 0.35)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'var(--font-mono, monospace)',
+                fontWeight: 900,
+                fontSize: 54,
+                letterSpacing: '-0.05em',
+                color: '#FFFFFF',
+                lineHeight: 1,
+              }}
+            >
+              404
+            </div>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                color: '#05CE78',
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                marginTop: 6,
+                fontWeight: 700,
+              }}
+            >
+              OUT OF ORBIT
+            </div>
+          </div>
         </div>
 
         {/* Headline */}
         <h1
           style={{
             fontWeight: 900,
-            fontSize: 'clamp(32px, 4.5vw, 56px)',
-            letterSpacing: '-0.035em',
+            fontSize: 'clamp(36px, 5vw, 60px)',
+            letterSpacing: '-0.04em',
             lineHeight: 1,
             margin: '0 0 12px',
             color: '#FFFFFF',
@@ -78,17 +136,16 @@ export default function NotFound() {
           This Page Rolled Away
         </h1>
 
-        {/* Subhead */}
         <p
           style={{
-            fontSize: 16,
+            fontSize: 17,
             color: 'rgba(255, 255, 255, 0.75)',
             lineHeight: 1.5,
             maxWidth: 520,
             margin: '0 0 28px',
           }}
         >
-          The requested URL is out of orbit. While we recalibrate, play a quick round of <strong style={{ color: '#05CE78' }}>Orbit Runner</strong> below!
+          The requested path is out of alignment. Enjoy a quick round of <strong style={{ color: '#05CE78' }}>Orbit Runner</strong> below!
         </p>
 
         {/* 404 Mini-Game Canvas */}
@@ -108,7 +165,7 @@ export default function NotFound() {
               borderRadius: 999,
               fontWeight: 800,
               fontSize: 15,
-              boxShadow: '0 8px 24px rgba(90, 116, 255, 0.35)',
+              boxShadow: '0 8px 24px rgba(90, 116, 255, 0.4)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
@@ -141,7 +198,7 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* Footer copyright */}
+      {/* Footer */}
       <div
         style={{
           borderTop: '1px solid rgba(255, 255, 255, 0.1)',

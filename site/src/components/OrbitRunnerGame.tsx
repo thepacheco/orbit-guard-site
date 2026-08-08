@@ -24,26 +24,122 @@ interface Obstacle {
   width: number;
   height: number;
   type: 'cable' | 'caster' | 'binary';
-  passed?: boolean;
 }
 
 export default function OrbitRunnerGame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [gameState, setGameState] = useState<'idle' | 'playing' | 'gameover'>('idle');
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const [hudScore, setHudScore] = useState(0);
+  const [hudHighScore, setHudHighScore] = useState(0);
+  const [displayState, setDisplayState] = useState<'idle' | 'playing' | 'gameover'>('idle');
+
+  // All mutable physics state in ref to guarantee 60fps loop with zero freezes
+  const stateRef = useRef({
+    gameState: 'idle' as 'idle' | 'playing' | 'gameover',
+    distance: 0,
+    highScore: 0,
+    speed: 6,
+    shakeTimer: 0,
+    playerY: 216,
+    playerVy: 0,
+    isGrounded: true,
+    playerRotation: 0,
+    obstacles: [] as Obstacle[],
+    particles: [] as Particle[],
+    trail: [] as { x: number; y: number; alpha: number }[],
+    lastObstacleX: 0,
+    wantsJump: false,
+  });
 
   // Read high score from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('og_runner_highscore');
-      if (saved) setHighScore(parseInt(saved, 10));
+      const saved = localStorage.getItem('og_space_runner_high');
+      if (saved) {
+        const val = parseInt(saved, 10);
+        stateRef.current.highScore = val;
+        setHudHighScore(val);
+      }
     } catch {}
   }, []);
 
-  const scoreRef = useRef(0);
-  const highScoreRef = useRef(highScore);
-  highScoreRef.current = highScore;
+  const triggerJump = () => {
+    const s = stateRef.current;
+    if (s.gameState === 'idle' || s.gameState === 'gameover') {
+      s.gameState = 'playing';
+      s.distance = 0;
+      s.speed = 6;
+      s.playerY = 216;
+      s.playerVy = 0;
+      s.isGrounded = true;
+      s.obstacles = [];
+      s.particles = [];
+      s.trail = [];
+      s.lastObstacleX = 0;
+      setDisplayState('playing');
+      return;
+    }
+    if (s.gameState === 'playing' && s.isGrounded) {
+      s.playerVy = -13;
+      s.isGrounded = false;
+      // Dust sparks
+      for (let i = 0; i < 8; i++) {
+        s.particles.push({
+          x: 110,
+          y: 240,
+          vx: (Math.random() - 0.5) * 5,
+          vy: -Math.random() * 3 - 1,
+          life: 1,
+          maxLife: 20,
+          size: 3 + Math.random() * 3,
+          color: '#5A74FF',
+          type: 'spark',
+          rotation: 0,
+          vRot: 0,
+        });
+      }
+    }
+  };
+
+  const triggerExplosion = (x: number, y: number) => {
+    const s = stateRef.current;
+    s.shakeTimer = 22;
+    s.particles = [];
+    for (let i = 0; i < 24; i++) {
+      const angle = (Math.PI * 2 * i) / 24;
+      const vel = 3 + Math.random() * 7;
+      s.particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * vel,
+        vy: Math.sin(angle) * vel,
+        life: 1,
+        maxLife: 45,
+        size: 4 + Math.random() * 6,
+        color: i % 2 === 0 ? '#5A74FF' : '#05CE78',
+        type: 'ring',
+        rotation: Math.random() * Math.PI,
+        vRot: (Math.random() - 0.5) * 0.3,
+      });
+    }
+    for (let i = 0; i < 18; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const vel = 2 + Math.random() * 6;
+      s.particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * vel,
+        vy: Math.sin(angle) * vel - 2,
+        life: 1,
+        maxLife: 55,
+        size: 14,
+        color: Math.random() > 0.5 ? '#05CE78' : '#FFFFFF',
+        type: 'binary',
+        text: Math.random() > 0.5 ? '0' : '1',
+        rotation: Math.random() * Math.PI,
+        vRot: (Math.random() - 0.5) * 0.2,
+      });
+    }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -52,254 +148,144 @@ export default function OrbitRunnerGame() {
     if (!ctx) return;
 
     let animId: number;
-    let distance = 0;
-    let speed = 6;
-    let shakeTimer = 0;
-
-    // Player state
-    const groundY = 280;
+    const groundY = 240;
     const playerRadius = 24;
-    let playerY = groundY - playerRadius;
-    let playerVy = 0;
-    let isGrounded = true;
-    let playerRotation = 0;
     const playerX = 110;
 
-    // Trail history
-    const trail: { x: number; y: number; alpha: number }[] = [];
-
-    // Obstacles & Particles
-    let obstacles: Obstacle[] = [];
-    let particles: Particle[] = [];
-    let lastObstacleX = 0;
-
-    const resetGame = () => {
-      distance = 0;
-      speed = 6;
-      playerY = groundY - playerRadius;
-      playerVy = 0;
-      isGrounded = true;
-      playerRotation = 0;
-      obstacles = [];
-      particles = [];
-      trail.length = 0;
-      shakeTimer = 0;
-      setScore(0);
-    };
-
-    const triggerJump = () => {
-      if (isGrounded) {
-        playerVy = -13.5;
-        isGrounded = false;
-        // Jump dust particles
-        for (let i = 0; i < 8; i++) {
-          particles.push({
-            x: playerX,
-            y: groundY,
-            vx: (Math.random() - 0.5) * 4,
-            vy: -Math.random() * 3 - 1,
-            life: 1,
-            maxLife: 20 + Math.random() * 10,
-            size: 3 + Math.random() * 3,
-            color: 'rgba(90, 116, 255, 0.6)',
-            type: 'spark',
-            rotation: 0,
-            vRot: 0,
-          });
-        }
-      }
-    };
-
-    const createExplosion = (x: number, y: number) => {
-      shakeTimer = 24; // Trigger screen shake
-      particles = [];
-      // Ring fragments
-      for (let i = 0; i < 20; i++) {
-        const angle = (Math.PI * 2 * i) / 20;
-        const vel = 4 + Math.random() * 8;
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * vel,
-          vy: Math.sin(angle) * vel,
-          life: 1,
-          maxLife: 40 + Math.random() * 20,
-          size: 4 + Math.random() * 6,
-          color: i % 2 === 0 ? '#5A74FF' : '#05CE78',
-          type: 'ring',
-          rotation: Math.random() * Math.PI,
-          vRot: (Math.random() - 0.5) * 0.3,
-        });
-      }
-      // Binary text bursts
-      for (let i = 0; i < 16; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const vel = 3 + Math.random() * 6;
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * vel,
-          vy: Math.sin(angle) * vel - 2,
-          life: 1,
-          maxLife: 50 + Math.random() * 20,
-          size: 14,
-          color: Math.random() > 0.5 ? '#05CE78' : '#FFFFFF',
-          type: 'binary',
-          text: Math.random() > 0.5 ? '0' : '1',
-          rotation: Math.random() * Math.PI,
-          vRot: (Math.random() - 0.5) * 0.2,
-        });
-      }
-    };
-
-    // Keyboard controls
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault();
-        setGameState(prev => {
-          if (prev === 'idle' || prev === 'gameover') {
-            resetGame();
-            return 'playing';
-          }
-          if (prev === 'playing') {
-            triggerJump();
-          }
-          return prev;
-        });
+        triggerJump();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
 
-    // Main Game Loop
-    const loop = () => {
+    const gameLoop = () => {
+      const s = stateRef.current;
+
       // Clear canvas
-      ctx.fillStyle = '#0F172A';
+      ctx.fillStyle = '#0B1120';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Screen Shake offset
+      // Screen Shake
       ctx.save();
-      if (shakeTimer > 0) {
-        shakeTimer--;
-        const dx = (Math.random() - 0.5) * shakeTimer * 0.8;
-        const dy = (Math.random() - 0.5) * shakeTimer * 0.8;
+      if (s.shakeTimer > 0) {
+        s.shakeTimer--;
+        const dx = (Math.random() - 0.5) * s.shakeTimer * 0.7;
+        const dy = (Math.random() - 0.5) * s.shakeTimer * 0.7;
         ctx.translate(dx, dy);
       }
 
-      // Draw Grid / Road lines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+      // Background Starfield Grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
       ctx.lineWidth = 1;
-      for (let x = ( -distance * 2) % 40; x < canvas.width; x += 40) {
+      const step = 40;
+      const offset = (s.distance * 3) % step;
+      for (let x = -offset; x < canvas.width; x += step) {
         ctx.beginPath();
-        ctx.moveTo(x, groundY);
-        ctx.lineTo(x - 60, canvas.height);
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
         ctx.stroke();
       }
 
-      // Ground Line
-      ctx.strokeStyle = '#334155';
+      // Ground Neon Line
+      ctx.strokeStyle = '#5A74FF';
       ctx.lineWidth = 3;
+      ctx.shadowColor = '#5A74FF';
+      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.moveTo(0, groundY);
       ctx.lineTo(canvas.width, groundY);
       ctx.stroke();
+      ctx.shadowBlur = 0;
 
-      // Ambient Ground Glow Line
-      ctx.strokeStyle = 'rgba(90, 116, 255, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, groundY + 1);
-      ctx.lineTo(canvas.width, groundY + 1);
-      ctx.stroke();
+      // Gameplay Physics Update
+      if (s.gameState === 'playing') {
+        s.distance += 0.22;
+        s.speed = 6 + Math.floor(s.distance / 50) * 0.4;
+        const currentMeters = Math.floor(s.distance);
+        setHudScore(currentMeters);
 
-      // State check
-      setGameState((currentState) => {
-        if (currentState === 'playing') {
-          distance += 0.2;
-          speed = 6 + Math.floor(distance / 50) * 0.4;
-          const currentMeters = Math.floor(distance);
-          setScore(currentMeters);
-          if (currentMeters > highScoreRef.current) {
-            setHighScore(currentMeters);
-            try {
-              localStorage.setItem('og_runner_highscore', currentMeters.toString());
-            } catch {}
-          }
-
-          // Apply Gravity
-          playerVy += 0.65;
-          playerY += playerVy;
-          playerRotation += speed * 0.06;
-
-          if (playerY >= groundY - playerRadius) {
-            playerY = groundY - playerRadius;
-            playerVy = 0;
-            isGrounded = true;
-          }
-
-          // Record Trail
-          trail.unshift({ x: playerX, y: playerY, alpha: 0.6 });
-          if (trail.length > 10) trail.pop();
-
-          // Spawn Obstacles
-          if (canvas.width - lastObstacleX > 240 + Math.random() * 180) {
-            const types: ('cable' | 'caster' | 'binary')[] = ['cable', 'caster', 'binary'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            const obsH = type === 'cable' ? 32 : type === 'caster' ? 38 : 42;
-            const obsW = type === 'binary' ? 30 : 34;
-            obstacles.push({
-              x: canvas.width + 40,
-              y: groundY - obsH,
-              width: obsW,
-              height: obsH,
-              type,
-            });
-            lastObstacleX = canvas.width + 40;
-          }
-          lastObstacleX -= speed;
-
-          // Move Obstacles & Collision Check
-          for (let i = obstacles.length - 1; i >= 0; i--) {
-            const obs = obstacles[i];
-            obs.x -= speed;
-
-            // Collision Box Test
-            const margin = 6;
-            if (
-              playerX + playerRadius - margin > obs.x &&
-              playerX - playerRadius + margin < obs.x + obs.width &&
-              playerY + playerRadius - margin > obs.y &&
-              playerY - playerRadius + margin < obs.y + obs.height
-            ) {
-              createExplosion(playerX, playerY);
-              return 'gameover';
-            }
-
-            if (obs.x + obs.width < -50) {
-              obstacles.splice(i, 1);
-            }
-          }
+        if (currentMeters > s.highScore) {
+          s.highScore = currentMeters;
+          setHudHighScore(currentMeters);
+          try {
+            localStorage.setItem('og_space_runner_high', currentMeters.toString());
+          } catch {}
         }
 
-        return currentState;
-      });
+        // Apply Gravity
+        s.playerVy += 0.65;
+        s.playerY += s.playerVy;
+        s.playerRotation += s.speed * 0.07;
+
+        if (s.playerY >= groundY - playerRadius) {
+          s.playerY = groundY - playerRadius;
+          s.playerVy = 0;
+          s.isGrounded = true;
+        }
+
+        // Add trail point
+        s.trail.unshift({ x: playerX, y: s.playerY, alpha: 0.6 });
+        if (s.trail.length > 10) s.trail.pop();
+
+        // Spawn Obstacles
+        if (canvas.width - s.lastObstacleX > 220 + Math.random() * 180) {
+          const types: ('cable' | 'caster' | 'binary')[] = ['cable', 'caster', 'binary'];
+          const type = types[Math.floor(Math.random() * types.length)];
+          const obsH = type === 'cable' ? 32 : type === 'caster' ? 36 : 40;
+          const obsW = type === 'binary' ? 30 : 34;
+          s.obstacles.push({
+            x: canvas.width + 40,
+            y: groundY - obsH,
+            width: obsW,
+            height: obsH,
+            type,
+          });
+          s.lastObstacleX = canvas.width + 40;
+        }
+        s.lastObstacleX -= s.speed;
+
+        // Move Obstacles & Collision Test
+        for (let i = s.obstacles.length - 1; i >= 0; i--) {
+          const obs = s.obstacles[i];
+          obs.x -= s.speed;
+
+          const margin = 5;
+          if (
+            playerX + playerRadius - margin > obs.x &&
+            playerX - playerRadius + margin < obs.x + obs.width &&
+            s.playerY + playerRadius - margin > obs.y &&
+            s.playerY - playerRadius + margin < obs.y + obs.height
+          ) {
+            triggerExplosion(playerX, s.playerY);
+            s.gameState = 'gameover';
+            setDisplayState('gameover');
+          }
+
+          if (obs.x + obs.width < -50) {
+            s.obstacles.splice(i, 1);
+          }
+        }
+      }
 
       // Draw Player Trail
-      trail.forEach((pt, i) => {
+      s.trail.forEach((pt, i) => {
         pt.alpha *= 0.82;
         ctx.beginPath();
         ctx.arc(pt.x - i * 3, pt.y, playerRadius * (1 - i * 0.05), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(90, 116, 255, ${pt.alpha * 0.4})`;
+        ctx.fillStyle = `rgba(90, 116, 255, ${pt.alpha * 0.35})`;
         ctx.fill();
       });
 
-      // Draw Orbit Player Ring (if not gameover)
-      if (gameState !== 'gameover') {
+      // Draw Orbit Player Ring (if alive)
+      if (s.gameState !== 'gameover') {
         ctx.save();
-        ctx.translate(playerX, playerY);
-        ctx.rotate(playerRotation);
+        ctx.translate(playerX, s.playerY);
+        ctx.rotate(s.playerRotation);
 
-        // Outer Ring Body
+        // Outer Ring
         ctx.beginPath();
         ctx.arc(0, 0, playerRadius, 0, Math.PI * 2);
         ctx.fillStyle = '#5A74FF';
@@ -307,7 +293,7 @@ export default function OrbitRunnerGame() {
         ctx.shadowBlur = 16;
         ctx.fill();
 
-        // Inner Segment Dual Tone Accent
+        // Inner Segment
         ctx.beginPath();
         ctx.arc(0, 0, playerRadius - 6, 0, Math.PI);
         ctx.fillStyle = '#05CE78';
@@ -316,7 +302,7 @@ export default function OrbitRunnerGame() {
         // Center Hole
         ctx.beginPath();
         ctx.arc(0, 0, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#0F172A';
+        ctx.fillStyle = '#0B1120';
         ctx.shadowBlur = 0;
         ctx.fill();
 
@@ -324,10 +310,9 @@ export default function OrbitRunnerGame() {
       }
 
       // Draw Obstacles
-      obstacles.forEach(obs => {
+      s.obstacles.forEach(obs => {
         ctx.save();
         if (obs.type === 'cable') {
-          // Cable Spike / Wave
           ctx.fillStyle = '#FF4757';
           ctx.shadowColor = '#FF4757';
           ctx.shadowBlur = 12;
@@ -338,7 +323,6 @@ export default function OrbitRunnerGame() {
           ctx.closePath();
           ctx.fill();
         } else if (obs.type === 'caster') {
-          // Double Caster Wheel
           ctx.strokeStyle = '#FFA502';
           ctx.shadowColor = '#FFA502';
           ctx.shadowBlur = 12;
@@ -346,13 +330,8 @@ export default function OrbitRunnerGame() {
           ctx.beginPath();
           ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
           ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, 5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFA502';
-          ctx.fill();
         } else {
-          // Binary Block (01)
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+          ctx.fillStyle = 'rgba(5, 206, 120, 0.15)';
           ctx.strokeStyle = '#05CE78';
           ctx.shadowColor = '#05CE78';
           ctx.shadowBlur = 10;
@@ -360,7 +339,7 @@ export default function OrbitRunnerGame() {
           ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
           ctx.strokeRect(obs.x, obs.y, obs.width, obs.height);
           ctx.fillStyle = '#05CE78';
-          ctx.font = 'bold 16px monospace';
+          ctx.font = 'bold 15px monospace';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('01', obs.x + obs.width / 2, obs.y + obs.height / 2);
@@ -369,11 +348,11 @@ export default function OrbitRunnerGame() {
       });
 
       // Update & Draw Explosion Particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
+      for (let i = s.particles.length - 1; i >= 0; i--) {
+        const p = s.particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.25; // gravity on particles
+        p.vy += 0.22;
         p.life++;
         p.rotation += p.vRot;
         const progress = p.life / p.maxLife;
@@ -405,15 +384,15 @@ export default function OrbitRunnerGame() {
         ctx.restore();
 
         if (p.life >= p.maxLife) {
-          particles.splice(i, 1);
+          s.particles.splice(i, 1);
         }
       }
 
-      ctx.restore(); // Restore screen shake offset
-      animId = requestAnimationFrame(loop);
+      ctx.restore();
+      animId = requestAnimationFrame(gameLoop);
     };
 
-    animId = requestAnimationFrame(loop);
+    animId = requestAnimationFrame(gameLoop);
 
     return () => {
       cancelAnimationFrame(animId);
@@ -423,34 +402,27 @@ export default function OrbitRunnerGame() {
 
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: 800, margin: '0 auto' }}>
-      {/* Canvas Arcade Stage */}
+      {/* Canvas Stage */}
       <div
-        onClick={() => {
-          setGameState(prev => {
-            if (prev === 'idle' || prev === 'gameover') {
-              return 'playing';
-            }
-            return prev;
-          });
-        }}
+        onClick={triggerJump}
         style={{
           position: 'relative',
           borderRadius: 24,
           overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
-          background: '#0F172A',
+          border: '1px solid rgba(90, 116, 255, 0.3)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+          background: '#0B1120',
           cursor: 'pointer',
         }}
       >
         <canvas
           ref={canvasRef}
           width={800}
-          height={360}
+          height={320}
           style={{ width: '100%', height: 'auto', display: 'block' }}
         />
 
-        {/* HUD Top Overlay */}
+        {/* HUD Top Header */}
         <div
           style={{
             position: 'absolute',
@@ -466,27 +438,27 @@ export default function OrbitRunnerGame() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 700 }}>
-              404 ORBIT RUNNER
+              ORBIT SPACE RUNNER
             </span>
           </div>
 
           <div style={{ display: 'flex', gap: 20, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 800 }}>
             <span style={{ color: '#05CE78' }}>
-              DIST: {score}m
+              DIST: {hudScore}m
             </span>
             <span style={{ color: '#5A74FF' }}>
-              BEST: {highScore}m
+              BEST: {hudHighScore}m
             </span>
           </div>
         </div>
 
-        {/* Idle Start Overlay */}
-        {gameState === 'idle' && (
+        {/* Start Overlay */}
+        {displayState === 'idle' && (
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'rgba(15, 23, 42, 0.75)',
+              background: 'rgba(11, 17, 32, 0.75)',
               backdropFilter: 'blur(4px)',
               display: 'flex',
               flexDirection: 'column',
@@ -497,24 +469,24 @@ export default function OrbitRunnerGame() {
             }}
           >
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 700, marginBottom: 12 }}>
-              Interactive 404 Mini-Game
+              404 Space Arcade
             </div>
             <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 32, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
-              PRESS SPACE OR TAP TO JUMP
+              PRESS SPACE OR TAP TO RUN
             </h3>
             <p style={{ fontSize: 15, color: '#94A3B8', margin: 0, maxWidth: 360, lineHeight: 1.5 }}>
-              Dodge trailing cables, caster wheels, and binary walls as long as you can!
+              Dodge trailing cables and caster wheels in deep space!
             </p>
           </div>
         )}
 
-        {/* Game Over Explosion Overlay */}
-        {gameState === 'gameover' && (
+        {/* Game Over Overlay */}
+        {displayState === 'gameover' && (
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'rgba(15, 23, 42, 0.85)',
+              background: 'rgba(11, 17, 32, 0.88)',
               backdropFilter: 'blur(6px)',
               display: 'flex',
               flexDirection: 'column',
@@ -525,19 +497,19 @@ export default function OrbitRunnerGame() {
             }}
           >
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#FF4757', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
-              SYSTEM COLLISION DETECTED
+              ORBIT SHATTERED
             </div>
-            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 40, margin: '0 0 8px', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
-              ORBIT SHATTERED!
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 38, margin: '0 0 8px', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
+              IMPACT DETECTED!
             </h3>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, color: '#05CE78', fontWeight: 800, marginBottom: 24 }}>
-              Distance Rolled: {score}m
+              Distance Rolled: {hudScore}m
             </div>
 
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setGameState('playing');
+                triggerJump();
               }}
               style={{
                 background: '#5A74FF',
@@ -560,12 +532,6 @@ export default function OrbitRunnerGame() {
             </button>
           </div>
         )}
-      </div>
-
-      {/* Control Hint Footer */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, padding: '0 8px', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#64748B' }}>
-        <span>CONTROLS: [SPACEBAR] / [UP ARROW] / TAP SCREEN</span>
-        <span>ZERO EMOJIS &middot; HTML5 CANVAS PHYSICS</span>
       </div>
     </div>
   );

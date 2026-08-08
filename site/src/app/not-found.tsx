@@ -44,15 +44,58 @@ export default function NotFound() {
         }}
       />
 
+      {/* Embedded Mobile Responsive Styles */}
+      <style>{`
+        .og-not-found-main {
+          padding: 140px 24px 60px;
+        }
+        .og-404-stage {
+          width: 280px;
+          height: 280px;
+        }
+        .og-404-core-circle {
+          width: 175px;
+          height: 175px;
+        }
+        .og-404-num {
+          font-size: 78px;
+        }
+        @media (max-width: 768px) {
+          .og-not-found-main {
+            padding: 90px 14px 30px !important;
+          }
+          .og-404-stage {
+            width: 190px !important;
+            height: 190px !important;
+            margin-bottom: 4px !important;
+          }
+          .og-404-core-circle {
+            width: 120px !important;
+            height: 120px !important;
+          }
+          .og-404-num {
+            font-size: 52px !important;
+          }
+        }
+        @media (max-height: 500px) and (orientation: landscape) {
+          .og-not-found-main {
+            padding: 70px 12px 20px !important;
+          }
+          .og-404-stage {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       {/* Main Container with 160px Navbar Clearance */}
       <div
+        className="og-not-found-main"
         style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '160px 24px 60px',
           textAlign: 'center',
           position: 'relative',
           zIndex: 10,
@@ -62,7 +105,7 @@ export default function NotFound() {
         }}
       >
         {/* Enlarged 84px Architectural 404 Emblem Stage */}
-        <div style={{ position: 'relative', width: 280, height: 280, marginBottom: 8, display: 'grid', placeItems: 'center' }}>
+        <div className="og-404-stage" style={{ position: 'relative', marginBottom: 8, display: 'grid', placeItems: 'center' }}>
           {/* Outer Rotating Dash Rings */}
           <svg
             viewBox="0 0 320 320"
@@ -80,10 +123,9 @@ export default function NotFound() {
 
           {/* Central High-Impact 84px 404 Core */}
           <div
+            className="og-404-core-circle"
             style={{
               position: 'relative',
-              width: 175,
-              height: 175,
               borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.05)',
               border: '2px solid rgba(255, 255, 255, 0.22)',
@@ -95,10 +137,10 @@ export default function NotFound() {
             }}
           >
             <div
+              className="og-404-num"
               style={{
                 fontFamily: 'var(--font-mono, monospace)',
                 fontWeight: 900,
-                fontSize: 78,
                 letterSpacing: '-0.06em',
                 color: '#FFFFFF',
                 lineHeight: 1,

@@ -1033,7 +1033,7 @@ export default function MultiStageOrbitGame() {
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: 900, margin: '0 auto' }}>
       {/* Stage Select Bar */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
         {[
           { num: 1 as const, name: 'STAGE 1: FLOOR RUNNER' },
           { num: 2 as const, name: 'STAGE 2: SPACE LASERS' },
@@ -1043,7 +1043,7 @@ export default function MultiStageOrbitGame() {
             background: activeStage === stg.num ? '#5A74FF' : 'rgba(255, 255, 255, 0.06)',
             color: '#FFFFFF',
             border: activeStage === stg.num ? '2px solid #5A74FF' : '1px solid rgba(255, 255, 255, 0.15)',
-            padding: '8px 18px', borderRadius: 999, fontSize: 12, fontWeight: 800,
+            padding: '6px 14px', borderRadius: 999, fontSize: 11, fontWeight: 800,
             fontFamily: 'var(--font-mono)', cursor: 'pointer',
             boxShadow: activeStage === stg.num ? '0 4px 16px rgba(90, 116, 255, 0.4)' : 'none',
             transition: 'all 200ms ease',
@@ -1114,7 +1114,7 @@ export default function MultiStageOrbitGame() {
             </div>
 
             <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 600 }}>
-              {activeStage === 1 ? 'Dodge floor cables & casters — reach 300m to warp to Space!' : activeStage === 2 ? 'Collect power-ups & reach 400m to confront the Magma Boss!' : 'Defeat the 50 HP Magma Boss across 3 intense phases!'}
+              {activeStage === 1 ? 'Dodge obstacles — reach 300m to warp to space!' : activeStage === 2 ? 'Collect power-ups & reach 400m to confront the Magma Boss!' : 'Defeat the 50 HP Magma Boss across 3 intense phases!'}
             </div>
           </div>
         )}

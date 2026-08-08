@@ -234,7 +234,8 @@ export default function CartPopup() {
                       padding: '12px 14px',
                       background: 'var(--bg-inset)',
                       borderRadius: 14,
-                      border: '1px solid var(--border)',
+                      border: item.isMix ? '1px solid rgba(138,43,226,0.3)' : '1px solid var(--border)',
+                      boxShadow: item.isMix ? '0 0 16px rgba(138,43,226,0.15)' : 'none',
                     }}
                   >
                     {/* Clickable area: color dot + info — navigates to shop with variant pre-selected */}
@@ -277,8 +278,26 @@ export default function CartPopup() {
                     )}
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
-                        {item.variantName}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
+                          {item.variantName}
+                        </div>
+                        {item.isMix && (
+                          <span style={{ 
+                            fontSize: 10, 
+                            fontWeight: 800, 
+                            textTransform: 'uppercase', 
+                            letterSpacing: '0.05em', 
+                            background: 'linear-gradient(135deg, #5A74FF, #8A2BE2)', 
+                            WebkitBackgroundClip: 'text', 
+                            WebkitTextFillColor: 'transparent',
+                            padding: '2px 6px',
+                            border: '1px solid rgba(138,43,226,0.2)',
+                            borderRadius: 6
+                          }}>
+                            Mix & Match
+                          </span>
+                        )}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>
                         {item.packCount}-pack · ${item.packPrice} each

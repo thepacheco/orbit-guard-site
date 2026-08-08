@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import * as LucideIcons from 'lucide-react';
-import OrbitRunnerGame from '@/components/OrbitRunnerGame';
+import IntegratedSpaceGame from '@/components/IntegratedSpaceGame';
 
 export default function NotFound() {
   return (
@@ -21,13 +21,13 @@ export default function NotFound() {
       <div
         style={{
           position: 'absolute',
-          top: '20%',
+          top: '25%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 950,
-          height: 650,
-          background: 'radial-gradient(ellipse at center, rgba(255, 180, 160, 0.22) 0%, rgba(90, 116, 255, 0.18) 45%, transparent 75%)',
-          filter: 'blur(110px)',
+          width: 1100,
+          height: 750,
+          background: 'radial-gradient(ellipse at center, rgba(255, 180, 160, 0.24) 0%, rgba(90, 116, 255, 0.18) 45%, transparent 75%)',
+          filter: 'blur(120px)',
           pointerEvents: 'none',
         }}
       />
@@ -37,14 +37,14 @@ export default function NotFound() {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 1px, transparent 1px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.6) 1.5px, transparent 1.5px), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.5) 1px, transparent 1px), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.7) 1.2px, transparent 1.2px)',
+          backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.85) 1px, transparent 1px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.65) 1.5px, transparent 1.5px), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.55) 1px, transparent 1px), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.75) 1.2px, transparent 1.2px)',
           backgroundSize: '240px 240px',
-          opacity: 0.6,
+          opacity: 0.65,
           pointerEvents: 'none',
         }}
       />
 
-      {/* Main Container */}
+      {/* Main Container with 160px Navbar Clearance */}
       <div
         style={{
           flex: 1,
@@ -52,20 +52,20 @@ export default function NotFound() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '48px 24px',
+          padding: '160px 24px 60px',
           textAlign: 'center',
           position: 'relative',
           zIndex: 10,
-          maxWidth: 900,
+          maxWidth: 960,
           width: '100%',
           margin: '0 auto',
         }}
       >
-        {/* Larger Architectural 404 Orbital Stage */}
-        <div style={{ position: 'relative', width: 220, height: 220, marginBottom: 32, display: 'grid', placeItems: 'center' }}>
-          {/* Rotating Dash Rings */}
+        {/* Enlarged 84px Architectural 404 Emblem Stage */}
+        <div style={{ position: 'relative', width: 320, height: 320, marginBottom: 36, display: 'grid', placeItems: 'center' }}>
+          {/* Outer Rotating Dash Rings */}
           <svg
-            viewBox="0 0 220 220"
+            viewBox="0 0 320 320"
             style={{
               position: 'absolute',
               inset: 0,
@@ -74,20 +74,20 @@ export default function NotFound() {
               animation: 'ogSpin 24s linear infinite',
             }}
           >
-            <circle cx="110" cy="110" r="100" fill="none" stroke="rgba(90, 116, 255, 0.4)" strokeWidth="2" strokeDasharray="8 14" />
-            <circle cx="110" cy="110" r="82" fill="none" stroke="rgba(5, 206, 120, 0.5)" strokeWidth="1.5" strokeDasharray="14 18" />
+            <circle cx="160" cy="160" r="148" fill="none" stroke="rgba(90, 116, 255, 0.45)" strokeWidth="2.5" strokeDasharray="10 16" />
+            <circle cx="160" cy="160" r="124" fill="none" stroke="rgba(5, 206, 120, 0.55)" strokeWidth="2" strokeDasharray="16 22" />
           </svg>
 
-          {/* Central High-Impact 404 Core */}
+          {/* Central High-Impact 84px 404 Core */}
           <div
             style={{
               position: 'relative',
-              width: 140,
-              height: 140,
+              width: 190,
+              height: 190,
               borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1.5px solid rgba(255, 255, 255, 0.18)',
-              boxShadow: '0 0 48px rgba(90, 116, 255, 0.35)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '2px solid rgba(255, 255, 255, 0.22)',
+              boxShadow: '0 0 60px rgba(90, 116, 255, 0.45)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -98,8 +98,8 @@ export default function NotFound() {
               style={{
                 fontFamily: 'var(--font-mono, monospace)',
                 fontWeight: 900,
-                fontSize: 54,
-                letterSpacing: '-0.05em',
+                fontSize: 84,
+                letterSpacing: '-0.06em',
                 color: '#FFFFFF',
                 lineHeight: 1,
               }}
@@ -109,12 +109,12 @@ export default function NotFound() {
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 10,
+                fontSize: 11,
                 color: '#05CE78',
-                letterSpacing: '0.22em',
+                letterSpacing: '0.24em',
                 textTransform: 'uppercase',
                 marginTop: 6,
-                fontWeight: 700,
+                fontWeight: 800,
               }}
             >
               OUT OF ORBIT
@@ -122,35 +122,23 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Headline */}
+        {/* Streamlined Headline Only */}
         <h1
           style={{
             fontWeight: 900,
-            fontSize: 'clamp(36px, 5vw, 60px)',
+            fontSize: 'clamp(40px, 6vw, 72px)',
             letterSpacing: '-0.04em',
             lineHeight: 1,
-            margin: '0 0 12px',
+            margin: '0 0 36px',
             color: '#FFFFFF',
           }}
         >
-          This Page Rolled Away
+          This page rolled away
         </h1>
 
-        <p
-          style={{
-            fontSize: 17,
-            color: 'rgba(255, 255, 255, 0.75)',
-            lineHeight: 1.5,
-            maxWidth: 520,
-            margin: '0 0 28px',
-          }}
-        >
-          The requested path is out of alignment. Enjoy a quick round of <strong style={{ color: '#05CE78' }}>Orbit Runner</strong> below!
-        </p>
-
-        {/* 404 Mini-Game Canvas */}
-        <div style={{ width: '100%', marginBottom: 36 }}>
-          <OrbitRunnerGame />
+        {/* Background Integrated Space Runner Game Canvas */}
+        <div style={{ width: '100%', marginBottom: 40 }}>
+          <IntegratedSpaceGame />
         </div>
 
         {/* Action Buttons */}
@@ -161,11 +149,11 @@ export default function NotFound() {
               background: '#5A74FF',
               color: '#FFFFFF',
               textDecoration: 'none',
-              padding: '14px 36px',
+              padding: '16px 40px',
               borderRadius: 999,
               fontWeight: 800,
-              fontSize: 15,
-              boxShadow: '0 8px 24px rgba(90, 116, 255, 0.4)',
+              fontSize: 16,
+              boxShadow: '0 8px 28px rgba(90, 116, 255, 0.45)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
@@ -179,14 +167,14 @@ export default function NotFound() {
           <Link
             href="/shop"
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'rgba(255, 255, 255, 0.08)',
               color: '#FFFFFF',
               textDecoration: 'none',
-              padding: '14px 36px',
+              padding: '16px 40px',
               borderRadius: 999,
               fontWeight: 700,
-              fontSize: 15,
-              border: '1px solid rgba(255, 255, 255, 0.18)',
+              fontSize: 16,
+              border: '1px solid rgba(255, 255, 255, 0.22)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,

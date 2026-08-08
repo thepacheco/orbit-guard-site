@@ -6,8 +6,7 @@ import { OrbitControls, Center } from '@react-three/drei';
 import { OBJLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
-// Preload the meshes so they're cached before the viewer mounts (reduces the
-// visible "pop-in" delay on first paint).
+// Preload the meshes so they're cached before the viewer mounts
 useLoader.preload(OBJLoader, '/assets/models/Snap_Top/Snap_Top.obj');
 useLoader.preload(OBJLoader, '/assets/models/Snap_Bottom/Snap_Bottom.obj');
 
@@ -17,13 +16,8 @@ interface Product3DViewerProps {
   exploded?: boolean;
   autoRotate?: boolean;
   autoRotateSpeed?: number;
-  // When true, spin the MODEL in place around its vertical axis (a turntable
-  // spin) instead of orbiting the camera. Keeps the framed angle fixed so the
-  // piece never appears to flip top-over-bottom.
   spin?: boolean;
   spinSpeed?: number;
-  // When true, the model gently floats in place (a subtle bob + sway) instead
-  // of spinning — a calm idle motion that keeps the framed angle fixed.
   float?: boolean;
   interactive?: boolean;
   cameraPosition?: [number, number, number];
@@ -41,104 +35,90 @@ function Model({ topColor, bottomColor, exploded, spin = false, spinSpeed = 0.45
   const firstFrame = useRef(true);
 
   useMemo(() => {
-    // Direct unconditional assignment — topColor always controls the mesh
-    // that renders as the visual top on screen, bottomColor the visual bottom.
-    // No float-dependent swap; the camera angle keeps the visual order stable.
-    const topMeshColor = topColor;
-    const bottomMeshColor = bottomColor;
+    // PHYSICAL MESH ARCHITECTURE & COLOR MAPPING:
+    // - Snap_Bottom.obj (bottomMesh) is physically the TOP ring -> assigned topColor
+    // - Snap_Top.obj (topMesh) is physically the BOTTOM cup -> assigned bottomColor
+    const topRingColor = topColor;
+    const bottomCupColor = bottomColor;
 
-    const topMat = new THREE.MeshStandardMaterial({
-      color: topMeshColor,
-      roughness: 0.62,
-      metalness: 0.0,
+    // High-gloss TPU Plastic Material Specification
+    const topRingMat = new THREE.MeshStandardMaterial({
+      color: topRingColor,
+      roughness: 0.45,  // smooth polished TPU surface
+      metalness: 0.08,  // subtle dielectric shine
     });
-    const bottomMat = new THREE.MeshStandardMaterial({
-      color: bottomMeshColor,
-      roughness: 0.62,
-      metalness: 0.0,
+    const bottomCupMat = new THREE.MeshStandardMaterial({
+      color: bottomCupColor,
+      roughness: 0.45,
+      metalness: 0.08,
     });
 
+    // topMesh (Snap_Top.obj) is physical BOTTOM cup
     topMesh.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
-        (child as THREE.Mesh).material = topMat;
+        (child as THREE.Mesh).material = bottomCupMat;
       }
     });
 
+    // bottomMesh (Snap_Bottom.obj) is physical TOP ring
     bottomMesh.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
-        (child as THREE.Mesh).material = bottomMat;
+        (child as THREE.Mesh).material = topRingMat;
       }
     });
-  }, [topMesh, bottomMesh, topColor, bottomColor, float]);
+  }, [topMesh, bottomMesh, topColor, bottomColor]);
 
   useFrame((state, delta) => {
-    // "Cracking an egg" separation: twist in opposite directions + a gentle
-    // hinge tilt while opening, rather than a robotic lateral slide.
-    const targetY = exploded ? 60 : 0;          // pull-apart gap so pieces don't touch
-    const targetTwist = exploded ? 0.5 : 0;     // opposite Y-rotation (radians)
-    const targetTilt = exploded ? 0.28 : 0;     // gentle hinge/tilt about X
+    // Detach animation: top ring moves UP (+Y), bottom cup moves DOWN (-Y)
+    const targetY = exploded ? 60 : 0;
+    const targetTwist = exploded ? 0.4 : 0;
+    const targetTilt = exploded ? 0.2 : 0;
     const isFirst = firstFrame.current;
-    // On the very first frame, snap directly to target values instead of
-    // lerping — this prevents the visible "zoom in" glitch when the viewer
-    // mounts (e.g. toggling Mix & Match on/off on the shop page).
-    const k = isFirst ? 1 : 10 * delta;          // lerp factor (eased)
+    const k = isFirst ? 1 : 10 * delta;
     if (isFirst) firstFrame.current = false;
 
-    if (topRef.current) {
-      // topRef holds Snap_Top.obj (the physical BOTTOM cup). It should move DOWN.
-      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, -targetY, k);
-      topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, -targetTwist, k);
-      topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, -targetTilt, k);
-    }
-    // Scale the whole assembly down when detached so the separated halves stay
-    // in frame. Done on the model group (not the camera) so it never fights
-    // OrbitControls — smooth, no snap-back.
-    if (groupRef.current) {
-      const targetScale = exploded ? 0.5 : 1;
-      const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, k);
-      groupRef.current.scale.setScalar(s);
-      // Turntable spin: rotate the model around its own vertical axis.
-      if (spin) {
-        groupRef.current.rotation.y += spinSpeed * delta;
-      }
-      // Gentle idle float: a subtle bob + slow sway, no full rotation.
-      if (float) {
-        const t = state.clock.elapsedTime;
-        groupRef.current.position.y = Math.sin(t * 1.1) * 9;
-        groupRef.current.rotation.y = Math.sin(t * 0.5) * 0.16;
-        groupRef.current.rotation.z = Math.sin(t * 0.8) * 0.04;
-      }
-    }
+    // bottomRef holds Snap_Bottom.obj (physical TOP ring) -> moves UP (+Y)
     if (bottomRef.current) {
-      // bottomRef holds Snap_Bottom.obj (the physical TOP ring). It should move UP.
       bottomRef.current.position.y = THREE.MathUtils.lerp(bottomRef.current.position.y, targetY, k);
       bottomRef.current.rotation.y = THREE.MathUtils.lerp(bottomRef.current.rotation.y, targetTwist, k);
       bottomRef.current.rotation.x = THREE.MathUtils.lerp(bottomRef.current.rotation.x, targetTilt, k);
     }
+
+    // topRef holds Snap_Top.obj (physical BOTTOM cup) -> moves DOWN (-Y)
+    if (topRef.current) {
+      topRef.current.position.y = THREE.MathUtils.lerp(topRef.current.position.y, -targetY, k);
+      topRef.current.rotation.y = THREE.MathUtils.lerp(topRef.current.rotation.y, -targetTwist, k);
+      topRef.current.rotation.x = THREE.MathUtils.lerp(topRef.current.rotation.x, -targetTilt, k);
+    }
+
+    if (groupRef.current) {
+      const targetScale = exploded ? 0.55 : 1;
+      const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, k);
+      groupRef.current.scale.setScalar(s);
+
+      if (spin) {
+        groupRef.current.rotation.y += spinSpeed * delta;
+      }
+      if (float) {
+        const t = state.clock.elapsedTime;
+        groupRef.current.position.y = Math.sin(t * 1.2) * 8;
+        groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.15;
+      }
+    }
   });
 
   return (
-    // Mix & Match (float mode) loads the assembly upside down relative to
-    // every other viewer context — flip it 180° about X so the shape reads
-    // right-side up. (Colors are swapped in the material block above to keep
-    // the Top/Bottom picker labels matching the flipped view.)
-    <group dispose={null} ref={groupRef} rotation={float ? [Math.PI, 0, 0] : [0, 0, 0]}>
-      <group ref={topRef}>
-        <primitive object={topMesh} />
-      </group>
+    <group dispose={null} ref={groupRef} rotation={[0, 0, 0]}>
       <group ref={bottomRef}>
         <primitive object={bottomMesh} />
+      </group>
+      <group ref={topRef}>
+        <primitive object={topMesh} />
       </group>
     </group>
   );
 }
 
-/* CameraRig keeps OrbitControls and the camera in sync. When the target
-   `position` changes (e.g. switching into Mix & Match), it smoothly glides the
-   camera to the new angle and pauses auto-rotation until it arrives, so the
-   transition never looks like a jarring flip. Auto-rotation is azimuthal
-   (spins around the vertical axis), so the model turns "around the circle"
-   instead of tumbling to the wrong side. */
 function CameraRig({
   position,
   autoRotate,
@@ -155,8 +135,8 @@ function CameraRig({
   const { camera } = useThree();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controls = useRef<any>(null);
-  const target = useRef(new THREE.Vector3(position[0], position[1], position[2]));
   const first = useRef(true);
+  const target = useRef(new THREE.Vector3(...position));
   const transitioning = useRef(false);
 
   const [px, py, pz] = position;
@@ -167,7 +147,6 @@ function CameraRig({
 
   useFrame((_, delta) => {
     if (first.current) {
-      // First paint: snap straight to the angle, no fly-in.
       camera.position.copy(target.current);
       camera.lookAt(0, 0, 0);
       first.current = false;
@@ -184,7 +163,6 @@ function CameraRig({
     }
 
     if (controls.current) {
-      // Pause spin while gliding to the new angle, resume once settled.
       controls.current.autoRotate = !transitioning.current && !camLog && autoRotate;
       controls.current.update();
     }
@@ -222,11 +200,8 @@ export default function Product3DViewer({
   spinSpeed = 0.45,
   float = false,
   interactive = true,
-  cameraPosition = [0, 0, 4.5]
+  cameraPosition = [104.74, 96.92, 138.54] // Positive Y camera position for correct top-to-bottom orientation
 }: Product3DViewerProps) {
-  // Debug mode: add ?camlog=1 to the URL to freeze auto-rotation and log the
-  // camera position to the console as you drag, so an exact starting angle can
-  // be captured and baked in as `cameraPosition`.
   const camLog = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('camlog');
 
   return (
@@ -242,10 +217,13 @@ export default function Product3DViewer({
         camera={{ position: cameraPosition, fov: 45 }}
       >
         <Suspense fallback={null}>
-          {/* Neutral studio lighting without color casts */}
-          <ambientLight intensity={0.85} color="#ffffff" />
-          <directionalLight position={[5, 8, 6]} intensity={1.2} color="#ffffff" />
-          <directionalLight position={[-5, 3, -4]} intensity={0.6} color="#ffffff" />
+          {/* Enhanced Studio Lighting setup to highlight TPU plastic material finish */}
+          <ambientLight intensity={0.75} color="#ffffff" />
+          <directionalLight position={[12, 24, 18]} intensity={1.6} color="#ffffff" />
+          <directionalLight position={[-12, 12, -12]} intensity={0.8} color="#e2ebff" />
+          <directionalLight position={[0, -12, 12]} intensity={0.4} color="#ffffff" />
+          <pointLight position={[6, 12, 6]} intensity={0.5} distance={25} color="#ffffff" />
+          
           <Center>
             <Model topColor={topColor} bottomColor={bottomColor} exploded={exploded} spin={spin && !camLog} spinSpeed={spinSpeed} float={float && !camLog} />
           </Center>

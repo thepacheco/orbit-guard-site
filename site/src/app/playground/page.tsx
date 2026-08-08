@@ -23,8 +23,8 @@ export default function PlaygroundPage() {
   const [customTitle, setCustomTitle] = useState('');
   
   // Default camera position: right-side up, clean profile angle
-  const [camPosStr, setCamPosStr] = useState('[104.74, -96.92, 138.54]');
-  const [camPosArray, setCamPosArray] = useState<[number, number, number]>([104.74, -96.92, 138.54]);
+  const [camPosStr, setCamPosStr] = useState('[104.74, 96.92, 138.54]');
+  const [camPosArray, setCamPosArray] = useState<[number, number, number]>([104.74, 96.92, 138.54]);
 
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +71,7 @@ export default function PlaygroundPage() {
     setSpin(false);
     setExploded(false);
     setFloatMode(false);
-    applyPreset([104.74, -96.92, 138.54], false, false);
+    applyPreset([104.74, 96.92, 138.54], false, false);
   };
 
   // PNG Exporter

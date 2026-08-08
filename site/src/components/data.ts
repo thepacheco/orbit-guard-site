@@ -5,7 +5,7 @@ export const PACK_SIZES: Pack[] = SITE_CONFIG.packPricing.map(p => ({ ...p }));
 
 export const PRODUCT_VARIANTS: Variant[] = [
   {
-    key: "blueberry", name: "Blueberry", hex: "#4361EE",
+    key: "blueberry", name: "Blueberry", hex: "#0062C8",
     bg: "#E4E9FF", text: "#0E1640",  ring: "#2A45C7",
     accent: "#FFB4A2",
     headline: { line1: "Deep, calm,", lasso: "Blueberry", line2: "blue." },
@@ -26,7 +26,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "clover", name: "Clover",   hex: "#06D6A0",
+    key: "clover", name: "Clover",   hex: "#2DD9C3",
     bg: "#E5F7EE", text: "#0A2A22",  ring: "#06D6A0",
     accent: "#5A74FF",
     headline: { line1: "Fresh take.", lasso: "Clover", line2: "guard." },
@@ -47,7 +47,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "coral",  name: "Coral",    hex: "#FFB4A2",
+    key: "coral",  name: "Coral",    hex: "#FF8576",
     bg: "#FFEEE8", text: "#3A1A12",  ring: "#FF6B47",
     accent: "#5A74FF",
     headline: { line1: "Warm room?", lasso: "Coral", line2: "is yours." },
@@ -68,7 +68,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "lavender", name: "Lavender", hex: "#A292FF",
+    key: "lavender", name: "Lavender", hex: "#C98BDB",
     bg: "#F1EEFF", text: "#1F1840",   ring: "#7C5CFF",
     accent: "#FFB4A2",
     headline: { line1: "Calm, but", lasso: "Lavender", line2: "punchy." },
@@ -89,7 +89,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "fawn",   name: "Fawn",     hex: "#E7BC91",
+    key: "fawn",   name: "Fawn",     hex: "#DDA46F",
     bg: "#FBF1E3", text: "#3A2614",  ring: "#9C6644",
     accent: "#06D6A0",
     headline: { line1: "Warm wood?", lasso: "Fawn", line2: "feels right." },
@@ -110,7 +110,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "rooster", name: "Rooster", hex: "#FF3131",
+    key: "rooster", name: "Rooster", hex: "#EE2737",
     bg: "#FFE7E2", text: "#3A0808",  ring: "#B5161B",
     accent: "#06D6A0",
     headline: { line1: "Loud.", lasso: "Rooster", line2: "and proud." },
@@ -131,7 +131,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "flamingo", name: "Flamingo", hex: "#FF90FE",
+    key: "flamingo", name: "Flamingo", hex: "#F277C6",
     bg: "#FFE6FE", text: "#3B0D3A",  ring: "#C44FC1",
     accent: "#06D6A0",
     headline: { line1: "Pink, with", lasso: "Flamingo", line2: "energy." },
@@ -152,7 +152,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "bear", name: "Bear", hex: "#9C6644",
+    key: "bear", name: "Bear", hex: "#603D20",
     bg: "#F1E4D6", text: "#2A1608",  ring: "#7A4A2F",
     accent: "#06D6A0",
     headline: { line1: "Cozy as a", lasso: "Bear", line2: "in autumn." },
@@ -173,7 +173,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "pomegranate", name: "Pomegranate", hex: "#950000",
+    key: "pomegranate", name: "Pomegranate", hex: "#862633",
     bg: "#F0D9D9", text: "#2A0808",  ring: "#700000",
     accent: "#E7BC91",
     headline: { line1: "Rich and", lasso: "Pomegranate", line2: "luxe." },
@@ -194,7 +194,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "onyx",   name: "Onyx",     hex: "#212529",
+    key: "onyx",   name: "Onyx",     hex: "#151D27",
     bg: "#F0F2F5", text: "#1A1B1F",  ring: "#5A74FF",
     accent: "#FFB4A2",
     headline: { line1: "Sleek", lasso: "Onyx", line2: "black." },
@@ -215,7 +215,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: true,
   },
   {
-    key: "lunar",  name: "Lunar",    hex: "#ADB5BD",
+    key: "lunar",  name: "Lunar",    hex: "#AAB7DE",
     bg: "#EEF0F2", text: "#1A1D21",  ring: "#5C6773",
     accent: "#FFB4A2",
     headline: { line1: "Cool, calm,", lasso: "Lunar", line2: "gray." },
@@ -236,7 +236,7 @@ export const PRODUCT_VARIANTS: Variant[] = [
     dark: false,
   },
   {
-    key: "polar",  name: "Polar",    hex: "#FFFFFF",
+    key: "polar",  name: "Polar",    hex: "#F0EFEE",
     bg: "#E8EBED", text: "#1A1B1F",  ring: "#5A74FF",
     accent: "#06D6A0",
     headline: { line1: "Pure,", lasso: "Polar", line2: "minimal." },

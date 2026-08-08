@@ -463,6 +463,13 @@ function ShopPageContent() {
       if (newVariant) setActiveVariant(newVariant);
     }
     
+    const packParam = searchParams.get('pack');
+    if (packParam) {
+      const pCount = parseInt(packParam, 10);
+      const foundIdx = PACK_SIZES.findIndex(p => p.count === pCount);
+      if (foundIdx >= 0) setPackIdx(foundIdx);
+    }
+
     const mixTopParam = searchParams.get('mixTop');
     const mixBottomParam = searchParams.get('mixBottom');
     if (mixTopParam && mixBottomParam) {
@@ -561,7 +568,7 @@ function ShopPageContent() {
   }
 
   function addToCart() {
-    cart.addItem({
+    cart.updatePackItem({
       variantKey: v.key,
       variantName: v.name,
       hex: v.hex,
@@ -574,7 +581,7 @@ function ShopPageContent() {
   function addMixToCart() {
     const topVariant = mixTopVariant;
     const bottomVariant = mixBottomVariant;
-    cart.addItem({
+    cart.updatePackItem({
       variantKey: `mix-${mixTopKey}-${mixBottomKey}`,
       variantName: getMixName(mixTopKey, mixBottomKey),
       hex: `linear-gradient(to bottom, ${topVariant.hex} 50%, ${bottomVariant.hex} 50%)`,
@@ -769,7 +776,7 @@ function ShopPageContent() {
                 bottomColor={previewBottomVariant.hex}
                 exploded={exploded}
                 float
-                cameraPosition={[-17.0, -265.4, -129.6]}
+                cameraPosition={[-17.0, 265.4, 129.6]}
               />
             </div>
           ) : (
@@ -778,7 +785,7 @@ function ShopPageContent() {
                 topColor={v.hex}
                 bottomColor={v.hex}
                 exploded={exploded}
-                cameraPosition={[104.74, -96.92, 138.54]}
+                cameraPosition={[104.74, 96.92, 138.54]}
               />
             </div>
           )}
@@ -969,33 +976,39 @@ function ShopPageContent() {
               </div>
 
               {/* Add to cart */}
-              <button
-                onClick={addMixToCart}
-                style={{
-                  background: '#5A74FF',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 999,
-                  padding: '16px 32px',
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 800,
-                  fontSize: 17,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
-                  boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
-                  transition: 'transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out)',
-                  width: '100%',
-                }}
-                onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.98)'; }}
-                onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-              >
-                <LucideIcons.ShoppingBag size={20} strokeWidth={2} />
-                Add to cart · ${pack.price}
-              </button>
+              {/* Add / Update cart button */}
+              {(() => {
+                const isMixInCart = cart.items.some(x => x.isMix && x.mixTop === mixTopVariant.hex && x.mixBottom === mixBottomVariant.hex);
+                return (
+                  <button
+                    onClick={addMixToCart}
+                    style={{
+                      background: '#5A74FF',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 999,
+                      padding: '16px 32px',
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 800,
+                      fontSize: 17,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 10,
+                      boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
+                      transition: 'transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out)',
+                      width: '100%',
+                    }}
+                    onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.98)'; }}
+                    onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                  >
+                    {isMixInCart ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
+                    {isMixInCart ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
+                  </button>
+                );
+              })()}
             </>
           ) : (
             // ── NORMAL MODE RIGHT PANEL ───────────────────────────────
@@ -1016,34 +1029,39 @@ function ShopPageContent() {
               {/* Color picker */}
               <ShopPalettePicker v={v} setVariantKey={setVariantKey} />
 
-              {/* Add to cart */}
-              <button
-                onClick={addToCart}
-                style={{
-                  background: '#5A74FF',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 999,
-                  padding: '16px 32px',
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 800,
-                  fontSize: 17,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
-                  boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
-                  transition: 'transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out)',
-                  width: '100%',
-                }}
-                onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.98)'; }}
-                onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
-              >
-                <LucideIcons.ShoppingBag size={20} strokeWidth={2} />
-                Add to cart · ${pack.price}
-              </button>
+              {/* Add / Update cart button */}
+              {(() => {
+                const isVariantInCart = cart.items.some(x => !x.isMix && x.variantKey === v.key);
+                return (
+                  <button
+                    onClick={addToCart}
+                    style={{
+                      background: '#5A74FF',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 999,
+                      padding: '16px 32px',
+                      fontFamily: 'var(--font-ui)',
+                      fontWeight: 800,
+                      fontSize: 17,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 10,
+                      boxShadow: '0 10px 28px rgba(90,116,255,0.35)',
+                      transition: 'transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out)',
+                      width: '100%',
+                    }}
+                    onMouseDown={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.98)'; }}
+                    onMouseUp={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; }}
+                  >
+                    {isVariantInCart ? <LucideIcons.RefreshCw size={20} strokeWidth={2} /> : <LucideIcons.ShoppingBag size={20} strokeWidth={2} />}
+                    {isVariantInCart ? `Update pack · $${pack.price}` : `Add to cart · $${pack.price}`}
+                  </button>
+                );
+              })()}
             </>
           )}
 

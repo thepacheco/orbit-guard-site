@@ -16,6 +16,7 @@ export type CartItem = {
 type CartCtx = {
   items: CartItem[]
   addItem: (item: Omit<CartItem, 'qty'>) => void
+  updatePackItem: (item: Omit<CartItem, 'qty'>) => void
   updateQty: (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => void
   removeItem: (variantKey: string, packCount: number, mixTop?: string, mixBottom?: string) => void
   totalItems: number
@@ -71,6 +72,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const updatePackItem = (item: Omit<CartItem, 'qty'>) => {
+    setItems(prev => {
+      const targetKey = itemKey(item);
+      const exactExisting = prev.find(x => itemKey(x) === targetKey);
+      if (exactExisting) {
+        return prev.map(x => itemKey(x) === targetKey ? { ...x, qty: x.qty + 1 } : x);
+      }
+      
+      // If variant or mix combination already exists in cart, update its packCount & packPrice
+      const matchIndex = prev.findIndex(x => {
+        if (item.isMix) return x.isMix && x.mixTop === item.mixTop && x.mixBottom === item.mixBottom;
+        return !x.isMix && x.variantKey === item.variantKey;
+      });
+
+      if (matchIndex >= 0) {
+        return prev.map((x, idx) => idx === matchIndex ? { ...x, packCount: item.packCount, packPrice: item.packPrice } : x);
+      }
+
+      return [...prev, { ...item, qty: 1 }];
+    });
+  };
+
   const updateQty = (variantKey: string, packCount: number, delta: number, mixTop?: string, mixBottom?: string) => {
     const key = mixTop && mixBottom
       ? `mix-${mixTop}-${mixBottom}-${packCount}`
@@ -98,27 +121,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'save_cart_email', email, items, total: totalPrice, timestamp: new Date().toISOString() }),
       }).catch(() => {});
-    } catch {}
+    } catch {
+      // ignore
+    }
   };
 
   const loadCartByEmail = (email: string): boolean => {
     const saved = localStorage.getItem(`og_cart_${email}`);
     if (!saved) return false;
     try {
-      const loadedItems: CartItem[] = JSON.parse(saved);
-      setItems(prev => {
-        const merged = [...prev];
-        for (const loaded of loadedItems) {
-          const k = itemKey(loaded);
-          const idx = merged.findIndex(x => itemKey(x) === k);
-          if (idx >= 0) {
-            merged[idx] = { ...merged[idx], qty: merged[idx].qty + loaded.qty };
-          } else {
-            merged.push(loaded);
-          }
-        }
-        return merged;
-      });
+      setItems(JSON.parse(saved));
       return true;
     } catch {
       return false;
@@ -128,14 +140,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => setItems([]);
 
   return (
-    <CartContext.Provider value={{ items, addItem, updateQty, removeItem, totalItems, totalPrice, saveCartByEmail, loadCartByEmail, clearCart }}>
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        updatePackItem,
+        updateQty,
+        removeItem,
+        totalItems,
+        totalPrice,
+        saveCartByEmail,
+        loadCartByEmail,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   )
 }
 
 export function useCart() {
-  const ctx = useContext(CartContext)
-  if (!ctx) throw new Error('useCart must be used within CartProvider')
-  return ctx
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error('useCart must be used within a CartProvider');
+  return ctx;
 }

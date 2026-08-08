@@ -14,36 +14,35 @@ export default function Faq() {
   const currentCategoryData = CATEGORIZED_FAQ.find(c => c.category === activeCategory);
 
   return (
-    <div style={{ maxWidth: 1100, width: '100%', margin: '0 auto' }}>
-
+    <div style={{ maxWidth: 1240, width: '100%', margin: '0 auto' }}>
+      
       {/* Two-column split: large title left, accordions right */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '320px 1fr',
-          gap: 64,
+          gridTemplateColumns: '360px 1fr',
+          gap: 72,
           alignItems: 'start',
         }}
       >
-
         {/* Left Column: Title + Category Tabs + Contact CTA */}
         <div style={{ position: 'sticky', top: 140 }}>
-          <h2
+          <h1
             style={{
               fontFamily: 'var(--font-ui)',
-              fontSize: 'clamp(56px, 6vw, 80px)',
+              fontSize: 'clamp(72px, 8vw, 110px)',
               fontWeight: 900,
-              color: '#111827',
-              letterSpacing: '-0.04em',
-              lineHeight: 0.95,
-              margin: '0 0 40px',
+              color: '#0F172A',
+              letterSpacing: '-0.05em',
+              lineHeight: 0.9,
+              margin: '0 0 48px',
             }}
           >
             FAQs
-          </h2>
+          </h1>
 
           {/* Category Tabs */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 32 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 36 }}>
             {CATEGORIZED_FAQ.map((cat) => {
               const isActive = activeCategory === cat.category;
               return (
@@ -54,43 +53,44 @@ export default function Faq() {
                     setOpenIndex(0);
                   }}
                   style={{
-                    background: isActive ? '#F3F4F6' : 'transparent',
+                    background: isActive ? '#0F172A' : 'transparent',
                     border: 'none',
-                    padding: '14px 18px',
-                    borderRadius: 10,
+                    padding: '16px 22px',
+                    borderRadius: 12,
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.15s ease',
-                    color: isActive ? '#111827' : '#6B7280',
-                    fontWeight: isActive ? 700 : 500,
-                    fontSize: 15,
-                    fontFamily: 'var(--font-body)',
+                    transition: 'all 0.2s ease',
+                    color: isActive ? '#FFFFFF' : '#475569',
+                    fontWeight: isActive ? 800 : 600,
+                    fontSize: 17,
+                    fontFamily: 'var(--font-ui)',
                   }}
                 >
                   <span>{cat.category}</span>
-                  <ChevronRight size={16} opacity={isActive ? 1 : 0.4} />
+                  <ChevronRight size={18} opacity={isActive ? 1 : 0.4} />
                 </button>
               );
             })}
           </div>
 
-          {/* Contact CTA — links to /contact */}
+          {/* Contact CTA */}
           <Link
             href="/contact"
             style={{
               display: 'block',
-              background: '#111827',
-              color: '#fff',
-              padding: '16px 24px',
-              borderRadius: 12,
+              background: '#5A74FF',
+              color: '#FFFFFF',
+              padding: '18px 28px',
+              borderRadius: 14,
               textAlign: 'center',
               textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: 15,
+              fontWeight: 800,
+              fontSize: 16,
               fontFamily: 'var(--font-ui)',
+              boxShadow: '0 10px 28px rgba(90, 116, 255, 0.3)',
               transition: 'transform 0.15s ease',
             }}
           >
@@ -98,7 +98,7 @@ export default function Faq() {
           </Link>
         </div>
 
-        {/* Right Column: Accordion Items */}
+        {/* Right Column: Large Font Accordion Items */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {currentCategoryData?.items.map((item, idx) => {
             const isOpen = openIndex === idx;
@@ -106,14 +106,14 @@ export default function Faq() {
               <div
                 key={idx}
                 style={{
-                  borderBottom: '1px solid #E5E7EB',
+                  borderBottom: '1.5px solid #E2E8F0',
                 }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
                   style={{
                     width: '100%',
-                    padding: '24px 0',
+                    padding: '32px 0',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -121,28 +121,29 @@ export default function Faq() {
                     border: 'none',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    color: '#111827',
-                    fontWeight: isOpen ? 700 : 500,
-                    fontSize: 16,
-                    fontFamily: 'var(--font-body)',
-                    lineHeight: 1.4,
+                    color: '#0F172A',
+                    fontWeight: isOpen ? 800 : 700,
+                    fontSize: 'clamp(19px, 2vw, 24px)',
+                    fontFamily: 'var(--font-ui)',
+                    lineHeight: 1.3,
+                    letterSpacing: '-0.015em',
                   }}
                 >
-                  <span style={{ paddingRight: 24, flex: 1 }}>{item.q}</span>
+                  <span style={{ paddingRight: 32, flex: 1 }}>{item.q}</span>
                   <div
                     style={{
-                      width: 28,
-                      height: 28,
+                      width: 36,
+                      height: 36,
                       borderRadius: '50%',
-                      background: isOpen ? '#111827' : '#F3F4F6',
-                      color: isOpen ? '#fff' : '#6B7280',
+                      background: isOpen ? '#0F172A' : '#F1F5F9',
+                      color: isOpen ? '#FFFFFF' : '#475569',
                       display: 'grid',
                       placeItems: 'center',
                       flexShrink: 0,
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    {isOpen ? <X size={14} /> : <Plus size={14} />}
+                    {isOpen ? <X size={18} strokeWidth={2.5} /> : <Plus size={18} strokeWidth={2.5} />}
                   </div>
                 </button>
                 <div
@@ -156,12 +157,12 @@ export default function Faq() {
                     <p
                       style={{
                         margin: 0,
-                        padding: '0 0 24px',
-                        color: '#6B7280',
-                        lineHeight: 1.65,
-                        fontSize: 15,
+                        padding: '0 0 32px',
+                        color: '#475569',
+                        lineHeight: 1.7,
+                        fontSize: 18,
                         fontFamily: 'var(--font-body)',
-                        maxWidth: 580,
+                        maxWidth: 680,
                       }}
                     >
                       {item.a}
@@ -172,7 +173,6 @@ export default function Faq() {
             );
           })}
         </div>
-
       </div>
     </div>
   );

@@ -211,9 +211,11 @@ export default function Product3DViewer({
   return (
     <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10, touchAction: 'none' }}>
       <Canvas
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         frameloop="always"
         gl={{
+          powerPreference: 'high-performance',
+          antialias: true,
           preserveDrawingBuffer: true,
           outputColorSpace: THREE.SRGBColorSpace,
           toneMapping: THREE.NoToneMapping,

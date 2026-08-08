@@ -85,8 +85,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${abeeZee.variable}`}>
       <head>
-        {/* Site-wide structured data: identifies the brand and enables
-            search/sitelinks. Page-level schemas are added per route. */}
+        {/* Instant High-Speed Preloading for 3D Models & Core Assets */}
+        <link rel="preload" href="/assets/models/Snap_Top/Snap_Top.obj" as="fetch" crossOrigin="anonymous" />
+        <link rel="preload" href="/assets/models/Snap_Bottom/Snap_Bottom.obj" as="fetch" crossOrigin="anonymous" />
+        <link rel="preload" href="/assets/orbit-wordmark-white.png" as="image" />
+        
+        {/* Site-wide structured data */}
         <StructuredData data={[organizationSchema, websiteSchema]} />
       </head>
       <body><Providers><GlobalLayoutClient>{children}</GlobalLayoutClient></Providers><Analytics /></body>

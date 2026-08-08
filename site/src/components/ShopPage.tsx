@@ -393,6 +393,18 @@ function EditorialProductHero({ v }: { v: Variant }) {
   const [selectedKey, setSelectedKey] = useState(v.key);
   const activeVar = PRODUCT_VARIANTS.find(x => x.key === selectedKey) || v;
 
+  // Auto-shuffle Pantone colors every 3.5s
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setSelectedKey(prev => {
+        const idx = PRODUCT_VARIANTS.findIndex(x => x.key === prev);
+        const nextIdx = (idx + 1) % PRODUCT_VARIANTS.length;
+        return PRODUCT_VARIANTS[nextIdx].key;
+      });
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section
       style={{
@@ -427,7 +439,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#64748B', fontWeight: 700 }}>
-              Design Concept Showcase
+              Starting Collection
             </span>
           </div>
 
@@ -482,7 +494,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                   marginBottom: 16,
                 }}
               >
-                Signature Palette Showcase
+                Starting Collection Showcase
               </div>
 
               <h2
@@ -554,7 +566,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
             </div>
           </div>
 
-          {/* RIGHT: High-Gloss Still 3D Stage */}
+          {/* RIGHT: High-Gloss Still 3D Stage (Non-interactive) */}
           <div
             style={{
               position: 'relative',
@@ -567,6 +579,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
               border: '1px solid #E2E8F0',
               padding: 24,
               boxShadow: '0 12px 36px rgba(0,0,0,0.04)',
+              pointerEvents: 'none',
             }}
           >
             <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
@@ -578,7 +591,7 @@ function EditorialProductHero({ v }: { v: Variant }) {
                 spin={false}
                 spinSpeed={0}
                 autoRotate={false}
-                interactive={true}
+                interactive={false}
                 cameraPosition={[97.41, -66.94, 171.29]}
               />
             </div>

@@ -12,10 +12,12 @@ interface Particle {
   maxLife: number;
   size: number;
   color: string;
-  type: 'ring' | 'binary' | 'spark' | 'warp';
+  type: 'ring' | 'binary' | 'spark' | 'warp' | 'confetti';
   text?: string;
   rotation: number;
   vRot: number;
+  width?: number;
+  height?: number;
 }
 
 interface Obstacle {
@@ -47,6 +49,8 @@ interface Drone {
 
 interface Boss {
   active: boolean;
+  exploding: boolean;
+  explodeTimer: number;
   x: number;
   y: number;
   width: number;
@@ -113,8 +117,10 @@ export default function MultiStageOrbitGame() {
     trail: [] as { x: number; y: number; alpha: number }[],
     boss: {
       active: false,
+      exploding: false,
+      explodeTimer: 0,
       x: 680,
-      y: 110,
+      y: 60,
       width: 100,
       height: 100,
       hp: 50,
@@ -199,6 +205,23 @@ export default function MultiStageOrbitGame() {
     } catch {}
   };
 
+  const playVictoryFanfare = () => {
+    try {
+      const ctx = getAudioCtx(); if (!ctx) return;
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + i * 0.12);
+        gain.gain.setValueAtTime(0.3, now + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.12 + 0.6);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(now + i * 0.12); osc.stop(now + i * 0.12 + 0.6);
+      });
+    } catch {}
+  };
+
   const playBlastSound = () => {
     try {
       const ctx = getAudioCtx(); if (!ctx) return;
@@ -262,6 +285,7 @@ export default function MultiStageOrbitGame() {
     s.lasers = [];
     s.particles = [];
     s.boss.active = false;
+    s.boss.exploding = false;
     s.obstacleCount = 0;
     setWeaponLevel(s.godMode ? 3 : 1);
     setHasShield(s.godMode);
@@ -291,7 +315,6 @@ export default function MultiStageOrbitGame() {
     }
   };
 
-  // Drone auto-fire
   const fireDroneLaser = (dx: number, dy: number) => {
     const s = stateRef.current;
     const isExplosive = Date.now() < s.explosiveEnd;
@@ -326,9 +349,23 @@ export default function MultiStageOrbitGame() {
       s.particles = [];
       s.obstacleCount = 0;
       s.boss = {
-        active: false, x: 680, y: 110, width: 100, height: 100,
-        hp: 50, maxHp: 50, direction: 1, shootTimer: 0, phase: 1,
-        shieldTimer: 0, hitsSinceShield: 0, chargeTimer: 0, charging: false, chargeVx: 0,
+        active: false,
+        exploding: false,
+        explodeTimer: 0,
+        x: 680,
+        y: 60,
+        width: 100,
+        height: 100,
+        hp: 50,
+        maxHp: 50,
+        direction: 1,
+        shootTimer: 0,
+        phase: 1,
+        shieldTimer: 0,
+        hitsSinceShield: 0,
+        chargeTimer: 0,
+        charging: false,
+        chargeVx: 0,
       };
       setDisplayState('playing');
       return;
@@ -353,7 +390,6 @@ export default function MultiStageOrbitGame() {
     }
   };
 
-  // Detect if mobile/small screen for particle reduction
   const isMobileRef = useRef(false);
   useEffect(() => {
     isMobileRef.current = window.innerWidth < 768;
@@ -393,13 +429,33 @@ export default function MultiStageOrbitGame() {
     }
   };
 
-  // Explosive shrapnel: destroy nearby enemies within blast radius
+  const spawnConfetti = (count: number = 30) => {
+    const s = stateRef.current;
+    const colors = ['#05CE78', '#5A74FF', '#F59E0B', '#EF4444', '#8B5CF6', '#22D3EE', '#EC4899'];
+    for (let i = 0; i < count; i++) {
+      s.particles.push({
+        x: Math.random() * 900,
+        y: -10 - Math.random() * 40,
+        vx: (Math.random() - 0.5) * 3,
+        vy: 2 + Math.random() * 4,
+        life: 1,
+        maxLife: 180,
+        size: 6 + Math.random() * 6,
+        width: 8 + Math.random() * 6,
+        height: 6 + Math.random() * 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: 'confetti',
+        rotation: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 0.15,
+      });
+    }
+  };
+
   const explosiveShrapnel = (cx: number, cy: number) => {
     const s = stateRef.current;
     const blastRadius = 90;
     playBlastSound();
     s.shakeTimer = 12;
-    // Red explosion particles
     for (let i = 0; i < 18; i++) {
       const angle = (Math.PI * 2 * i) / 18;
       const vel = 3 + Math.random() * 5;
@@ -410,7 +466,6 @@ export default function MultiStageOrbitGame() {
         type: 'spark', rotation: 0, vRot: 0,
       });
     }
-    // Kill nearby enemies
     for (let j = s.obstacles.length - 1; j >= 0; j--) {
       const obs = s.obstacles[j];
       if (obs.type.startsWith('pw_')) continue;
@@ -448,14 +503,11 @@ export default function MultiStageOrbitGame() {
     const topCeiling = 34;
     const playerRadius = 24;
 
-    // Viewport speed scaling: compensate for CSS-shrunk canvas on mobile
-    // At 900px rendered width, scale = 1.0. At 400px, scale ≈ 2.25.
     const getSpeedScale = () => {
       const renderedWidth = canvas.getBoundingClientRect().width;
       return Math.max(1, 900 / renderedWidth);
     };
 
-    // Prevent page scroll on touch during gameplay
     const preventScroll = (e: TouchEvent) => {
       if (stateRef.current.gameState === 'playing') e.preventDefault();
     };
@@ -483,10 +535,9 @@ export default function MultiStageOrbitGame() {
     window.addEventListener('mousemove', handleMouseMove);
 
     const gameLoop = (now: number) => {
-      // Delta-time: normalize physics to 60fps baseline
       const rawDt = now - lastFrameTime;
       lastFrameTime = now;
-      const dt = Math.min(rawDt, 33.33) / 16.667; // 1.0 at 60fps, 2.0 at 30fps
+      const dt = Math.min(rawDt, 33.33) / 16.667;
       const vScale = getSpeedScale();
 
       const s = stateRef.current;
@@ -531,19 +582,45 @@ export default function MultiStageOrbitGame() {
 
       // === GAMEPLAY ===
       if (s.gameState === 'playing') {
-        s.distance += 0.25 * dt;
+        // Continuous confetti during victory/cutscene
+        if (s.boss.exploding) {
+          s.boss.explodeTimer -= dt;
+          s.shakeTimer = 20;
+
+          // Staggered explosions across boss body
+          if (Math.random() < 0.6) {
+            const expX = s.boss.x + Math.random() * s.boss.width;
+            const expY = s.boss.y + Math.random() * s.boss.height;
+            triggerExplosion(expX, expY, Math.random() > 0.4);
+            playExplosionSound();
+          }
+
+          // Rain confetti
+          if (Math.random() < 0.5) spawnConfetti(4);
+
+          // End of cutscene -> victory
+          if (s.boss.explodeTimer <= 0) {
+            s.boss.exploding = false;
+            s.boss.active = false;
+            s.gameState = 'victory';
+            setDisplayState('victory');
+            playVictoryFanfare();
+            spawnConfetti(60);
+          }
+        } else {
+          s.distance += 0.25 * dt;
+        }
+
         if (s.shootCooldown > 0) s.shootCooldown -= dt;
         const currentMeters = Math.floor(s.distance);
         setHudScore(currentMeters);
 
-        // Timer HUDs
         const rapidRemaining = Math.max(0, Math.ceil((s.rapidFireEnd - Date.now()) / 1000));
         setRapidTimer(rapidRemaining);
         setHasExplosive(Date.now() < s.explosiveEnd);
         const droneRemaining = Math.max(0, Math.ceil((s.droneEnd - Date.now()) / 1000));
         setDroneTimer(droneRemaining);
 
-        // Expire drones
         if (Date.now() >= s.droneEnd) s.drones = [];
 
         // Stage transitions
@@ -564,13 +641,12 @@ export default function MultiStageOrbitGame() {
           setNextStageMeter(0);
         }
 
-        // High score
         if (currentMeters > s.highScore) {
           s.highScore = currentMeters; setHudHighScore(currentMeters);
           try { localStorage.setItem('og_multistage_high_v2', currentMeters.toString()); } catch {}
         }
 
-        // === PHYSICS (delta-time scaled) ===
+        // === PHYSICS ===
         if (s.stage === 1) {
           s.playerVy += 0.65 * dt; s.playerY += s.playerVy * dt; s.playerRotation += s.speed * 0.07 * dt;
           if (s.playerY <= topCeiling + playerRadius) { s.playerY = topCeiling + playerRadius; s.playerVy = 1.5; }
@@ -591,7 +667,7 @@ export default function MultiStageOrbitGame() {
         s.trail.unshift({ x: s.playerX, y: s.playerY, alpha: 0.6 });
         if (s.trail.length > 10) s.trail.pop();
 
-        // === DRONE AUTO-FIRE ===
+        // === DRONES ===
         s.drones.forEach(drone => {
           drone.shootTimer++;
           if (drone.shootTimer >= 18) {
@@ -600,7 +676,7 @@ export default function MultiStageOrbitGame() {
           }
         });
 
-        // === LASERS (speed-scaled for mobile) ===
+        // === LASERS ===
         for (let i = s.lasers.length - 1; i >= 0; i--) {
           const l = s.lasers[i];
           l.x += l.vx * dt * vScale; l.y += l.vy * dt;
@@ -621,30 +697,33 @@ export default function MultiStageOrbitGame() {
           }
 
           // Laser vs boss
-          if (s.boss.active && s.boss.shieldTimer <= 0 &&
+          if (s.boss.active && !s.boss.exploding && s.boss.shieldTimer <= 0 &&
             l.x > s.boss.x && l.y > s.boss.y && l.y < s.boss.y + s.boss.height) {
             s.lasers.splice(i, 1);
             s.boss.hp -= 1; s.boss.hitsSinceShield += 1;
             if (s.boss.hitsSinceShield >= 10) { s.boss.shieldTimer = 120; s.boss.hitsSinceShield = 0; }
             if (s.boss.hp <= 14) s.boss.phase = 3;
             else if (s.boss.hp <= 34) s.boss.phase = 2;
+
+            // Trigger Boss Explosion Cutscene!
             if (s.boss.hp <= 0) {
-              triggerExplosion(s.boss.x + s.boss.width / 2, s.boss.y + s.boss.height / 2);
-              s.boss.active = false; s.gameState = 'victory'; setDisplayState('victory');
+              s.boss.exploding = true;
+              s.boss.explodeTimer = 120; // 2 seconds cutscene
+              s.obstacles = []; // clear remaining fireballs
             }
           }
 
           if (l.x > canvas.width + 50 || l.y < 0 || l.y > canvas.height) s.lasers.splice(i, 1);
         }
 
-        // === BOSS ===
-        if (s.stage === 3 && (currentMeters - s.stageStartDist) >= 60 && !s.boss.active) {
+        // === BOSS (Stage 3) ===
+        if (s.stage === 3 && (currentMeters - s.stageStartDist) >= 40 && !s.boss.active && !s.boss.exploding) {
           s.boss.active = true; s.boss.hp = 50; s.boss.maxHp = 50; s.boss.phase = 1;
-          s.boss.x = canvas.width - 160; s.boss.y = 80;
+          s.boss.x = canvas.width - 160; s.boss.y = 50;
           s.boss.shieldTimer = 0; s.boss.hitsSinceShield = 0; s.boss.chargeTimer = 0; s.boss.charging = false;
         }
 
-        if (s.boss.active) {
+        if (s.boss.active && !s.boss.exploding) {
           if (s.boss.shieldTimer > 0) s.boss.shieldTimer--;
           const moveSpeed = (s.boss.phase === 3 ? 4.5 : s.boss.phase === 2 ? 3 : 2) * dt;
 
@@ -658,7 +737,12 @@ export default function MultiStageOrbitGame() {
             }
           }
 
-          if (!s.boss.charging) { s.boss.y += s.boss.direction * moveSpeed; if (s.boss.y <= 30 || s.boss.y >= 160) s.boss.direction *= -1; }
+          // Strict vertical range clamp (Y between 35 and 110 so bottom edge NEVER touches groundY 244)
+          if (!s.boss.charging) {
+            s.boss.y += s.boss.direction * moveSpeed;
+            if (s.boss.y <= 35) { s.boss.y = 35; s.boss.direction = 1; }
+            if (s.boss.y >= 110) { s.boss.y = 110; s.boss.direction = -1; }
+          }
 
           s.boss.shootTimer += dt;
           const shootInterval = s.boss.phase === 3 ? 30 : s.boss.phase === 2 ? 40 : 55;
@@ -676,7 +760,7 @@ export default function MultiStageOrbitGame() {
         }
 
         // === SPAWN OBSTACLES ===
-        if (!s.boss.active && canvas.width - s.lastObstacleX > 200 + Math.random() * 160) {
+        if (!s.boss.active && !s.boss.exploding && canvas.width - s.lastObstacleX > 200 + Math.random() * 160) {
           s.obstacleCount++;
           let type: Obstacle['type'];
           if (s.stage === 1) {
@@ -735,7 +819,6 @@ export default function MultiStageOrbitGame() {
                 setDroneTimer(10);
               }
             } else if (s.godMode) {
-              // God mode: destroy obstacle on contact
               s.obstacles.splice(i, 1);
               triggerExplosion(obs.x + obs.width / 2, obs.y + obs.height / 2, true);
             } else if (s.hasShield) {
@@ -747,6 +830,11 @@ export default function MultiStageOrbitGame() {
           }
           if (obs.x + obs.width < -80) s.obstacles.splice(i, 1);
         }
+      }
+
+      // Continuous victory confetti animation
+      if (s.gameState === 'victory') {
+        if (Math.random() < 0.3) spawnConfetti(2);
       }
 
       // === DRAW TRAIL ===
@@ -801,7 +889,6 @@ export default function MultiStageOrbitGame() {
         ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#0B1120'; ctx.shadowBlur = 0; ctx.fill();
 
-        // God mode glow
         if (s.godMode) {
           ctx.beginPath(); ctx.arc(0, 0, playerRadius + 14, 0, Math.PI * 2);
           ctx.strokeStyle = '#F59E0B'; ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 20; ctx.lineWidth = 2;
@@ -875,37 +962,63 @@ export default function MultiStageOrbitGame() {
         ctx.save(); ctx.translate(s.boss.x, s.boss.y);
         const isShielded = s.boss.shieldTimer > 0;
         const phaseColor = s.boss.phase === 3 ? '#DC2626' : s.boss.phase === 2 ? '#F97316' : '#EF4444';
-        ctx.fillStyle = isShielded && Math.floor(Date.now() / 80) % 2 === 0 ? '#FFFFFF' : phaseColor;
-        ctx.shadowColor = phaseColor; ctx.shadowBlur = isShielded ? 30 : 24;
+
+        // Exploding flickering flash effect during boss death cutscene
+        if (s.boss.exploding) {
+          ctx.fillStyle = Math.floor(Date.now() / 40) % 2 === 0 ? '#FFFFFF' : '#EF4444';
+          ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 40;
+        } else {
+          ctx.fillStyle = isShielded && Math.floor(Date.now() / 80) % 2 === 0 ? '#FFFFFF' : phaseColor;
+          ctx.shadowColor = phaseColor; ctx.shadowBlur = isShielded ? 30 : 24;
+        }
+
         ctx.fillRect(0, 0, s.boss.width, s.boss.height);
         ctx.fillStyle = '#FFF'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.shadowBlur = 0;
-        ctx.fillText(s.boss.phase === 3 ? 'RAGE' : s.boss.phase === 2 ? 'P2' : 'P1', s.boss.width / 2, s.boss.height / 2);
-        const hpPercent = Math.max(0, s.boss.hp / s.boss.maxHp);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fillRect(0, -18, s.boss.width, 10);
-        const hpColor = s.boss.phase === 3 ? '#EF4444' : s.boss.phase === 2 ? '#F59E0B' : '#05CE78';
-        ctx.fillStyle = hpColor; ctx.fillRect(0, -18, s.boss.width * hpPercent, 10);
-        if (isShielded) { ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3; ctx.strokeRect(-6, -6, s.boss.width + 12, s.boss.height + 12); }
+        ctx.fillText(
+          s.boss.exploding ? 'CRITICAL' : s.boss.phase === 3 ? 'RAGE' : s.boss.phase === 2 ? 'P2' : 'P1',
+          s.boss.width / 2, s.boss.height / 2
+        );
+
+        if (!s.boss.exploding) {
+          const hpPercent = Math.max(0, s.boss.hp / s.boss.maxHp);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fillRect(0, -18, s.boss.width, 10);
+          const hpColor = s.boss.phase === 3 ? '#EF4444' : s.boss.phase === 2 ? '#F59E0B' : '#05CE78';
+          ctx.fillStyle = hpColor; ctx.fillRect(0, -18, s.boss.width * hpPercent, 10);
+          if (isShielded) { ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3; ctx.strokeRect(-6, -6, s.boss.width + 12, s.boss.height + 12); }
+        }
         ctx.restore();
       }
 
-      // === DRAW PARTICLES ===
+      // === DRAW PARTICLES & CONFETTI ===
       for (let i = s.particles.length - 1; i >= 0; i--) {
         const p = s.particles[i];
-        p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life++; p.rotation += p.vRot;
-        const progress = p.life / p.maxLife;
-        const alpha = Math.max(0, 1 - progress);
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
-        if (p.type === 'binary') { ctx.fillStyle = p.color; ctx.globalAlpha = alpha; ctx.font = '900 16px monospace'; ctx.fillText(p.text || '0', 0, 0); }
-        else if (p.type === 'ring') { ctx.strokeStyle = p.color; ctx.globalAlpha = alpha; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI * 1.5); ctx.stroke(); }
-        else { ctx.fillStyle = p.color; ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(0, 0, p.size * (1 - progress), 0, Math.PI * 2); ctx.fill(); }
-        ctx.restore();
+        p.life++; p.rotation += p.vRot;
+
+        if (p.type === 'confetti') {
+          p.x += p.vx; p.y += p.vy;
+          p.vx *= 0.98;
+          const progress = p.life / p.maxLife;
+          const alpha = Math.max(0, 1 - progress);
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
+          ctx.fillRect(-p.size / 2, -(p.height || p.size) / 2, p.size, p.height || p.size);
+          ctx.restore();
+        } else {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.2;
+          const progress = p.life / p.maxLife;
+          const alpha = Math.max(0, 1 - progress);
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
+          if (p.type === 'binary') { ctx.fillStyle = p.color; ctx.globalAlpha = alpha; ctx.font = '900 16px monospace'; ctx.fillText(p.text || '0', 0, 0); }
+          else if (p.type === 'ring') { ctx.strokeStyle = p.color; ctx.globalAlpha = alpha; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI * 1.5); ctx.stroke(); }
+          else { ctx.fillStyle = p.color; ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(0, 0, p.size * (1 - progress), 0, Math.PI * 2); ctx.fill(); }
+          ctx.restore();
+        }
         if (p.life >= p.maxLife) s.particles.splice(i, 1);
       }
 
       ctx.restore();
       animId = requestAnimationFrame(gameLoop);
     };
-    // Kick off with initial timestamp
 
     animId = requestAnimationFrame(gameLoop);
 
@@ -968,27 +1081,57 @@ export default function MultiStageOrbitGame() {
           </div>
         </div>
 
-        {/* Idle Overlay */}
+        {/* Visual Symbol Guide on Idle Overlay */}
         {displayState === 'idle' && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(11, 17, 32, 0.72)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
-              {activeStage === 1 ? 'CLICK OR SPACE TO JUMP' : activeStage === 2 ? 'CLICK TO SHOOT & FLY' : 'MOVE MOUSE TO AIM · CLICK TO SHOOT'}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(11, 17, 32, 0.88)', backdropFilter: 'blur(6px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', textAlign: 'center', padding: '16px 24px' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 800, marginBottom: 6 }}>
+              {activeStage === 1 ? 'TAP / CLICK / SPACE TO JUMP' : activeStage === 2 ? 'CLICK TO SHOOT & FLY' : 'MOVE MOUSE TO AIM · CLICK TO SHOOT'}
             </div>
-            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 32, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 26, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
               {activeStage === 1 ? 'STAGE 1: FLOOR RUNNER' : activeStage === 2 ? 'STAGE 2: SPACE LASERS' : 'STAGE 3: MAGMA BOSS'}
             </h3>
-            <p style={{ fontSize: 15, color: '#94A3B8', margin: 0, maxWidth: 440, lineHeight: 1.5 }}>
-              {activeStage === 1 ? 'Dodge cables & casters — 300m to reach space!' : activeStage === 2 ? 'Blast viruses, collect power-ups [W] [S] [R] [X] [E] [D] — 400m to the boss!' : 'Defeat the Magma Boss across 3 deadly phases!'}
-            </p>
+
+            {/* Visual Symbol Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px 14px', maxWidth: 640, marginBottom: 14, textTransform: 'none' }}>
+              {[
+                { badge: 'W', color: '#3B82F6', title: 'WEAPON TIER', desc: 'Single → Dual → Triple Spread' },
+                { badge: 'S', color: '#22D3EE', title: 'ENERGY SHIELD', desc: 'Absorbs 1 Lethal Impact' },
+                { badge: 'R', color: '#F59E0B', title: 'RAPID FIRE', desc: '2× Laser Fire Rate' },
+                { badge: 'X', color: '#EF4444', title: 'SCREEN BLAST', desc: 'Clears All On-Screen Enemies' },
+                { badge: 'E', color: '#DC2626', title: 'EXPLOSIVE LASER', desc: 'Shrapnel Chain Explosions' },
+                { badge: 'D', color: '#8B5CF6', title: 'DRONE WINGMEN', desc: '2 Auto-Firing CPU Orbits' },
+              ].map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255, 255, 255, 0.05)', padding: '6px 10px', borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'left' }}>
+                  <span style={{ display: 'grid', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', background: item.color, color: '#FFF', fontWeight: 900, fontFamily: 'var(--font-mono)', fontSize: 11, flexShrink: 0 }}>
+                    {item.badge}
+                  </span>
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 800, color: '#F1F5F9', lineHeight: 1.1 }}>{item.title}</div>
+                    <div style={{ fontSize: 9, color: '#94A3B8', lineHeight: 1.1 }}>{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 600 }}>
+              {activeStage === 1 ? 'Dodge floor cables & casters — reach 300m to warp to Space!' : activeStage === 2 ? 'Collect power-ups & reach 400m to confront the Magma Boss!' : 'Defeat the 50 HP Magma Boss across 3 intense phases!'}
+            </div>
           </div>
         )}
 
-        {/* Victory */}
+        {/* Epic Victory Cutscene Overlay */}
         {displayState === 'victory' && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(11, 17, 32, 0.88)', backdropFilter: 'blur(6px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>VICTORY ACHIEVED</div>
-            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 40, margin: '0 0 8px', letterSpacing: '-0.03em' }}>MAGMA BOSS DEFEATED!</h3>
-            <button onClick={(e) => { e.stopPropagation(); handleActionInput(); }} style={{ background: '#05CE78', color: '#0F172A', border: 'none', padding: '14px 36px', borderRadius: 999, fontWeight: 800, fontSize: 15, cursor: 'pointer', boxShadow: '0 8px 24px rgba(5, 206, 120, 0.4)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(11, 17, 32, 0.88)', backdropFilter: 'blur(8px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.22em', fontWeight: 800, marginBottom: 12 }}>
+              <LucideIcons.Trophy size={18} /> VICTORY ACHIEVED
+            </div>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 42, margin: '0 0 10px', letterSpacing: '-0.03em', background: 'linear-gradient(135deg, #FFF 30%, #05CE78 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              MAGMA BOSS DEFEATED!
+            </h3>
+            <p style={{ fontSize: 15, color: '#94A3B8', margin: '0 0 20px', maxWidth: 420 }}>
+              Sensors clear. You have conquered all 3 stages and defended the Orbit core!
+            </p>
+            <button onClick={(e) => { e.stopPropagation(); handleActionInput(); }} style={{ background: '#05CE78', color: '#0F172A', border: 'none', padding: '14px 38px', borderRadius: 999, fontWeight: 800, fontSize: 15, cursor: 'pointer', boxShadow: '0 8px 28px rgba(5, 206, 120, 0.5)', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'all 200ms ease' }}>
               <LucideIcons.RotateCcw size={18} /> PLAY AGAIN
             </button>
           </div>
@@ -1007,7 +1150,7 @@ export default function MultiStageOrbitGame() {
         )}
       </div>
 
-      {/* Dev God Mode Button (Subtle, Bottom Right) */}
+      {/* Dev God Mode Button */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
         <button
           onClick={toggleGodMode}

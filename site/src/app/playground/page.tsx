@@ -23,8 +23,8 @@ export default function PlaygroundPage() {
   const [customTitle, setCustomTitle] = useState('');
   
   // Default camera position: right-side up, clean profile angle
-  const [camPosStr, setCamPosStr] = useState('[104.74, 96.92, 138.54]');
-  const [camPosArray, setCamPosArray] = useState<[number, number, number]>([104.74, 96.92, 138.54]);
+  const [camPosStr, setCamPosStr] = useState('[97.41, -66.94, 171.29]');
+  const [camPosArray, setCamPosArray] = useState<[number, number, number]>([97.41, -66.94, 171.29]);
 
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +71,7 @@ export default function PlaygroundPage() {
     setSpin(false);
     setExploded(false);
     setFloatMode(false);
-    applyPreset([104.74, 96.92, 138.54], false, false);
+    applyPreset([97.41, -66.94, 171.29], false, false);
   };
 
   // PNG Exporter
@@ -181,60 +181,8 @@ export default function PlaygroundPage() {
               </div>
             </div>
 
-            {/* Live Camera Vector Coordinates Display Card */}
-            <div
-              style={{
-                marginTop: 16,
-                padding: '14px 20px',
-                background: '#0F172A',
-                borderRadius: 14,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                color: '#FFFFFF',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <LucideIcons.Camera size={18} color="#05CE78" />
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#94A3B8' }}>
-                    Live Camera Vector Coordinates
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 700, color: '#05CE78', marginTop: 2 }}>
-                    cameraPosition={camPosStr}
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(`cameraPosition={${camPosStr}}`);
-                  alert(`Copied coordinates: cameraPosition={${camPosStr}}`);
-                }}
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: '#FFFFFF',
-                  padding: '6px 14px',
-                  borderRadius: 8,
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                <LucideIcons.Copy size={13} />
-                Copy Code
-              </button>
-            </div>
-
             {/* Export PNG Button & Angle Presets */}
-            <div style={{ marginTop: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
+            <div style={{ marginTop: 20, display: 'flex', gap: 14, alignItems: 'center' }}>
               <button
                 onClick={exportPNG}
                 style={{
@@ -261,7 +209,7 @@ export default function PlaygroundPage() {
 
               {/* Angle Presets */}
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => applyPreset([104.74, 96.92, 138.54], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                <button onClick={() => applyPreset([97.41, -66.94, 171.29], false, false)} style={{ padding: '12px 16px', background: '#fff', border: '1px solid #e5e7eb', color: '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
                   3D View
                 </button>
                 <button
@@ -269,8 +217,8 @@ export default function PlaygroundPage() {
                     const nextExploded = !exploded;
                     setExploded(nextExploded);
                     if (nextExploded) {
-                      setCamPosArray([157.11, 145.38, 207.81]);
-                      setCamPosStr('[157.11, 145.38, 207.81]');
+                      setCamPosArray([157.11, -145.38, 207.81]);
+                      setCamPosStr('[157.11, -145.38, 207.81]');
                     }
                   }}
                   style={{ padding: '12px 16px', background: exploded ? '#e0e7ff' : '#fff', border: exploded ? '1px solid #6366f1' : '1px solid #e5e7eb', color: exploded ? '#4338ca' : '#374151', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}

@@ -1110,7 +1110,7 @@ export function MixAndMatchBanner() {
               spinSpeed={0.35}
               autoRotate={false}
               interactive={true}
-              cameraPosition={[104.74, 96.92, 138.54]}
+              cameraPosition={[-1.3, -195.13, 71.33]}
             />
           </div>
 

@@ -203,7 +203,7 @@ export default function Product3DViewer({
   spinSpeed = 0.45,
   float = false,
   interactive = true,
-  cameraPosition = [104.74, 96.92, 138.54],
+  cameraPosition = [97.41, -66.94, 171.29],
   onCameraChange,
 }: Product3DViewerProps) {
   const camLog = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('camlog');

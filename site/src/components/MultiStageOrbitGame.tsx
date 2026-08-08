@@ -24,8 +24,9 @@ interface Obstacle {
   y: number;
   width: number;
   height: number;
-  type: 'cable' | 'caster' | 'virus' | 'fireball' | 'powerup';
+  type: 'cable' | 'caster' | 'virus' | 'fireball' | 'homing' | 'pw_weapon' | 'pw_shield' | 'pw_rapid' | 'pw_blast';
   hp?: number;
+  homingVy?: number;
 }
 
 interface Laser {
@@ -46,6 +47,12 @@ interface Boss {
   maxHp: number;
   direction: number;
   shootTimer: number;
+  phase: 1 | 2 | 3;
+  shieldTimer: number;
+  hitsSinceShield: number;
+  chargeTimer: number;
+  charging: boolean;
+  chargeVx: number;
 }
 
 export default function MultiStageOrbitGame() {
@@ -55,17 +62,25 @@ export default function MultiStageOrbitGame() {
   const [activeStage, setActiveStage] = useState<1 | 2 | 3>(1);
   const [hudScore, setHudScore] = useState(0);
   const [hudHighScore, setHudHighScore] = useState(0);
-  const [nextStageMeter, setNextStageMeter] = useState(150);
+  const [nextStageMeter, setNextStageMeter] = useState(300);
   const [weaponLevel, setWeaponLevel] = useState(1);
+  const [hasShield, setHasShield] = useState(false);
+  const [rapidTimer, setRapidTimer] = useState(0);
   const [displayState, setDisplayState] = useState<'idle' | 'playing' | 'gameover' | 'victory'>('idle');
 
-  // Mutable Game Physics State in Ref
+  const STAGE_1_DIST = 300;
+  const STAGE_2_DIST = 400;
+
+  // Mutable Game State
   const stateRef = useRef({
     gameState: 'idle' as 'idle' | 'playing' | 'gameover' | 'victory',
     stage: 1 as 1 | 2 | 3,
     distance: 0,
+    stageStartDist: 0,
     highScore: 0,
     weaponLevel: 1,
+    hasShield: false,
+    rapidFireEnd: 0,
     speed: 6,
     shakeTimer: 0,
     warpFlash: 0,
@@ -76,6 +91,7 @@ export default function MultiStageOrbitGame() {
     isGrounded: true,
     playerRotation: 0,
     jumpBuffer: 0,
+    shootCooldown: 0,
     obstacles: [] as Obstacle[],
     lasers: [] as Laser[],
     particles: [] as Particle[],
@@ -86,15 +102,22 @@ export default function MultiStageOrbitGame() {
       y: 110,
       width: 100,
       height: 100,
-      hp: 35,
-      maxHp: 35,
+      hp: 50,
+      maxHp: 50,
       direction: 1,
       shootTimer: 0,
+      phase: 1 as 1 | 2 | 3,
+      shieldTimer: 0,
+      hitsSinceShield: 0,
+      chargeTimer: 0,
+      charging: false,
+      chargeVx: 0,
     } as Boss,
     lastObstacleX: 0,
+    obstacleCount: 0,
   });
 
-  // Web Audio Synthesizer
+  // === Web Audio ===
   const getAudioCtx = () => {
     if (!audioCtxRef.current) {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -135,7 +158,7 @@ export default function MultiStageOrbitGame() {
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(880, now);
       osc.frequency.exponentialRampToValueAtTime(180, now + 0.1);
-      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.setValueAtTime(0.2, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -163,6 +186,25 @@ export default function MultiStageOrbitGame() {
     } catch {}
   };
 
+  const playShieldHitSound = () => {
+    try {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } catch {}
+  };
+
   const playExplosionSound = () => {
     try {
       const ctx = getAudioCtx();
@@ -182,10 +224,31 @@ export default function MultiStageOrbitGame() {
     } catch {}
   };
 
+  const playBlastSound = () => {
+    try {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      [200, 300, 500].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+        osc.frequency.exponentialRampToValueAtTime(30, now + i * 0.05 + 0.2);
+        gain.gain.setValueAtTime(0.25, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.05);
+        osc.stop(now + i * 0.05 + 0.2);
+      });
+    } catch {}
+  };
+
   // High score read
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('og_multistage_high');
+      const saved = localStorage.getItem('og_multistage_high_v2');
       if (saved) {
         const val = parseInt(saved, 10);
         stateRef.current.highScore = val;
@@ -200,32 +263,41 @@ export default function MultiStageOrbitGame() {
     s.stage = stageNum;
     s.gameState = 'idle';
     s.distance = 0;
+    s.stageStartDist = 0;
     s.playerX = 110;
     s.playerY = stageNum === 1 ? 216 : 150;
     s.playerVy = 0;
     s.isGrounded = true;
+    s.weaponLevel = 1;
+    s.hasShield = false;
+    s.rapidFireEnd = 0;
     s.obstacles = [];
     s.lasers = [];
     s.particles = [];
     s.boss.active = false;
+    s.obstacleCount = 0;
+    setWeaponLevel(1);
+    setHasShield(false);
+    setRapidTimer(0);
     setDisplayState('idle');
   };
 
   const fireLasers = () => {
     const s = stateRef.current;
+    if (s.shootCooldown > 0) return;
     playLaserSound();
+    const isRapid = Date.now() < s.rapidFireEnd;
+    s.shootCooldown = isRapid ? 5 : 12;
+
     if (s.weaponLevel === 1) {
-      // Single Laser
       s.lasers.push({ x: s.playerX + 20, y: s.playerY, vx: 14, vy: 0, speed: 14 });
     } else if (s.weaponLevel === 2) {
-      // Dual Lasers
       s.lasers.push({ x: s.playerX + 20, y: s.playerY - 8, vx: 14, vy: 0, speed: 14 });
       s.lasers.push({ x: s.playerX + 20, y: s.playerY + 8, vx: 14, vy: 0, speed: 14 });
     } else {
-      // Triple Spread Beam
       s.lasers.push({ x: s.playerX + 20, y: s.playerY, vx: 14, vy: 0, speed: 14 });
-      s.lasers.push({ x: s.playerX + 20, y: s.playerY - 4, vx: 14, vy: -2, speed: 14 });
-      s.lasers.push({ x: s.playerX + 20, y: s.playerY + 4, vx: 14, vy: 2, speed: 14 });
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY - 4, vx: 14, vy: -2.5, speed: 14 });
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY + 4, vx: 14, vy: 2.5, speed: 14 });
     }
   };
 
@@ -235,8 +307,13 @@ export default function MultiStageOrbitGame() {
     if (s.gameState === 'idle' || s.gameState === 'gameover' || s.gameState === 'victory') {
       s.gameState = 'playing';
       s.distance = 0;
+      s.stageStartDist = 0;
       s.weaponLevel = 1;
+      s.hasShield = false;
+      s.rapidFireEnd = 0;
       setWeaponLevel(1);
+      setHasShield(false);
+      setRapidTimer(0);
       s.speed = s.stage === 1 ? 6 : s.stage === 2 ? 8 : 7;
       s.playerX = 110;
       s.playerY = s.stage === 1 ? 216 : 150;
@@ -245,15 +322,30 @@ export default function MultiStageOrbitGame() {
       s.obstacles = [];
       s.lasers = [];
       s.particles = [];
-      s.boss.active = false;
-      s.boss.hp = 35;
+      s.obstacleCount = 0;
+      s.boss = {
+        active: false,
+        x: 680,
+        y: 110,
+        width: 100,
+        height: 100,
+        hp: 50,
+        maxHp: 50,
+        direction: 1,
+        shootTimer: 0,
+        phase: 1,
+        shieldTimer: 0,
+        hitsSinceShield: 0,
+        chargeTimer: 0,
+        charging: false,
+        chargeVx: 0,
+      };
       setDisplayState('playing');
       return;
     }
 
     if (s.gameState === 'playing') {
       if (s.stage === 1) {
-        // Stage 1: Floor Runner
         if (s.isGrounded) {
           s.playerVy = -13.5;
           s.isGrounded = false;
@@ -262,11 +354,10 @@ export default function MultiStageOrbitGame() {
           s.jumpBuffer = 10;
         }
       } else if (s.stage === 2) {
-        // Stage 2: Space Defender (Thrust & Shoot)
         s.playerVy = -8;
         fireLasers();
       } else {
-        // Stage 3: Star Fox 64 360 Flight (Shoot Lasers & Move X/Y)
+        // Stage 3: Star Fox flight
         if (e && canvasRef.current) {
           const rect = canvasRef.current.getBoundingClientRect();
           const clickY = e.clientY - rect.top;
@@ -278,45 +369,60 @@ export default function MultiStageOrbitGame() {
     }
   };
 
-  const triggerExplosion = (x: number, y: number) => {
+  const triggerExplosion = (x: number, y: number, small?: boolean) => {
     const s = stateRef.current;
-    s.shakeTimer = 24;
-    playExplosionSound();
-    s.particles = [];
-    for (let i = 0; i < 32; i++) {
-      const angle = (Math.PI * 2 * i) / 32;
-      const vel = 4 + Math.random() * 8;
+    if (!small) {
+      s.shakeTimer = 24;
+      playExplosionSound();
+    }
+    const count = small ? 10 : 30;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count;
+      const vel = (small ? 2 : 4) + Math.random() * (small ? 4 : 8);
       s.particles.push({
-        x,
-        y,
+        x, y,
         vx: Math.cos(angle) * vel,
         vy: Math.sin(angle) * vel,
         life: 1,
-        maxLife: 50,
-        size: 4 + Math.random() * 6,
+        maxLife: small ? 25 : 50,
+        size: (small ? 2 : 4) + Math.random() * (small ? 3 : 6),
         color: i % 2 === 0 ? '#5A74FF' : '#05CE78',
         type: 'ring',
         rotation: Math.random() * Math.PI,
         vRot: (Math.random() - 0.5) * 0.3,
       });
     }
-    for (let i = 0; i < 20; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const vel = 3 + Math.random() * 6;
-      s.particles.push({
-        x,
-        y,
-        vx: Math.cos(angle) * vel,
-        vy: Math.sin(angle) * vel - 2,
-        life: 1,
-        maxLife: 60,
-        size: 14,
-        color: Math.random() > 0.5 ? '#05CE78' : '#FFFFFF',
-        type: 'binary',
-        text: Math.random() > 0.5 ? '0' : '1',
-        rotation: Math.random() * Math.PI,
-        vRot: (Math.random() - 0.5) * 0.2,
-      });
+    if (!small) {
+      for (let i = 0; i < 20; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const vel = 3 + Math.random() * 6;
+        s.particles.push({
+          x, y,
+          vx: Math.cos(angle) * vel,
+          vy: Math.sin(angle) * vel - 2,
+          life: 1,
+          maxLife: 60,
+          size: 14,
+          color: Math.random() > 0.5 ? '#05CE78' : '#FFFFFF',
+          type: 'binary',
+          text: Math.random() > 0.5 ? '0' : '1',
+          rotation: Math.random() * Math.PI,
+          vRot: (Math.random() - 0.5) * 0.2,
+        });
+      }
+    }
+  };
+
+  const screenBlast = () => {
+    const s = stateRef.current;
+    playBlastSound();
+    s.shakeTimer = 18;
+    for (let i = s.obstacles.length - 1; i >= 0; i--) {
+      const obs = s.obstacles[i];
+      if (!obs.type.startsWith('pw_')) {
+        triggerExplosion(obs.x + obs.width / 2, obs.y + obs.height / 2, true);
+        s.obstacles.splice(i, 1);
+      }
     }
   };
 
@@ -328,7 +434,7 @@ export default function MultiStageOrbitGame() {
 
     let animId: number;
     const groundY = 244;
-    const topCeiling = 34; // Top Ceiling Exploit Boundary
+    const topCeiling = 34;
     const playerRadius = 24;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -355,7 +461,7 @@ export default function MultiStageOrbitGame() {
     const gameLoop = () => {
       const s = stateRef.current;
 
-      // Environment Canvas Background
+      // Background
       if (s.stage === 3) {
         ctx.fillStyle = '#180A10';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -369,23 +475,23 @@ export default function MultiStageOrbitGame() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      // Warp Flash Transition Effect
+      // Warp Flash
       if (s.warpFlash > 0) {
         s.warpFlash--;
         ctx.fillStyle = `rgba(255, 255, 255, ${s.warpFlash / 20})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      // Screen Shake
       ctx.save();
       if (s.shakeTimer > 0) {
         s.shakeTimer--;
-        const dx = (Math.random() - 0.5) * s.shakeTimer * 0.8;
-        const dy = (Math.random() - 0.5) * s.shakeTimer * 0.8;
-        ctx.translate(dx, dy);
+        ctx.translate(
+          (Math.random() - 0.5) * s.shakeTimer * 0.8,
+          (Math.random() - 0.5) * s.shakeTimer * 0.8
+        );
       }
 
-      // Top Ceiling Boundary Hazard Line (Prevent Roof Riding Exploit)
+      // Ceiling hazard line
       if (s.stage !== 3) {
         ctx.strokeStyle = 'rgba(255, 71, 87, 0.4)';
         ctx.lineWidth = 2;
@@ -409,54 +515,62 @@ export default function MultiStageOrbitGame() {
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Gameplay Physics Update
+      // === GAMEPLAY ===
       if (s.gameState === 'playing') {
         s.distance += 0.25;
+        if (s.shootCooldown > 0) s.shootCooldown--;
         const currentMeters = Math.floor(s.distance);
         setHudScore(currentMeters);
 
-        // Distance Meter & Arena Warp Transformation Check (150m per stage)
-        const stageMaxMeter = 150;
-        const metersRemaining = Math.max(0, stageMaxMeter - (currentMeters % stageMaxMeter));
-        setNextStageMeter(metersRemaining);
+        // Rapid fire timer HUD
+        const rapidRemaining = Math.max(0, Math.ceil((s.rapidFireEnd - Date.now()) / 1000));
+        setRapidTimer(rapidRemaining);
 
-        if (currentMeters > 0 && currentMeters % stageMaxMeter === 0 && metersRemaining === stageMaxMeter) {
-          s.warpFlash = 20;
-          if (s.stage === 1) {
+        // Stage transition distance meter
+        const stageDist = currentMeters - s.stageStartDist;
+        if (s.stage === 1) {
+          setNextStageMeter(Math.max(0, STAGE_1_DIST - stageDist));
+          if (stageDist >= STAGE_1_DIST) {
             s.stage = 2;
+            s.stageStartDist = currentMeters;
+            s.warpFlash = 20;
+            s.playerY = 150;
+            s.speed = 8;
             setActiveStage(2);
-          } else if (s.stage === 2) {
+          }
+        } else if (s.stage === 2) {
+          setNextStageMeter(Math.max(0, STAGE_2_DIST - stageDist));
+          if (stageDist >= STAGE_2_DIST) {
             s.stage = 3;
+            s.stageStartDist = currentMeters;
+            s.warpFlash = 20;
+            s.speed = 7;
             setActiveStage(3);
           }
+        } else {
+          setNextStageMeter(0);
         }
 
+        // High score
         if (currentMeters > s.highScore) {
           s.highScore = currentMeters;
           setHudHighScore(currentMeters);
-          try {
-            localStorage.setItem('og_multistage_high', currentMeters.toString());
-          } catch {}
+          try { localStorage.setItem('og_multistage_high_v2', currentMeters.toString()); } catch {}
         }
 
-        // Physics per Stage
+        // === PHYSICS ===
         if (s.stage === 1) {
-          // Floor Runner Gravity & Ceiling Limit
           s.playerVy += 0.65;
           s.playerY += s.playerVy;
           s.playerRotation += s.speed * 0.07;
-
-          // Top Ceiling Exploit Boundary Check
           if (s.playerY <= topCeiling + playerRadius) {
             s.playerY = topCeiling + playerRadius;
-            s.playerVy = 1.5; // Bounce down from roof
+            s.playerVy = 1.5;
           }
-
           if (s.playerY >= groundY - playerRadius) {
             s.playerY = groundY - playerRadius;
             s.playerVy = 0;
             s.isGrounded = true;
-
             if (s.jumpBuffer > 0) {
               s.jumpBuffer = 0;
               s.playerVy = -13.5;
@@ -467,11 +581,9 @@ export default function MultiStageOrbitGame() {
             if (s.jumpBuffer > 0) s.jumpBuffer--;
           }
         } else if (s.stage === 2) {
-          // Stage 2: Space Defender
           s.playerVy += 0.35;
           s.playerY += s.playerVy;
           s.playerRotation = s.playerVy * 0.04;
-
           if (s.playerY <= topCeiling + playerRadius) {
             s.playerY = topCeiling + playerRadius;
             s.playerVy = 1.5;
@@ -481,43 +593,57 @@ export default function MultiStageOrbitGame() {
             s.playerVy = 0;
           }
         } else {
-          // Stage 3: Star Fox 64 360 Flight Controls
+          // Stage 3: Star Fox flight
           s.playerY += s.playerVy * 0.5;
           s.playerVy *= 0.9;
           s.playerY = Math.max(topCeiling + playerRadius, Math.min(groundY - playerRadius, s.playerY));
         }
 
-        // Trail Record
+        // Trail
         s.trail.unshift({ x: s.playerX, y: s.playerY, alpha: 0.6 });
         if (s.trail.length > 10) s.trail.pop();
 
-        // Move Lasers
+        // === LASERS ===
         for (let i = s.lasers.length - 1; i >= 0; i--) {
           const l = s.lasers[i];
           l.x += l.vx;
           l.y += l.vy;
 
-          // Laser vs Obstacles
+          // Laser vs obstacles
           for (let j = s.obstacles.length - 1; j >= 0; j--) {
             const obs = s.obstacles[j];
+            if (obs.type.startsWith('pw_')) continue;
             if (
-              obs.type !== 'powerup' &&
-              l.x > obs.x &&
-              l.x < obs.x + obs.width &&
-              l.y > obs.y &&
-              l.y < obs.y + obs.height
+              l.x > obs.x && l.x < obs.x + obs.width &&
+              l.y > obs.y && l.y < obs.y + obs.height
             ) {
               s.lasers.splice(i, 1);
               s.obstacles.splice(j, 1);
-              playExplosionSound();
+              triggerExplosion(obs.x + obs.width / 2, obs.y + obs.height / 2, true);
               break;
             }
           }
 
-          // Laser vs Boss
-          if (s.boss.active && l.x > s.boss.x && l.y > s.boss.y && l.y < s.boss.y + s.boss.height) {
+          // Laser vs boss
+          if (s.boss.active && s.boss.shieldTimer <= 0 &&
+              l.x > s.boss.x && l.y > s.boss.y && l.y < s.boss.y + s.boss.height) {
             s.lasers.splice(i, 1);
             s.boss.hp -= 1;
+            s.boss.hitsSinceShield += 1;
+
+            // Shield activation every 10 hits
+            if (s.boss.hitsSinceShield >= 10) {
+              s.boss.shieldTimer = 120; // ~2 seconds at 60fps
+              s.boss.hitsSinceShield = 0;
+            }
+
+            // Phase transitions
+            if (s.boss.hp <= 14) {
+              s.boss.phase = 3;
+            } else if (s.boss.hp <= 34) {
+              s.boss.phase = 2;
+            }
+
             if (s.boss.hp <= 0) {
               triggerExplosion(s.boss.x + s.boss.width / 2, s.boss.y + s.boss.height / 2);
               s.boss.active = false;
@@ -531,64 +657,147 @@ export default function MultiStageOrbitGame() {
           }
         }
 
-        // Stage 3 Star Fox Boss Spawn
-        if (s.stage === 3 && currentMeters >= 80 && !s.boss.active) {
+        // === BOSS (Stage 3) ===
+        if (s.stage === 3 && (currentMeters - s.stageStartDist) >= 60 && !s.boss.active) {
           s.boss.active = true;
-          s.boss.hp = 35;
+          s.boss.hp = 50;
+          s.boss.maxHp = 50;
+          s.boss.phase = 1;
           s.boss.x = canvas.width - 160;
           s.boss.y = 80;
+          s.boss.shieldTimer = 0;
+          s.boss.hitsSinceShield = 0;
+          s.boss.chargeTimer = 0;
+          s.boss.charging = false;
         }
 
         if (s.boss.active) {
-          s.boss.y += s.boss.direction * 2.2;
-          if (s.boss.y <= 40 || s.boss.y >= 150) s.boss.direction *= -1;
+          if (s.boss.shieldTimer > 0) s.boss.shieldTimer--;
 
+          const moveSpeed = s.boss.phase === 3 ? 4.5 : s.boss.phase === 2 ? 3 : 2;
+
+          // Phase 3 Charge Attack
+          if (s.boss.phase === 3) {
+            s.boss.chargeTimer++;
+            if (s.boss.chargeTimer > 180 && !s.boss.charging) {
+              s.boss.charging = true;
+              s.boss.chargeVx = -18;
+            }
+            if (s.boss.charging) {
+              s.boss.x += s.boss.chargeVx;
+              if (s.boss.x <= 100) {
+                s.boss.chargeVx = 8;
+              }
+              if (s.boss.x >= canvas.width - 160) {
+                s.boss.x = canvas.width - 160;
+                s.boss.charging = false;
+                s.boss.chargeTimer = 0;
+              }
+            }
+          }
+
+          if (!s.boss.charging) {
+            s.boss.y += s.boss.direction * moveSpeed;
+            if (s.boss.y <= 30 || s.boss.y >= 160) s.boss.direction *= -1;
+          }
+
+          // Boss Shooting Patterns
           s.boss.shootTimer++;
-          if (s.boss.shootTimer > 45) {
+          const shootInterval = s.boss.phase === 3 ? 30 : s.boss.phase === 2 ? 40 : 55;
+
+          if (s.boss.shootTimer > shootInterval) {
             s.boss.shootTimer = 0;
-            s.obstacles.push({
-              id: Math.random().toString(),
-              x: s.boss.x,
-              y: s.boss.y + s.boss.height / 2,
-              width: 28,
-              height: 28,
-              type: 'fireball',
-            });
+            const bossCenter = s.boss.y + s.boss.height / 2;
+
+            if (s.boss.phase === 1) {
+              // Phase 1: 3-fireball volley
+              for (let f = -1; f <= 1; f++) {
+                s.obstacles.push({
+                  id: Math.random().toString(),
+                  x: s.boss.x,
+                  y: bossCenter + f * 25,
+                  width: 24, height: 24,
+                  type: 'fireball',
+                });
+              }
+            } else if (s.boss.phase === 2) {
+              // Phase 2: Homing fireballs
+              for (let f = -1; f <= 1; f++) {
+                s.obstacles.push({
+                  id: Math.random().toString(),
+                  x: s.boss.x,
+                  y: bossCenter + f * 20,
+                  width: 24, height: 24,
+                  type: 'homing',
+                  homingVy: 0,
+                });
+              }
+            } else {
+              // Phase 3: 5-fireball spread
+              for (let f = -2; f <= 2; f++) {
+                s.obstacles.push({
+                  id: Math.random().toString(),
+                  x: s.boss.x,
+                  y: bossCenter + f * 18,
+                  width: 22, height: 22,
+                  type: f === 0 ? 'homing' : 'fireball',
+                  homingVy: f === 0 ? 0 : undefined,
+                });
+              }
+            }
           }
         }
 
-        // Spawn Power-Ups [P] & Obstacles
+        // === SPAWN OBSTACLES ===
         if (!s.boss.active && canvas.width - s.lastObstacleX > 200 + Math.random() * 160) {
-          const isPowerup = Math.random() < 0.2;
-          const type: 'cable' | 'caster' | 'virus' | 'fireball' | 'powerup' = isPowerup
-            ? 'powerup'
-            : s.stage === 2
-            ? 'virus'
-            : s.stage === 3
-            ? 'fireball'
-            : Math.random() > 0.5 ? 'cable' : 'caster';
+          s.obstacleCount++;
 
-          const obsH = type === 'powerup' ? 28 : type === 'virus' ? 36 : type === 'fireball' ? 28 : 34;
+          // Power-up logic: NEVER in Stage 1, ~8% in Stage 2+
+          let type: Obstacle['type'];
+          if (s.stage === 1) {
+            type = Math.random() > 0.5 ? 'cable' : 'caster';
+          } else {
+            const isPowerup = s.stage >= 2 && Math.random() < 0.08;
+            if (isPowerup) {
+              const roll = Math.random();
+              if (roll < 0.35) type = 'pw_weapon';
+              else if (roll < 0.6) type = 'pw_shield';
+              else if (roll < 0.85) type = 'pw_rapid';
+              else type = 'pw_blast';
+            } else {
+              type = s.stage === 2 ? 'virus' : 'fireball';
+            }
+          }
+
+          const isPU = type.startsWith('pw_');
+          const obsH = isPU ? 28 : type === 'virus' ? 36 : type === 'fireball' ? 28 : 34;
           const obsW = 34;
-          const obsY = type === 'powerup' || s.stage >= 2 ? 60 + Math.random() * 130 : groundY - obsH;
+          const obsY = isPU || s.stage >= 2 ? 60 + Math.random() * 130 : groundY - obsH;
 
           s.obstacles.push({
             id: Math.random().toString(),
-            x: canvas.width + 40,
-            y: obsY,
-            width: obsW,
-            height: obsH,
+            x: canvas.width + 40, y: obsY,
+            width: obsW, height: obsH,
             type,
           });
           s.lastObstacleX = canvas.width + 40;
         }
         s.lastObstacleX -= s.speed;
 
-        // Obstacle & Powerup Pickup Collision
+        // === OBSTACLE MOVEMENT & COLLISION ===
         for (let i = s.obstacles.length - 1; i >= 0; i--) {
           const obs = s.obstacles[i];
-          obs.x -= s.speed;
+          const moveSpeed = obs.type === 'fireball' || obs.type === 'homing' ? s.speed + 4 : s.speed;
+          obs.x -= moveSpeed;
 
+          // Homing fireball tracking
+          if (obs.type === 'homing') {
+            const dy = s.playerY - (obs.y + obs.height / 2);
+            obs.homingVy = (obs.homingVy || 0) * 0.95 + dy * 0.025;
+            obs.y += obs.homingVy || 0;
+          }
+
+          // Player collision
           const margin = 5;
           if (
             s.playerX + playerRadius - margin > obs.x &&
@@ -596,27 +805,40 @@ export default function MultiStageOrbitGame() {
             s.playerY + playerRadius - margin > obs.y &&
             s.playerY - playerRadius + margin < obs.y + obs.height
           ) {
-            if (obs.type === 'powerup') {
-              // Power-Up Collected
+            if (obs.type.startsWith('pw_')) {
+              // Power-up collected
               s.obstacles.splice(i, 1);
-              if (s.weaponLevel < 3) {
-                s.weaponLevel += 1;
-                setWeaponLevel(s.weaponLevel);
-              }
               playPowerupSound();
+              if (obs.type === 'pw_weapon') {
+                if (s.weaponLevel < 3) { s.weaponLevel += 1; setWeaponLevel(s.weaponLevel); }
+              } else if (obs.type === 'pw_shield') {
+                s.hasShield = true;
+                setHasShield(true);
+              } else if (obs.type === 'pw_rapid') {
+                s.rapidFireEnd = Date.now() + 8000;
+              } else if (obs.type === 'pw_blast') {
+                screenBlast();
+              }
+            } else if (s.hasShield) {
+              // Shield absorbs hit
+              s.hasShield = false;
+              setHasShield(false);
+              s.obstacles.splice(i, 1);
+              playShieldHitSound();
+              s.shakeTimer = 8;
             } else {
-              // Collision Impact
+              // Death
               triggerExplosion(s.playerX, s.playerY);
               s.gameState = 'gameover';
               setDisplayState('gameover');
             }
           }
 
-          if (obs.x + obs.width < -50) s.obstacles.splice(i, 1);
+          if (obs.x + obs.width < -80) s.obstacles.splice(i, 1);
         }
       }
 
-      // Draw Player Trail
+      // === DRAW TRAIL ===
       s.trail.forEach((pt, i) => {
         pt.alpha *= 0.82;
         ctx.beginPath();
@@ -625,7 +847,7 @@ export default function MultiStageOrbitGame() {
         ctx.fill();
       });
 
-      // Draw Lasers
+      // === DRAW LASERS ===
       ctx.fillStyle = '#05CE78';
       ctx.shadowColor = '#05CE78';
       ctx.shadowBlur = 14;
@@ -634,11 +856,23 @@ export default function MultiStageOrbitGame() {
       });
       ctx.shadowBlur = 0;
 
-      // Draw Player Orbit
+      // === DRAW PLAYER ===
       if (s.gameState !== 'gameover') {
         ctx.save();
         ctx.translate(s.playerX, s.playerY);
         ctx.rotate(s.playerRotation);
+
+        // Shield ring
+        if (s.hasShield) {
+          ctx.beginPath();
+          ctx.arc(0, 0, playerRadius + 8, 0, Math.PI * 2);
+          ctx.strokeStyle = '#22D3EE';
+          ctx.shadowColor = '#22D3EE';
+          ctx.shadowBlur = 16;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
 
         ctx.beginPath();
         ctx.arc(0, 0, playerRadius, 0, Math.PI * 2);
@@ -661,85 +895,101 @@ export default function MultiStageOrbitGame() {
         ctx.restore();
       }
 
-      // Draw Obstacles & Powerups
+      // === DRAW OBSTACLES ===
       s.obstacles.forEach(obs => {
         ctx.save();
-        if (obs.type === 'powerup') {
-          // Power-Up Orb [P]
-          ctx.fillStyle = '#3B82F6';
-          ctx.shadowColor = '#3B82F6';
-          ctx.shadowBlur = 16;
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = 'bold 14px monospace';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('P', obs.x + obs.width / 2, obs.y + obs.height / 2);
+        if (obs.type === 'pw_weapon') {
+          ctx.fillStyle = '#3B82F6'; ctx.shadowColor = '#3B82F6'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('W', obs.x + obs.width / 2, obs.y + obs.height / 2);
+        } else if (obs.type === 'pw_shield') {
+          ctx.fillStyle = '#22D3EE'; ctx.shadowColor = '#22D3EE'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('S', obs.x + obs.width / 2, obs.y + obs.height / 2);
+        } else if (obs.type === 'pw_rapid') {
+          ctx.fillStyle = '#F59E0B'; ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('R', obs.x + obs.width / 2, obs.y + obs.height / 2);
+        } else if (obs.type === 'pw_blast') {
+          ctx.fillStyle = '#EF4444'; ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#FFF'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('X', obs.x + obs.width / 2, obs.y + obs.height / 2);
         } else if (obs.type === 'virus') {
-          ctx.fillStyle = '#A855F7';
-          ctx.shadowColor = '#A855F7';
-          ctx.shadowBlur = 14;
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillStyle = '#A855F7'; ctx.shadowColor = '#A855F7'; ctx.shadowBlur = 14;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
         } else if (obs.type === 'fireball') {
-          ctx.fillStyle = '#EF4444';
-          ctx.shadowColor = '#EF4444';
-          ctx.shadowBlur = 16;
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillStyle = '#EF4444'; ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+        } else if (obs.type === 'homing') {
+          ctx.fillStyle = '#FF6B35'; ctx.shadowColor = '#FF6B35'; ctx.shadowBlur = 18;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.fill();
+          // Homing indicator ring
+          ctx.strokeStyle = '#FFCC00'; ctx.lineWidth = 2; ctx.shadowBlur = 0;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2 + 4, 0, Math.PI * 2); ctx.stroke();
         } else if (obs.type === 'cable') {
-          ctx.fillStyle = '#FF4757';
-          ctx.shadowColor = '#FF4757';
-          ctx.shadowBlur = 12;
+          ctx.fillStyle = '#FF4757'; ctx.shadowColor = '#FF4757'; ctx.shadowBlur = 12;
           ctx.beginPath();
           ctx.moveTo(obs.x, obs.y + obs.height);
           ctx.lineTo(obs.x + obs.width / 2, obs.y);
           ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
-          ctx.closePath();
-          ctx.fill();
+          ctx.closePath(); ctx.fill();
         } else {
-          ctx.strokeStyle = '#FFA502';
-          ctx.shadowColor = '#FFA502';
-          ctx.shadowBlur = 12;
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
-          ctx.stroke();
+          ctx.strokeStyle = '#FFA502'; ctx.shadowColor = '#FFA502'; ctx.shadowBlur = 12; ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2); ctx.stroke();
         }
         ctx.restore();
       });
 
-      // Draw Star Fox Magma Boss
+      // === DRAW BOSS ===
       if (s.boss.active) {
         ctx.save();
         ctx.translate(s.boss.x, s.boss.y);
-        ctx.fillStyle = '#EF4444';
-        ctx.shadowColor = '#EF4444';
-        ctx.shadowBlur = 24;
+
+        // Boss body
+        const isShielded = s.boss.shieldTimer > 0;
+        const phaseColor = s.boss.phase === 3 ? '#DC2626' : s.boss.phase === 2 ? '#F97316' : '#EF4444';
+        ctx.fillStyle = isShielded && Math.floor(Date.now() / 80) % 2 === 0 ? '#FFFFFF' : phaseColor;
+        ctx.shadowColor = phaseColor;
+        ctx.shadowBlur = isShielded ? 30 : 24;
         ctx.fillRect(0, 0, s.boss.width, s.boss.height);
 
-        // Boss Health Bar
+        // Phase indicator
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 0;
+        ctx.fillText(
+          s.boss.phase === 3 ? 'RAGE' : s.boss.phase === 2 ? 'P2' : 'P1',
+          s.boss.width / 2, s.boss.height / 2
+        );
+
+        // Boss HP bar
         const hpPercent = Math.max(0, s.boss.hp / s.boss.maxHp);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.fillRect(0, -16, s.boss.width, 8);
-        ctx.fillStyle = '#05CE78';
-        ctx.fillRect(0, -16, s.boss.width * hpPercent, 8);
+        ctx.fillRect(0, -18, s.boss.width, 10);
+        const hpColor = s.boss.phase === 3 ? '#EF4444' : s.boss.phase === 2 ? '#F59E0B' : '#05CE78';
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(0, -18, s.boss.width * hpPercent, 10);
+
+        if (isShielded) {
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(-6, -6, s.boss.width + 12, s.boss.height + 12);
+        }
 
         ctx.restore();
       }
 
-      // Draw Particles
+      // === DRAW PARTICLES ===
       for (let i = s.particles.length - 1; i >= 0; i--) {
         const p = s.particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.2;
-        p.life++;
-        p.rotation += p.vRot;
+        p.x += p.vx; p.y += p.vy; p.vy += 0.2;
+        p.life++; p.rotation += p.vRot;
         const progress = p.life / p.maxLife;
         const alpha = Math.max(0, 1 - progress);
 
@@ -748,26 +998,16 @@ export default function MultiStageOrbitGame() {
         ctx.rotate(p.rotation);
 
         if (p.type === 'binary') {
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = alpha;
-          ctx.font = '900 16px monospace';
-          ctx.fillText(p.text || '0', 0, 0);
+          ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
+          ctx.font = '900 16px monospace'; ctx.fillText(p.text || '0', 0, 0);
         } else if (p.type === 'ring') {
-          ctx.strokeStyle = p.color;
-          ctx.globalAlpha = alpha;
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size, 0, Math.PI * 1.5);
-          ctx.stroke();
+          ctx.strokeStyle = p.color; ctx.globalAlpha = alpha; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI * 1.5); ctx.stroke();
         } else {
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = alpha;
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size * (1 - progress), 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillStyle = p.color; ctx.globalAlpha = alpha;
+          ctx.beginPath(); ctx.arc(0, 0, p.size * (1 - progress), 0, Math.PI * 2); ctx.fill();
         }
         ctx.restore();
-
         if (p.life >= p.maxLife) s.particles.splice(i, 1);
       }
 
@@ -791,7 +1031,7 @@ export default function MultiStageOrbitGame() {
         {[
           { num: 1 as const, name: 'STAGE 1: FLOOR RUNNER' },
           { num: 2 as const, name: 'STAGE 2: SPACE LASERS' },
-          { num: 3 as const, name: 'STAGE 3: STAR FOX BOSS' },
+          { num: 3 as const, name: 'STAGE 3: MAGMA BOSS' },
         ].map((stg) => (
           <button
             key={stg.num}
@@ -815,7 +1055,7 @@ export default function MultiStageOrbitGame() {
         ))}
       </div>
 
-      {/* Canvas Stage */}
+      {/* Canvas */}
       <div
         onPointerDown={handleActionInput}
         style={{
@@ -835,157 +1075,108 @@ export default function MultiStageOrbitGame() {
           style={{ width: '100%', height: 'auto', display: 'block' }}
         />
 
-        {/* HUD Header */}
+        {/* HUD */}
         <div
           style={{
             position: 'absolute',
-            top: 18,
-            left: 24,
-            right: 24,
+            top: 18, left: 24, right: 24,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             pointerEvents: 'none',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#A855F7', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 800 }}>
-              STAGE {activeStage} · WEAPON L{weaponLevel}
+              STAGE {activeStage}
+              {weaponLevel > 1 && <span style={{ color: '#3B82F6' }}> · W{weaponLevel}</span>}
+              {hasShield && <span style={{ color: '#22D3EE' }}> · SHIELD</span>}
+              {rapidTimer > 0 && <span style={{ color: '#F59E0B' }}> · RAPID {rapidTimer}s</span>}
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: 20, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 800 }}>
-            <span style={{ color: '#F59E0B' }}>NEXT STAGE IN: {nextStageMeter}m</span>
-            <span style={{ color: '#05CE78' }}>DIST: {hudScore}m</span>
+          <div style={{ display: 'flex', gap: 18, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 800 }}>
+            {activeStage < 3 && <span style={{ color: '#F59E0B' }}>NEXT: {nextStageMeter}m</span>}
+            {activeStage === 3 && <span style={{ color: '#EF4444' }}>BOSS FIGHT</span>}
+            <span style={{ color: '#05CE78' }}>{hudScore}m</span>
             <span style={{ color: '#5A74FF' }}>BEST: {hudHighScore}m</span>
           </div>
         </div>
 
-        {/* Idle Start Overlay */}
+        {/* Idle Overlay */}
         {displayState === 'idle' && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'rgba(11, 17, 32, 0.72)',
-              backdropFilter: 'blur(4px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              textAlign: 'center',
-            }}
-          >
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(11, 17, 32, 0.72)', backdropFilter: 'blur(4px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            color: '#FFFFFF', textAlign: 'center',
+          }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
-              {activeStage === 1 ? 'CLICK OR SPACE TO JUMP' : 'CLICK OR SPACE TO SHOOT & FLY'}
+              {activeStage === 1 ? 'CLICK OR SPACE TO JUMP' : activeStage === 2 ? 'CLICK TO SHOOT & FLY' : 'MOVE MOUSE TO AIM · CLICK TO SHOOT'}
             </div>
             <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 32, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
-              {activeStage === 1 ? 'STAGE 1: FLOOR RUNNER' : activeStage === 2 ? 'STAGE 2: SPACE LASERS' : 'STAGE 3: STAR FOX BOSS'}
+              {activeStage === 1 ? 'STAGE 1: FLOOR RUNNER' : activeStage === 2 ? 'STAGE 2: SPACE LASERS' : 'STAGE 3: MAGMA BOSS'}
             </h3>
-            <p style={{ fontSize: 15, color: '#94A3B8', margin: 0, maxWidth: 420, lineHeight: 1.5 }}>
-              {activeStage === 1 ? 'Dodge floor cables & casters with jump buffering!' : activeStage === 2 ? 'Shoot lasers & collect [P] weapon power-ups!' : 'Star Fox 360 flight battle against the Magma Boss!'}
+            <p style={{ fontSize: 15, color: '#94A3B8', margin: 0, maxWidth: 440, lineHeight: 1.5 }}>
+              {activeStage === 1
+                ? 'Dodge cables & casters — 300m to reach space!'
+                : activeStage === 2
+                ? 'Blast viruses, collect power-ups [W] [S] [R] [X] — 400m to the boss!'
+                : 'Defeat the Magma Boss across 3 deadly phases!'}
             </p>
           </div>
         )}
 
-        {/* Victory Overlay */}
+        {/* Victory */}
         {displayState === 'victory' && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'rgba(11, 17, 32, 0.88)',
-              backdropFilter: 'blur(6px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              textAlign: 'center',
-            }}
-          >
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(11, 17, 32, 0.88)', backdropFilter: 'blur(6px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            color: '#FFFFFF', textAlign: 'center',
+          }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
               VICTORY ACHIEVED
             </div>
-            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 40, margin: '0 0 8px', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 40, margin: '0 0 8px', letterSpacing: '-0.03em' }}>
               MAGMA BOSS DEFEATED!
             </h3>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleActionInput();
-              }}
-              style={{
-                background: '#05CE78',
-                color: '#0F172A',
-                border: 'none',
-                padding: '14px 36px',
-                borderRadius: 999,
-                fontWeight: 800,
-                fontSize: 15,
-                cursor: 'pointer',
-                boxShadow: '0 8px 24px rgba(5, 206, 120, 0.4)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <LucideIcons.RotateCcw size={18} />
-              PLAY AGAIN
+            <button onClick={(e) => { e.stopPropagation(); handleActionInput(); }} style={{
+              background: '#05CE78', color: '#0F172A', border: 'none',
+              padding: '14px 36px', borderRadius: 999, fontWeight: 800, fontSize: 15,
+              cursor: 'pointer', boxShadow: '0 8px 24px rgba(5, 206, 120, 0.4)',
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+            }}>
+              <LucideIcons.RotateCcw size={18} /> PLAY AGAIN
             </button>
           </div>
         )}
 
-        {/* Game Over Overlay */}
+        {/* Game Over */}
         {displayState === 'gameover' && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'rgba(11, 17, 32, 0.88)',
-              backdropFilter: 'blur(6px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#FFFFFF',
-              textAlign: 'center',
-            }}
-          >
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'rgba(11, 17, 32, 0.88)', backdropFilter: 'blur(6px)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            color: '#FFFFFF', textAlign: 'center',
+          }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#FF4757', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
               IMPACT DETECTED
             </div>
-            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 38, margin: '0 0 8px', letterSpacing: '-0.03em', color: '#FFFFFF' }}>
+            <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 38, margin: '0 0 8px', letterSpacing: '-0.03em' }}>
               ORBIT SHATTERED!
             </h3>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, color: '#05CE78', fontWeight: 800, marginBottom: 24 }}>
-              Distance Rolled: {hudScore}m
+              Distance: {hudScore}m
             </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleActionInput();
-              }}
-              style={{
-                background: '#5A74FF',
-                color: '#FFFFFF',
-                border: 'none',
-                padding: '14px 36px',
-                borderRadius: 999,
-                fontWeight: 800,
-                fontSize: 15,
-                cursor: 'pointer',
-                boxShadow: '0 8px 24px rgba(90, 116, 255, 0.4)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <LucideIcons.RotateCcw size={18} />
-              PLAY AGAIN (SPACE)
+            <button onClick={(e) => { e.stopPropagation(); handleActionInput(); }} style={{
+              background: '#5A74FF', color: '#FFFFFF', border: 'none',
+              padding: '14px 36px', borderRadius: 999, fontWeight: 800, fontSize: 15,
+              cursor: 'pointer', boxShadow: '0 8px 24px rgba(90, 116, 255, 0.4)',
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+            }}>
+              <LucideIcons.RotateCcw size={18} /> PLAY AGAIN (SPACE)
             </button>
           </div>
         )}

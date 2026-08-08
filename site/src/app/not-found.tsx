@@ -62,7 +62,7 @@ export default function NotFound() {
         }}
       >
         {/* Enlarged 84px Architectural 404 Emblem Stage */}
-        <div style={{ position: 'relative', width: 320, height: 320, marginBottom: 20, display: 'grid', placeItems: 'center' }}>
+        <div style={{ position: 'relative', width: 280, height: 280, marginBottom: 8, display: 'grid', placeItems: 'center' }}>
           {/* Outer Rotating Dash Rings */}
           <svg
             viewBox="0 0 320 320"
@@ -82,8 +82,8 @@ export default function NotFound() {
           <div
             style={{
               position: 'relative',
-              width: 190,
-              height: 190,
+              width: 175,
+              height: 175,
               borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.05)',
               border: '2px solid rgba(255, 255, 255, 0.22)',
@@ -98,7 +98,7 @@ export default function NotFound() {
               style={{
                 fontFamily: 'var(--font-mono, monospace)',
                 fontWeight: 900,
-                fontSize: 84,
+                fontSize: 78,
                 letterSpacing: '-0.06em',
                 color: '#FFFFFF',
                 lineHeight: 1,
@@ -109,11 +109,11 @@ export default function NotFound() {
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 11,
+                fontSize: 10,
                 color: '#05CE78',
                 letterSpacing: '0.24em',
                 textTransform: 'uppercase',
-                marginTop: 6,
+                marginTop: 4,
                 fontWeight: 800,
               }}
             >
@@ -122,13 +122,13 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Smiley-Curved SVG Headline Path */}
-        <div style={{ width: '100%', maxWidth: 640, marginBottom: 24 }}>
-          <svg viewBox="0 0 600 120" style={{ width: '100%', height: 'auto', overflow: 'visible' }}>
-            <path id="smileCurve" d="M 20,40 Q 300,130 580,40" fill="none" />
-            <text fill="#FFFFFF" fontSize="48" fontWeight="900" fontFamily="var(--font-ui, sans-serif)" letterSpacing="-0.035em">
+        {/* Smiley-Curved SVG Headline Path (Positioned High & All Lowercase) */}
+        <div style={{ width: '100%', maxWidth: 640, marginBottom: 20 }}>
+          <svg viewBox="0 0 600 110" style={{ width: '100%', height: 'auto', overflow: 'visible' }}>
+            <path id="smileCurve" d="M 20,30 Q 300,110 580,30" fill="none" />
+            <text fill="#FFFFFF" fontSize="54" fontWeight="900" fontFamily="var(--font-ui, sans-serif)" letterSpacing="-0.035em">
               <textPath href="#smileCurve" startOffset="50%" textAnchor="middle">
-                This page rolled away
+                this page rolled away
               </textPath>
             </text>
           </svg>

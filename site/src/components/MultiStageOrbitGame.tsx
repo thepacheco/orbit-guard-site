@@ -12,7 +12,7 @@ interface Particle {
   maxLife: number;
   size: number;
   color: string;
-  type: 'ring' | 'binary' | 'spark' | 'laser';
+  type: 'ring' | 'binary' | 'spark' | 'warp';
   text?: string;
   rotation: number;
   vRot: number;
@@ -24,13 +24,15 @@ interface Obstacle {
   y: number;
   width: number;
   height: number;
-  type: 'cable' | 'caster' | 'virus' | 'fireball';
+  type: 'cable' | 'caster' | 'virus' | 'fireball' | 'powerup';
   hp?: number;
 }
 
 interface Laser {
   x: number;
   y: number;
+  vx: number;
+  vy: number;
   speed: number;
 }
 
@@ -53,6 +55,8 @@ export default function MultiStageOrbitGame() {
   const [activeStage, setActiveStage] = useState<1 | 2 | 3>(1);
   const [hudScore, setHudScore] = useState(0);
   const [hudHighScore, setHudHighScore] = useState(0);
+  const [nextStageMeter, setNextStageMeter] = useState(150);
+  const [weaponLevel, setWeaponLevel] = useState(1);
   const [displayState, setDisplayState] = useState<'idle' | 'playing' | 'gameover' | 'victory'>('idle');
 
   // Mutable Game Physics State in Ref
@@ -61,25 +65,29 @@ export default function MultiStageOrbitGame() {
     stage: 1 as 1 | 2 | 3,
     distance: 0,
     highScore: 0,
+    weaponLevel: 1,
     speed: 6,
     shakeTimer: 0,
+    warpFlash: 0,
+    playerX: 110,
     playerY: 216,
+    playerVx: 0,
     playerVy: 0,
     isGrounded: true,
     playerRotation: 0,
-    jumpBuffer: 0, // Jump input buffering
+    jumpBuffer: 0,
     obstacles: [] as Obstacle[],
     lasers: [] as Laser[],
     particles: [] as Particle[],
     trail: [] as { x: number; y: number; alpha: number }[],
     boss: {
       active: false,
-      x: 700,
-      y: 120,
-      width: 90,
-      height: 90,
-      hp: 25,
-      maxHp: 25,
+      x: 680,
+      y: 110,
+      width: 100,
+      height: 100,
+      hp: 35,
+      maxHp: 35,
       direction: 1,
       shootTimer: 0,
     } as Boss,
@@ -136,6 +144,25 @@ export default function MultiStageOrbitGame() {
     } catch {}
   };
 
+  const playPowerupSound = () => {
+    try {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.2);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } catch {}
+  };
+
   const playExplosionSound = () => {
     try {
       const ctx = getAudioCtx();
@@ -152,25 +179,6 @@ export default function MultiStageOrbitGame() {
       gain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.35);
-    } catch {}
-  };
-
-  const playBossHitSound = () => {
-    try {
-      const ctx = getAudioCtx();
-      if (!ctx) return;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const now = ctx.currentTime;
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(110, now + 0.08);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.08);
     } catch {}
   };
 
@@ -192,6 +200,7 @@ export default function MultiStageOrbitGame() {
     s.stage = stageNum;
     s.gameState = 'idle';
     s.distance = 0;
+    s.playerX = 110;
     s.playerY = stageNum === 1 ? 216 : 150;
     s.playerVy = 0;
     s.isGrounded = true;
@@ -202,13 +211,34 @@ export default function MultiStageOrbitGame() {
     setDisplayState('idle');
   };
 
-  const handleActionInput = () => {
+  const fireLasers = () => {
+    const s = stateRef.current;
+    playLaserSound();
+    if (s.weaponLevel === 1) {
+      // Single Laser
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY, vx: 14, vy: 0, speed: 14 });
+    } else if (s.weaponLevel === 2) {
+      // Dual Lasers
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY - 8, vx: 14, vy: 0, speed: 14 });
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY + 8, vx: 14, vy: 0, speed: 14 });
+    } else {
+      // Triple Spread Beam
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY, vx: 14, vy: 0, speed: 14 });
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY - 4, vx: 14, vy: -2, speed: 14 });
+      s.lasers.push({ x: s.playerX + 20, y: s.playerY + 4, vx: 14, vy: 2, speed: 14 });
+    }
+  };
+
+  const handleActionInput = (e?: React.PointerEvent) => {
     const s = stateRef.current;
 
     if (s.gameState === 'idle' || s.gameState === 'gameover' || s.gameState === 'victory') {
       s.gameState = 'playing';
       s.distance = 0;
+      s.weaponLevel = 1;
+      setWeaponLevel(1);
       s.speed = s.stage === 1 ? 6 : s.stage === 2 ? 8 : 7;
+      s.playerX = 110;
       s.playerY = s.stage === 1 ? 216 : 150;
       s.playerVy = 0;
       s.isGrounded = true;
@@ -216,26 +246,34 @@ export default function MultiStageOrbitGame() {
       s.lasers = [];
       s.particles = [];
       s.boss.active = false;
-      s.boss.hp = 25;
+      s.boss.hp = 35;
       setDisplayState('playing');
       return;
     }
 
     if (s.gameState === 'playing') {
       if (s.stage === 1) {
-        // Floor Runner Jump Buffer logic
+        // Stage 1: Floor Runner
         if (s.isGrounded) {
           s.playerVy = -13.5;
           s.isGrounded = false;
           playJumpSound();
         } else {
-          s.jumpBuffer = 10; // Buffer jump for next landing
+          s.jumpBuffer = 10;
         }
+      } else if (s.stage === 2) {
+        // Stage 2: Space Defender (Thrust & Shoot)
+        s.playerVy = -8;
+        fireLasers();
       } else {
-        // Space Defender & Magma Boss Laser Shoot / Thrust
-        s.playerVy = -8; // Thrust upwards
-        s.lasers.push({ x: 130, y: s.playerY, speed: 14 });
-        playLaserSound();
+        // Stage 3: Star Fox 64 360 Flight (Shoot Lasers & Move X/Y)
+        if (e && canvasRef.current) {
+          const rect = canvasRef.current.getBoundingClientRect();
+          const clickY = e.clientY - rect.top;
+          const targetY = (clickY / rect.height) * 320;
+          s.playerVy = (targetY - s.playerY) * 0.15;
+        }
+        fireLasers();
       }
     }
   };
@@ -245,8 +283,8 @@ export default function MultiStageOrbitGame() {
     s.shakeTimer = 24;
     playExplosionSound();
     s.particles = [];
-    for (let i = 0; i < 30; i++) {
-      const angle = (Math.PI * 2 * i) / 30;
+    for (let i = 0; i < 32; i++) {
+      const angle = (Math.PI * 2 * i) / 32;
       const vel = 4 + Math.random() * 8;
       s.particles.push({
         x,
@@ -289,9 +327,9 @@ export default function MultiStageOrbitGame() {
     if (!ctx) return;
 
     let animId: number;
-    const groundY = 240;
+    const groundY = 244;
+    const topCeiling = 34; // Top Ceiling Exploit Boundary
     const playerRadius = 24;
-    const playerX = 110;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'ArrowUp') {
@@ -300,26 +338,41 @@ export default function MultiStageOrbitGame() {
       }
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      const s = stateRef.current;
+      if (s.gameState === 'playing' && s.stage === 3 && canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const targetY = ((e.clientY - rect.top) / rect.height) * 320;
+        const targetX = ((e.clientX - rect.left) / rect.width) * 900;
+        s.playerY += (targetY - s.playerY) * 0.12;
+        s.playerX += (Math.max(60, Math.min(300, targetX)) - s.playerX) * 0.12;
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('mousemove', handleMouseMove);
 
     const gameLoop = () => {
       const s = stateRef.current;
 
-      // Stage Environment Background Styling
+      // Environment Canvas Background
       if (s.stage === 3) {
-        // Stage 3: Magma Underground Core
-        ctx.fillStyle = '#1A0B0E';
+        ctx.fillStyle = '#180A10';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        // Magma Floor Glow
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.18)';
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
         ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
       } else if (s.stage === 2) {
-        // Stage 2: Deep Space Laser Field
         ctx.fillStyle = '#0B0D1B';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       } else {
-        // Stage 1: Office Floor Track
         ctx.fillStyle = '#0B1120';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Warp Flash Transition Effect
+      if (s.warpFlash > 0) {
+        s.warpFlash--;
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.warpFlash / 20})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
@@ -330,6 +383,18 @@ export default function MultiStageOrbitGame() {
         const dx = (Math.random() - 0.5) * s.shakeTimer * 0.8;
         const dy = (Math.random() - 0.5) * s.shakeTimer * 0.8;
         ctx.translate(dx, dy);
+      }
+
+      // Top Ceiling Boundary Hazard Line (Prevent Roof Riding Exploit)
+      if (s.stage !== 3) {
+        ctx.strokeStyle = 'rgba(255, 71, 87, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 8]);
+        ctx.beginPath();
+        ctx.moveTo(0, topCeiling);
+        ctx.lineTo(canvas.width, topCeiling);
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
 
       // Ground Line
@@ -344,11 +409,27 @@ export default function MultiStageOrbitGame() {
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // Gameplay Loop Update
+      // Gameplay Physics Update
       if (s.gameState === 'playing') {
         s.distance += 0.25;
         const currentMeters = Math.floor(s.distance);
         setHudScore(currentMeters);
+
+        // Distance Meter & Arena Warp Transformation Check (150m per stage)
+        const stageMaxMeter = 150;
+        const metersRemaining = Math.max(0, stageMaxMeter - (currentMeters % stageMaxMeter));
+        setNextStageMeter(metersRemaining);
+
+        if (currentMeters > 0 && currentMeters % stageMaxMeter === 0 && metersRemaining === stageMaxMeter) {
+          s.warpFlash = 20;
+          if (s.stage === 1) {
+            s.stage = 2;
+            setActiveStage(2);
+          } else if (s.stage === 2) {
+            s.stage = 3;
+            setActiveStage(3);
+          }
+        }
 
         if (currentMeters > s.highScore) {
           s.highScore = currentMeters;
@@ -358,19 +439,24 @@ export default function MultiStageOrbitGame() {
           } catch {}
         }
 
-        // Apply Stage-Specific Physics
+        // Physics per Stage
         if (s.stage === 1) {
-          // Floor Runner Gravity
+          // Floor Runner Gravity & Ceiling Limit
           s.playerVy += 0.65;
           s.playerY += s.playerVy;
           s.playerRotation += s.speed * 0.07;
+
+          // Top Ceiling Exploit Boundary Check
+          if (s.playerY <= topCeiling + playerRadius) {
+            s.playerY = topCeiling + playerRadius;
+            s.playerVy = 1.5; // Bounce down from roof
+          }
 
           if (s.playerY >= groundY - playerRadius) {
             s.playerY = groundY - playerRadius;
             s.playerVy = 0;
             s.isGrounded = true;
 
-            // Process Jump Buffer
             if (s.jumpBuffer > 0) {
               s.jumpBuffer = 0;
               s.playerVy = -13.5;
@@ -380,70 +466,58 @@ export default function MultiStageOrbitGame() {
           } else {
             if (s.jumpBuffer > 0) s.jumpBuffer--;
           }
-        } else {
-          // Space & Magma Ship Flying Physics
-          s.playerVy += 0.38; // Mild gravity
+        } else if (s.stage === 2) {
+          // Stage 2: Space Defender
+          s.playerVy += 0.35;
           s.playerY += s.playerVy;
           s.playerRotation = s.playerVy * 0.04;
 
+          if (s.playerY <= topCeiling + playerRadius) {
+            s.playerY = topCeiling + playerRadius;
+            s.playerVy = 1.5;
+          }
           if (s.playerY >= groundY - playerRadius) {
             s.playerY = groundY - playerRadius;
             s.playerVy = 0;
           }
-          if (s.playerY <= playerRadius + 10) {
-            s.playerY = playerRadius + 10;
-            s.playerVy = 0;
-          }
+        } else {
+          // Stage 3: Star Fox 64 360 Flight Controls
+          s.playerY += s.playerVy * 0.5;
+          s.playerVy *= 0.9;
+          s.playerY = Math.max(topCeiling + playerRadius, Math.min(groundY - playerRadius, s.playerY));
         }
 
         // Trail Record
-        s.trail.unshift({ x: playerX, y: s.playerY, alpha: 0.6 });
+        s.trail.unshift({ x: s.playerX, y: s.playerY, alpha: 0.6 });
         if (s.trail.length > 10) s.trail.pop();
 
-        // Lasers Movement & Collision Test
+        // Move Lasers
         for (let i = s.lasers.length - 1; i >= 0; i--) {
           const l = s.lasers[i];
-          l.x += l.speed;
+          l.x += l.vx;
+          l.y += l.vy;
 
-          // Laser vs Obstacles (Viruses / Fireballs)
+          // Laser vs Obstacles
           for (let j = s.obstacles.length - 1; j >= 0; j--) {
             const obs = s.obstacles[j];
             if (
+              obs.type !== 'powerup' &&
               l.x > obs.x &&
               l.x < obs.x + obs.width &&
               l.y > obs.y &&
               l.y < obs.y + obs.height
             ) {
-              // Destroy obstacle
               s.lasers.splice(i, 1);
               s.obstacles.splice(j, 1);
               playExplosionSound();
-
-              // Virus Shatter Particles
-              for (let p = 0; p < 12; p++) {
-                s.particles.push({
-                  x: obs.x,
-                  y: obs.y,
-                  vx: (Math.random() - 0.5) * 6,
-                  vy: (Math.random() - 0.5) * 6,
-                  life: 1,
-                  maxLife: 30,
-                  size: 4 + Math.random() * 4,
-                  color: '#05CE78',
-                  type: 'spark',
-                  rotation: 0,
-                  vRot: 0,
-                });
-              }
               break;
             }
           }
 
-          // Laser vs Magma Boss
+          // Laser vs Boss
           if (s.boss.active && l.x > s.boss.x && l.y > s.boss.y && l.y < s.boss.y + s.boss.height) {
             s.lasers.splice(i, 1);
             s.boss.hp -= 1;
-            playBossHitSound();
             if (s.boss.hp <= 0) {
               triggerExplosion(s.boss.x + s.boss.width / 2, s.boss.y + s.boss.height / 2);
               s.boss.active = false;
@@ -452,26 +526,25 @@ export default function MultiStageOrbitGame() {
             }
           }
 
-          if (l.x > canvas.width + 50) s.lasers.splice(i, 1);
+          if (l.x > canvas.width + 50 || l.y < 0 || l.y > canvas.height) {
+            s.lasers.splice(i, 1);
+          }
         }
 
-        // Stage 3 Magma Boss Spawn & Movement
-        if (s.stage === 3 && currentMeters >= 120 && !s.boss.active) {
+        // Stage 3 Star Fox Boss Spawn
+        if (s.stage === 3 && currentMeters >= 80 && !s.boss.active) {
           s.boss.active = true;
-          s.boss.hp = 25;
-          s.boss.x = canvas.width - 140;
+          s.boss.hp = 35;
+          s.boss.x = canvas.width - 160;
           s.boss.y = 80;
         }
 
         if (s.boss.active) {
-          s.boss.y += s.boss.direction * 2;
-          if (s.boss.y <= 40 || s.boss.y >= 160) {
-            s.boss.direction *= -1;
-          }
+          s.boss.y += s.boss.direction * 2.2;
+          if (s.boss.y <= 40 || s.boss.y >= 150) s.boss.direction *= -1;
 
-          // Boss Shoot Fireballs
           s.boss.shootTimer++;
-          if (s.boss.shootTimer > 60) {
+          if (s.boss.shootTimer > 45) {
             s.boss.shootTimer = 0;
             s.obstacles.push({
               id: Math.random().toString(),
@@ -484,16 +557,21 @@ export default function MultiStageOrbitGame() {
           }
         }
 
-        // Spawn Obstacles
-        if (!s.boss.active && canvas.width - s.lastObstacleX > 200 + Math.random() * 180) {
-          const type: 'cable' | 'caster' | 'virus' | 'fireball' = s.stage === 2
+        // Spawn Power-Ups [P] & Obstacles
+        if (!s.boss.active && canvas.width - s.lastObstacleX > 200 + Math.random() * 160) {
+          const isPowerup = Math.random() < 0.2;
+          const type: 'cable' | 'caster' | 'virus' | 'fireball' | 'powerup' = isPowerup
+            ? 'powerup'
+            : s.stage === 2
             ? 'virus'
             : s.stage === 3
             ? 'fireball'
             : Math.random() > 0.5 ? 'cable' : 'caster';
-          const obsH = type === 'virus' ? 36 : type === 'fireball' ? 28 : type === 'cable' ? 34 : 38;
+
+          const obsH = type === 'powerup' ? 28 : type === 'virus' ? 36 : type === 'fireball' ? 28 : 34;
           const obsW = 34;
-          const obsY = s.stage === 2 ? 60 + Math.random() * 140 : groundY - obsH;
+          const obsY = type === 'powerup' || s.stage >= 2 ? 60 + Math.random() * 130 : groundY - obsH;
+
           s.obstacles.push({
             id: Math.random().toString(),
             x: canvas.width + 40,
@@ -506,28 +584,39 @@ export default function MultiStageOrbitGame() {
         }
         s.lastObstacleX -= s.speed;
 
-        // Obstacle Collision Test
+        // Obstacle & Powerup Pickup Collision
         for (let i = s.obstacles.length - 1; i >= 0; i--) {
           const obs = s.obstacles[i];
           obs.x -= s.speed;
 
           const margin = 5;
           if (
-            playerX + playerRadius - margin > obs.x &&
-            playerX - playerRadius + margin < obs.x + obs.width &&
+            s.playerX + playerRadius - margin > obs.x &&
+            s.playerX - playerRadius + margin < obs.x + obs.width &&
             s.playerY + playerRadius - margin > obs.y &&
             s.playerY - playerRadius + margin < obs.y + obs.height
           ) {
-            triggerExplosion(playerX, s.playerY);
-            s.gameState = 'gameover';
-            setDisplayState('gameover');
+            if (obs.type === 'powerup') {
+              // Power-Up Collected
+              s.obstacles.splice(i, 1);
+              if (s.weaponLevel < 3) {
+                s.weaponLevel += 1;
+                setWeaponLevel(s.weaponLevel);
+              }
+              playPowerupSound();
+            } else {
+              // Collision Impact
+              triggerExplosion(s.playerX, s.playerY);
+              s.gameState = 'gameover';
+              setDisplayState('gameover');
+            }
           }
 
           if (obs.x + obs.width < -50) s.obstacles.splice(i, 1);
         }
       }
 
-      // Draw Player Motion Trail
+      // Draw Player Trail
       s.trail.forEach((pt, i) => {
         pt.alpha *= 0.82;
         ctx.beginPath();
@@ -539,19 +628,18 @@ export default function MultiStageOrbitGame() {
       // Draw Lasers
       ctx.fillStyle = '#05CE78';
       ctx.shadowColor = '#05CE78';
-      ctx.shadowBlur = 12;
+      ctx.shadowBlur = 14;
       s.lasers.forEach(l => {
-        ctx.fillRect(l.x, l.y - 3, 24, 6);
+        ctx.fillRect(l.x, l.y - 3, 26, 6);
       });
       ctx.shadowBlur = 0;
 
-      // Draw Player Orbit / Space Ship
+      // Draw Player Orbit
       if (s.gameState !== 'gameover') {
         ctx.save();
-        ctx.translate(playerX, s.playerY);
+        ctx.translate(s.playerX, s.playerY);
         ctx.rotate(s.playerRotation);
 
-        // Outer Ring
         ctx.beginPath();
         ctx.arc(0, 0, playerRadius, 0, Math.PI * 2);
         ctx.fillStyle = groundColor;
@@ -559,13 +647,11 @@ export default function MultiStageOrbitGame() {
         ctx.shadowBlur = 18;
         ctx.fill();
 
-        // Inner Segment
         ctx.beginPath();
         ctx.arc(0, 0, playerRadius - 6, 0, Math.PI);
         ctx.fillStyle = '#05CE78';
         ctx.fill();
 
-        // Center Hole
         ctx.beginPath();
         ctx.arc(0, 0, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#0B1120';
@@ -575,11 +661,23 @@ export default function MultiStageOrbitGame() {
         ctx.restore();
       }
 
-      // Draw Obstacles
+      // Draw Obstacles & Powerups
       s.obstacles.forEach(obs => {
         ctx.save();
-        if (obs.type === 'virus') {
-          // Space Virus Node
+        if (obs.type === 'powerup') {
+          // Power-Up Orb [P]
+          ctx.fillStyle = '#3B82F6';
+          ctx.shadowColor = '#3B82F6';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 14px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('P', obs.x + obs.width / 2, obs.y + obs.height / 2);
+        } else if (obs.type === 'virus') {
           ctx.fillStyle = '#A855F7';
           ctx.shadowColor = '#A855F7';
           ctx.shadowBlur = 14;
@@ -587,7 +685,6 @@ export default function MultiStageOrbitGame() {
           ctx.arc(obs.x + obs.width / 2, obs.y + obs.height / 2, obs.width / 2, 0, Math.PI * 2);
           ctx.fill();
         } else if (obs.type === 'fireball') {
-          // Magma Fireball
           ctx.fillStyle = '#EF4444';
           ctx.shadowColor = '#EF4444';
           ctx.shadowBlur = 16;
@@ -616,7 +713,7 @@ export default function MultiStageOrbitGame() {
         ctx.restore();
       });
 
-      // Draw Magma Boss
+      // Draw Star Fox Magma Boss
       if (s.boss.active) {
         ctx.save();
         ctx.translate(s.boss.x, s.boss.y);
@@ -626,11 +723,11 @@ export default function MultiStageOrbitGame() {
         ctx.fillRect(0, 0, s.boss.width, s.boss.height);
 
         // Boss Health Bar
-        const hpPercent = s.boss.hp / s.boss.maxHp;
+        const hpPercent = Math.max(0, s.boss.hp / s.boss.maxHp);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.fillRect(0, -14, s.boss.width, 8);
+        ctx.fillRect(0, -16, s.boss.width, 8);
         ctx.fillStyle = '#05CE78';
-        ctx.fillRect(0, -14, s.boss.width * hpPercent, 8);
+        ctx.fillRect(0, -16, s.boss.width * hpPercent, 8);
 
         ctx.restore();
       }
@@ -683,6 +780,7 @@ export default function MultiStageOrbitGame() {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -693,7 +791,7 @@ export default function MultiStageOrbitGame() {
         {[
           { num: 1 as const, name: 'STAGE 1: FLOOR RUNNER' },
           { num: 2 as const, name: 'STAGE 2: SPACE LASERS' },
-          { num: 3 as const, name: 'STAGE 3: MAGMA BOSS' },
+          { num: 3 as const, name: 'STAGE 3: STAR FOX BOSS' },
         ].map((stg) => (
           <button
             key={stg.num}
@@ -750,14 +848,15 @@ export default function MultiStageOrbitGame() {
             pointerEvents: 'none',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#05CE78', boxShadow: '0 0 10px #05CE78' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#A855F7', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 800 }}>
-              STAGE {activeStage}
+              STAGE {activeStage} · WEAPON L{weaponLevel}
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: 24, fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 800 }}>
+          <div style={{ display: 'flex', gap: 20, fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 800 }}>
+            <span style={{ color: '#F59E0B' }}>NEXT STAGE IN: {nextStageMeter}m</span>
             <span style={{ color: '#05CE78' }}>DIST: {hudScore}m</span>
             <span style={{ color: '#5A74FF' }}>BEST: {hudHighScore}m</span>
           </div>
@@ -780,13 +879,13 @@ export default function MultiStageOrbitGame() {
             }}
           >
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700, marginBottom: 12 }}>
-              {activeStage === 1 ? 'CLICK OR SPACE TO JUMP' : 'CLICK OR SPACE TO SHOOT LASERS'}
+              {activeStage === 1 ? 'CLICK OR SPACE TO JUMP' : 'CLICK OR SPACE TO SHOOT & FLY'}
             </div>
             <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 32, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
-              {activeStage === 1 ? 'STAGE 1: FLOOR RUNNER' : activeStage === 2 ? 'STAGE 2: SPACE DEFENDER' : 'STAGE 3: MAGMA BOSS'}
+              {activeStage === 1 ? 'STAGE 1: FLOOR RUNNER' : activeStage === 2 ? 'STAGE 2: SPACE LASERS' : 'STAGE 3: STAR FOX BOSS'}
             </h3>
             <p style={{ fontSize: 15, color: '#94A3B8', margin: 0, maxWidth: 420, lineHeight: 1.5 }}>
-              {activeStage === 1 ? 'Dodge floor cables & casters with jump buffering!' : activeStage === 2 ? 'Fly through deep space and blast viruses with green lasers!' : 'Fight the Magma Boss in underground lava caverns!'}
+              {activeStage === 1 ? 'Dodge floor cables & casters with jump buffering!' : activeStage === 2 ? 'Shoot lasers & collect [P] weapon power-ups!' : 'Star Fox 360 flight battle against the Magma Boss!'}
             </p>
           </div>
         )}

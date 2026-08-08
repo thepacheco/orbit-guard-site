@@ -209,7 +209,7 @@ export default function Product3DViewer({
   const camLog = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('camlog');
 
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10, touchAction: 'none' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: 400, position: 'relative', zIndex: 10, touchAction: 'none', pointerEvents: interactive || camLog ? 'auto' : 'none' }}>
       <Canvas
         dpr={[1, 1.5]}
         frameloop="always"

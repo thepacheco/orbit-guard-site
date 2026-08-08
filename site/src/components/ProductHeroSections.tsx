@@ -246,7 +246,7 @@ export default function ProductHeroSections() {
       </section>
 
       {/* HERO 3: Color Showcase */}
-      <section style={{ padding: '100px 40px', background: '#15171B', color: '#fff' }}>
+      <section style={{ padding: '100px 40px', background: '#F8FAFC', color: '#0F172A', borderTop: '1px solid #E2E8F0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 60px' }}>
             <div
@@ -254,8 +254,8 @@ export default function ProductHeroSections() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                background: 'rgba(255, 180, 162, 0.15)',
-                color: '#FFB4A2',
+                background: 'rgba(90, 116, 255, 0.12)',
+                color: '#5A74FF',
                 fontSize: 12,
                 fontWeight: 700,
                 padding: '6px 16px',
@@ -266,7 +266,7 @@ export default function ProductHeroSections() {
               }}
             >
               <LucideIcons.Palette size={14} />
-              12 Signature Swatches
+              Starting Collection
             </div>
             <h2
               style={{
@@ -275,12 +275,12 @@ export default function ProductHeroSections() {
                 fontSize: 'clamp(32px, 4vw, 48px)',
                 letterSpacing: '-0.03em',
                 margin: '0 0 16px',
-                color: '#fff',
+                color: '#0F172A',
               }}
             >
               A palette for every desk
             </h2>
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+            <p style={{ fontSize: 18, color: '#475569', margin: 0 }}>
               From subtle stealth tones to vibrant statement pieces, mix and match top &amp; bottom colors to craft your custom setup.
             </p>
           </div>
@@ -290,14 +290,15 @@ export default function ProductHeroSections() {
               <div
                 key={v.key}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
                   borderRadius: 16,
                   padding: 20,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 12,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
                 }}
               >
                 <div
@@ -306,13 +307,12 @@ export default function ProductHeroSections() {
                     height: 48,
                     borderRadius: '50%',
                     background: v.hex,
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-                    border: v.hex === '#FFFFFF' ? '1px solid rgba(255,255,255,0.3)' : 'none',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.14)',
+                    border: v.hex === '#FFFFFF' ? '1px solid #E2E8F0' : 'none',
                   }}
                 />
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>{v.name}</div>
-                  <div style={{ fontFamily: 'monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{v.hex}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: '#0F172A' }}>{v.name}</div>
                 </div>
               </div>
             ))}
@@ -321,7 +321,7 @@ export default function ProductHeroSections() {
       </section>
 
       {/* HERO 4: Made to Fit & Compatibility Warning */}
-      <section style={{ padding: '100px 40px', background: '#F9FAFB' }}>
+      <section style={{ padding: '100px 40px', background: '#FFFFFF', borderTop: '1px solid #E2E8F0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
           <div>
             <div
@@ -343,16 +343,16 @@ export default function ProductHeroSections() {
               <LucideIcons.ShieldCheck size={14} />
               Made to Fit 99% of Chairs
             </div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 38, margin: '0 0 20px', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 38, margin: '0 0 20px', letterSpacing: '-0.02em', color: '#0F172A' }}>
               Universal caster compatibility
             </h2>
-            <p style={{ fontSize: 17, color: '#4B5563', lineHeight: 1.6, margin: '0 0 24px' }}>
+            <p style={{ fontSize: 17, color: '#475569', lineHeight: 1.6, margin: '0 0 24px' }}>
               Orbit Guard is precision-molded to fit standard office chair caster stems ranging from 7mm to 11mm in diameter.
               Compatible with Herman Miller, Steelcase, IKEA, Secretlab, Humanscale, and standard replacement casters.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {['Standard 11mm x 22mm stems', 'IKEA 10mm x 22mm stems', 'Single & dual-wheel casters'].map(check => (
-                <div key={check} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 15, fontWeight: 600, color: '#111827' }}>
+                <div key={check} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 15, fontWeight: 600, color: '#0F172A' }}>
                   <LucideIcons.CheckCircle2 size={18} color="#05CE78" />
                   <span>{check}</span>
                 </div>
@@ -387,44 +387,44 @@ export default function ProductHeroSections() {
       </section>
 
       {/* HERO 5: Upper & Lower Portion Breakdown Diagram */}
-      <section style={{ padding: '100px 40px', background: '#FFFFFF', borderTop: '1px solid #E5E7EB' }}>
+      <section style={{ padding: '100px 40px', background: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', fontWeight: 700, marginBottom: 12 }}>
             Split Architecture
           </div>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 36, margin: '0 0 16px', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 36, margin: '0 0 16px', letterSpacing: '-0.02em', color: '#0F172A' }}>
             Upper &amp; lower portion breakdown
           </h2>
-          <p style={{ fontSize: 17, color: '#6B7280', maxWidth: 640, margin: '0 auto 56px' }}>
+          <p style={{ fontSize: 17, color: '#475569', maxWidth: 640, margin: '0 auto 56px' }}>
             Each Orbit Guard is composed of two inter-locking halves engineered for seamless snap assembly and shock dispersion.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
-            <div style={{ background: '#F3F4F6', borderRadius: 24, padding: 40, position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.04)' }}>
+            <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 40, position: 'relative', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.04)', border: '1px solid #E2E8F0' }}>
               <img src="/assets/HomePage_OnChair_Photos/OnChair3.png" alt="Upper & Lower Split View" style={{ width: '100%', height: 320, objectFit: 'cover', borderRadius: 16 }} />
             </div>
 
             <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', padding: 24, borderRadius: 16 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: 24, borderRadius: 16 }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#5A74FF', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6 }}>
                   Upper Section (Stem Ring)
                 </div>
-                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 6px', color: '#111827' }}>
+                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>
                   Deflection Ring
                 </h4>
-                <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.5 }}>
+                <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.5 }}>
                   Anchors snugly around the caster stem to prevent vertical movement and absorb top impacts.
                 </p>
               </div>
 
-              <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', padding: 24, borderRadius: 16 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#06D6A0', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: 24, borderRadius: 16 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#05CE78', fontWeight: 700, textTransform: 'uppercase', marginBottom: 6 }}>
                   Lower Section (Base Cup)
                 </div>
-                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 6px', color: '#111827' }}>
+                <h4 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>
                   Floor-Proximity Cup
                 </h4>
-                <p style={{ fontSize: 14, color: '#4B5563', margin: 0, lineHeight: 1.5 }}>
+                <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.5 }}>
                   Rides just above floor level to push cables and obstacles away before they catch under the wheel.
                 </p>
               </div>
@@ -433,44 +433,102 @@ export default function ProductHeroSections() {
         </div>
       </section>
 
-      {/* HERO 6: Image Placeholder Section */}
-      <section style={{ padding: '80px 40px', background: '#F9FAFB', borderTop: '1px solid #E5E7EB' }}>
+      {/* HERO 6: Multi-Image Hero Photo Gallery Showcase */}
+      <section style={{ padding: '100px 40px', background: '#FFFFFF', borderTop: '1px solid #E2E8F0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div
-            style={{
-              background: '#E5E7EB',
-              borderRadius: 24,
-              height: 420,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px dashed #D1D5DB',
-            }}
-          >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              Image Placeholder
-            </span>
+          <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 56px' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', fontWeight: 700, marginBottom: 12 }}>
+              Hero Composition Gallery 01
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 36, margin: '0 0 14px', color: '#0F172A' }}>
+              Every Angle. Engineered for Utility.
+            </h2>
+            <p style={{ fontSize: 17, color: '#475569', margin: 0 }}>
+              Curated photography capturing Orbit Guard in action across workplace studios and home office environments.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+            {[
+              { img: '/assets/HomePage_OnChair_Photos/OnChair1.png', title: 'Shielding Protection', desc: 'Paws, cords, and toes stay safe.' },
+              { img: '/assets/HomePage_OnChair_Photos/OnChair2.png', title: 'Smooth Gliding', desc: 'Rolls quietly without drag.' },
+              { img: '/assets/HomePage_OnChair_Photos/OnChair3.png', title: 'Dual-Tone Split', desc: 'Mix upper & lower halves.' },
+            ].map((card, i) => (
+              <div
+                key={i}
+                style={{
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: 24,
+                  overflow: 'hidden',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                }}
+              >
+                <div style={{ height: 260, position: 'relative', overflow: 'hidden' }}>
+                  <img src={card.img} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: 24 }}>
+                  <h4 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 20, margin: '0 0 6px', color: '#0F172A' }}>
+                    {card.title}
+                  </h4>
+                  <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.5 }}>
+                    {card.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* HERO 7: Image Placeholder Section */}
-      <section style={{ padding: '80px 40px', background: '#FFFFFF', borderTop: '1px solid #E5E7EB' }}>
+      {/* HERO 7: Hero Composition Gallery 02 */}
+      <section style={{ padding: '100px 40px', background: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div
-            style={{
-              background: '#E5E7EB',
-              borderRadius: 24,
-              height: 420,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px dashed #D1D5DB',
-            }}
-          >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              Image Placeholder
-            </span>
+          <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 56px' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#05CE78', fontWeight: 700, marginBottom: 12 }}>
+              Hero Composition Gallery 02
+            </div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 36, margin: '0 0 14px', color: '#0F172A' }}>
+              Built for Modern Workspaces
+            </h2>
+            <p style={{ fontSize: 17, color: '#475569', margin: 0 }}>
+              Tailored for executive task chairs, gaming rigs, studio desks, and remote workstations.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
+            {[
+              { title: 'Executive Desks', tag: 'Polished Alloy', icon: <LucideIcons.Briefcase size={24} color="#5A74FF" /> },
+              { title: 'Gaming Setups', tag: 'High-Density TPU', icon: <LucideIcons.Gamepad2 size={24} color="#05CE78" /> },
+              { title: 'Creative Studios', tag: 'Sound-Dampening', icon: <LucideIcons.Sparkles size={24} color="#A292FF" /> },
+              { title: 'Home Offices', tag: 'Zero Markings', icon: <LucideIcons.Home size={24} color="#FFB4A2" /> },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: 20,
+                  padding: 28,
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16,
+                }}
+              >
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: '#F8FAFC', display: 'grid', placeItems: 'center', border: '1px solid #E2E8F0' }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <h4 style={{ fontFamily: 'var(--font-ui)', fontWeight: 800, fontSize: 18, margin: '0 0 4px', color: '#0F172A' }}>
+                    {item.title}
+                  </h4>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    {item.tag}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

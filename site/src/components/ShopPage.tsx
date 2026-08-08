@@ -560,67 +560,31 @@ function EditorialProductHero({ v }: { v: Variant }) {
             </div>
           </div>
 
-          {/* RIGHT: Multi-Image Hero Photo Gallery Grid */}
+          {/* RIGHT: High-Gloss 3D Stage with Studio Lighting */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 16,
               position: 'relative',
+              height: 480,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(255,255,255,0.02)',
+              borderRadius: 32,
+              border: '1px solid rgba(255,255,255,0.08)',
+              padding: 24,
             }}
           >
-            {/* Primary Hero Photo — spans full left height */}
-            <div
-              style={{
-                gridRow: 'span 2',
-                borderRadius: 24,
-                overflow: 'hidden',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
-                aspectRatio: '3/4',
-              }}
-            >
-              <img
-                src={heroPhotos[0]}
-                alt={`Orbit ${activeVar.name} Hero`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
-              />
-            </div>
-
-            {/* Secondary Angle Detail Photo */}
-            <div
-              style={{
-                borderRadius: 20,
-                overflow: 'hidden',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
-                aspectRatio: '4/3',
-              }}
-            >
-              <img
-                src={heroPhotos[1]}
-                alt={`Orbit ${activeVar.name} Angle`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
-              />
-            </div>
-
-            {/* Tertiary Chair Lifestyle Photo */}
-            <div
-              style={{
-                borderRadius: 20,
-                overflow: 'hidden',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
-                aspectRatio: '4/3',
-              }}
-            >
-              <img
-                src={heroPhotos[2]}
-                alt={`Orbit ${activeVar.name} Chair Lifestyle`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 500ms ease' }}
+            <div style={{ width: '100%', height: '100%', position: 'relative', zIndex: 10 }}>
+              <Product3DViewer
+                topColor={activeVar.hex}
+                bottomColor={activeVar.hex}
+                exploded={false}
+                float={true}
+                spin={true}
+                spinSpeed={0.35}
+                autoRotate={false}
+                interactive={true}
+                cameraPosition={[97.41, -66.94, 171.29]}
               />
             </div>
           </div>
@@ -1099,7 +1063,7 @@ function ShopPageContent() {
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#5A74FF', marginBottom: 8, fontWeight: 700 }}>
-                  Signature Pantone Collection
+                  Starting Collection
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
                   <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 900, fontSize: 'clamp(44px, 4.5vw, 68px)', letterSpacing: '-0.035em', lineHeight: 0.95, margin: 0, color: 'var(--fg)' }}>

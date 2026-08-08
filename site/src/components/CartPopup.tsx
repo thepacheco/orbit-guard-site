@@ -1,7 +1,5 @@
-'use client';
-
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
 import { useCart, getItemKey } from './CartContext';
 import type { CartItem } from './CartContext';
@@ -10,6 +8,7 @@ import { PRODUCT_VARIANTS } from './data';
 export default function CartPopup() {
   const cart = useCart();
   const router = useRouter();
+  const pathname = usePathname();
   const [saveEmail, setSaveEmail] = useState('');
   const [loadEmail, setLoadEmail] = useState('');
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
@@ -102,6 +101,7 @@ export default function CartPopup() {
         }}
       />
 
+
       {/* Popup panel */}
       <div
         onClick={() => {
@@ -124,7 +124,7 @@ export default function CartPopup() {
           transform: 'translateY(0) scale(1)',
           pointerEvents: 'auto',
           transition: 'all 320ms cubic-bezier(.16,.84,.32,1)',
-          display: 'flex',
+          display: (minimized && pathname && !pathname.startsWith('/shop')) ? 'none' : 'flex',
           flexDirection: 'column',
           overflowY: 'hidden',
           cursor: minimized ? 'pointer' : 'default',
@@ -278,10 +278,13 @@ export default function CartPopup() {
                     )}
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
-                          {item.variantName}
-                        </div>
+                      <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14 }}>
+                        {item.variantName}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: 12, color: 'var(--fg-3)' }}>
+                          {item.packCount}-pack · ${item.packPrice} each
+                        </span>
                         {item.isMix && (
                           <span style={{ 
                             fontSize: 10, 
@@ -291,16 +294,13 @@ export default function CartPopup() {
                             background: 'linear-gradient(135deg, #5A74FF, #8A2BE2)', 
                             WebkitBackgroundClip: 'text', 
                             WebkitTextFillColor: 'transparent',
-                            padding: '2px 6px',
+                            padding: '1px 5px',
                             border: '1px solid rgba(138,43,226,0.2)',
                             borderRadius: 6
                           }}>
                             Mix & Match
                           </span>
                         )}
-                      </div>
-                      <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>
-                        {item.packCount}-pack · ${item.packPrice} each
                       </div>
                     </div>
                     </div>
